@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('travel_destination');
-            $table->unsignedInteger('number_of_passengers')->default(1);
-            $table->date('booking_date');
-            $table->enum('payment_method', ['cash', 'online']);
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->string('ticket_code')->unique();
+            $table->string('origin');
+            $table->string('destination');
+            $table->date('travel_date');
+            $table->time('departure_time');
+            $table->integer('number_of_passengers')->default(1);
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
         
