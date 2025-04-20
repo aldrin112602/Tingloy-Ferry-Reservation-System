@@ -1,6 +1,9 @@
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import Logo from '../images/logo.png';
+import Tingloy from '../images/tingloy.jpg';
+
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
@@ -36,27 +39,11 @@ export default function Welcome() {
                 >
                     <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                         <div className="flex items-center gap-2">
-                            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-2 shadow-lg">
-                                <svg
-                                    className="h-6 w-6 text-white"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M18 8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v12h12V8z"></path>
-                                    <path d="M6 2h12v6H6z"></path>
-                                    <path d="M9 10h1"></path>
-                                    <path d="M14 10h1"></path>
-                                    <path d="M9 14h6"></path>
-                                </svg>
+                            <div className="h-12 w-12 rounded-xl">
+                                {/* logo */}
+                                <img src={Logo} alt="Tingloy Logo" className='w-full object-cover'/>
                             </div>
-                            <span className="text-xl font-bold tracking-tight">Tingloy Ferry</span>
+                            <span className="text-xl tracking-tight font-normal" style={{ fontFamily: '"Arvo", serif' }}>Tingloy Ferry</span>
                         </div>
                         <div className="flex items-center gap-4">
                             {auth.user ? (
@@ -96,11 +83,11 @@ export default function Welcome() {
                             <div className="relative z-10 flex flex-col items-center text-center">
                                 <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500/10 to-indigo-500/10 px-4 py-1.5 text-sm font-medium text-blue-600 dark:from-blue-500/20 dark:to-indigo-500/20 dark:text-blue-400">
                                     <span className="h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400"></span>
-                                    Now available for all Tingloy routes
+                                    Now available Mabini to Tingloy (Vise Versa)
                                 </span>
 
                                 <h1 className="mb-6 bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-5xl font-bold tracking-tight text-transparent  lg:text-6xl dark:from-white dark:to-blue-100">
-                                    Modern Ferry Reservation <br />
+                                    Tingloy Ferry Reservation <br />
                                     <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Made Simple</span>
                                 </h1>
 
@@ -127,11 +114,11 @@ export default function Welcome() {
                             </div>
 
                             {/* Ferry illustration/mockup would go here */}
-                            <div className="mt-16 flex justify-center">
+                            {/* <div className="mt-16 flex justify-center">
                                 <div className="relative h-64 w-full max-w-3xl overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 shadow-xl backdrop-blur-md md:h-80 dark:from-blue-900/30 dark:to-indigo-900/30">
-                                    <img src="https://www.apollocamper.co.nz/portals/19/Bluebird%20Ferry%20Bookings.jpg" alt="Ferry" className='w-full h-full object-cover' />
+                                    <img src={Tingloy} alt="Ferry" className='w-full h-full object-cover' />
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </section>
 
