@@ -14,7 +14,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('age')->nullable();
             $table->string('address')->nullable();
             $table->string('contact_number')->nullable();
-            $table->enum('residency_status', ['Resident', 'Non-resident'])->nullable();
+            $table->string('residency_status')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

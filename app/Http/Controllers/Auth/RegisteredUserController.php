@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'residency_status' => 'required|string|max:100',
             'age' => 'required|integer|min:18',
-            'contact_number' => 'required|numeric',
+            'contact_number' => 'required|numeric|min:11',
             'address' => 'required|string|max:255',
         ]);
 
@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
             'residency_status' => $request->residency_status,
             'age' => $request->age,
             'contact_number' => $request->contact_number,
-            'address' => $request->address,
+            'address' => ucwords($request->address),
         ]);
 
         event(new Registered($user));

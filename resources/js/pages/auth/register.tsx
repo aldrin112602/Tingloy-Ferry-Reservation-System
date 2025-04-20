@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 type RegisterForm = {
     name: string;
@@ -24,7 +25,7 @@ export default function Register() {
     // Step management
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 3;
-    
+
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
@@ -47,7 +48,7 @@ export default function Register() {
         //         return;
         //     }
         // }
-        
+
         if (currentStep < totalSteps) {
             setCurrentStep(currentStep + 1);
         }
@@ -67,51 +68,41 @@ export default function Register() {
     };
 
     // Step titles for the progress indicator
-    const stepTitles = [
-        "Account Info",
-        "Personal Details",
-        "Security"
-    ];
+    const stepTitles = ['Account Info', 'Personal Details', 'Security'];
 
     return (
-        <AuthLayout 
-            title="Create an account" 
-            description={`Step ${currentStep} of ${totalSteps}: ${stepTitles[currentStep-1]}`}
-        >
+        <AuthLayout title="Create an account" description={`Step ${currentStep} of ${totalSteps}: ${stepTitles[currentStep - 1]}`}>
             <Head title="Register" />
-            
+
             {/* Progress indicator */}
-            <div className="flex justify-between mb-6">
+            <div className="mb-6 flex justify-between">
                 {[...Array(totalSteps)].map((_, index) => (
                     <div key={index} className="flex items-center">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            index + 1 === currentStep 
-                                ? 'bg-primary text-primary-foreground' 
-                                : index + 1 < currentStep 
-                                    ? 'bg-primary/80 text-primary-foreground' 
-                                    : 'bg-muted text-muted-foreground'
-                        }`}>
+                        <div
+                            className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                                index + 1 === currentStep
+                                    ? 'bg-primary text-primary-foreground'
+                                    : index + 1 < currentStep
+                                      ? 'bg-primary/80 text-primary-foreground'
+                                      : 'bg-muted text-muted-foreground'
+                            }`}
+                        >
                             {index + 1}
                         </div>
-                        {index < totalSteps - 1 && (
-                            <div className={`h-1 w-36 ${
-                                index + 1 < currentStep ? 'bg-primary/80' : 'bg-muted'
-                            }`} />
-                        )}
+                        {index < totalSteps - 1 && <div className={`h-1 w-36 ${index + 1 < currentStep ? 'bg-primary/80' : 'bg-muted'}`} />}
                     </div>
                 ))}
             </div>
-            
+
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 {/* Step 1: Account Information */}
                 {currentStep === 1 && (
-                    <div className="grid gap-6 animate-in fade-in slide-in-from-left-5 duration-300">
+                    <div className="animate-in fade-in slide-in-from-left-5 grid gap-6 duration-300">
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email address</Label>
                             <Input
                                 id="email"
                                 type="email"
-                                required
                                 tabIndex={1}
                                 autoComplete="email"
                                 value={data.email}
@@ -121,13 +112,12 @@ export default function Register() {
                             />
                             <InputError message={errors.email} />
                         </div>
-                        
+
                         <div className="grid gap-2">
                             <Label htmlFor="name">Full Name</Label>
                             <Input
                                 id="name"
                                 type="text"
-                                required
                                 tabIndex={2}
                                 autoComplete="name"
                                 value={data.name}
@@ -137,28 +127,21 @@ export default function Register() {
                             />
                             <InputError message={errors.name} className="mt-2" />
                         </div>
-                        
-                        
-                        <Button 
-                            type="button" 
-                            className="mt-2 w-full" 
-                            tabIndex={4} 
-                            onClick={nextStep}
-                        >
+
+                        <Button type="button" className="mt-2 w-full" tabIndex={4} onClick={nextStep}>
                             Continue
                         </Button>
                     </div>
                 )}
-                
+
                 {/* Step 2: Personal Details */}
                 {currentStep === 2 && (
-                    <div className="grid gap-6 animate-in fade-in slide-in-from-right-5 duration-300">
+                    <div className="animate-in fade-in slide-in-from-right-5 grid gap-6 duration-300">
                         <div className="grid gap-2">
                             <Label htmlFor="age">Age</Label>
                             <Input
                                 id="age"
                                 type="number"
-                                required
                                 tabIndex={1}
                                 value={data.age || ''}
                                 onChange={(e) => setData('age', Number(e.target.value))}
@@ -167,13 +150,12 @@ export default function Register() {
                             />
                             <InputError message={errors.age} />
                         </div>
-                        
+
                         <div className="grid gap-2">
                             <Label htmlFor="contact_number">Contact Number</Label>
                             <Input
                                 id="contact_number"
                                 type="tel"
-                                required
                                 tabIndex={2}
                                 autoComplete="tel"
                                 value={data.contact_number || ''}
@@ -183,13 +165,12 @@ export default function Register() {
                             />
                             <InputError message={errors.contact_number} />
                         </div>
-                        
+
                         <div className="grid gap-2">
                             <Label htmlFor="address">Address</Label>
                             <Input
                                 id="address"
                                 type="text"
-                                required
                                 tabIndex={3}
                                 autoComplete="street-address"
                                 value={data.address}
@@ -199,53 +180,42 @@ export default function Register() {
                             />
                             <InputError message={errors.address} />
                         </div>
-                        
+
                         <div className="grid gap-2">
                             <Label htmlFor="residency_status">Residency Status</Label>
-                            <Input
-                                id="residency_status"
-                                type="text"
-                                required
-                                tabIndex={4}
-                                value={data.residency_status}
-                                onChange={(e) => setData('residency_status', e.target.value)}
-                                disabled={processing}
-                                placeholder="Your residency status"
-                            />
+                            <Select value={data.residency_status} onValueChange={(value) => setData('residency_status', value)} disabled={processing}>
+                                <SelectTrigger id="residency_status" tabIndex={4}>
+                                    <SelectValue placeholder="Select your residency status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Citizen">Citizen</SelectItem>
+                                    <SelectItem value="Permanent Resident">Permanent Resident</SelectItem>
+                                    <SelectItem value="Temporary Resident">Temporary Resident</SelectItem>
+                                    <SelectItem value="Non-Resident">Non-Resident</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <InputError message={errors.residency_status} />
                         </div>
-                        
+
                         <div className="flex gap-4">
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                className="mt-2 w-full" 
-                                tabIndex={5} 
-                                onClick={prevStep}
-                            >
+                            <Button type="button" variant="outline" className="mt-2 w-full" tabIndex={5} onClick={prevStep}>
                                 Back
                             </Button>
-                            <Button 
-                                type="button" 
-                                className="mt-2 w-full" 
-                                tabIndex={6} 
-                                onClick={nextStep}
-                            >
+                            <Button type="button" className="mt-2 w-full" tabIndex={6} onClick={nextStep}>
                                 Continue
                             </Button>
                         </div>
                     </div>
                 )}
-                
+
                 {/* Step 3: Security */}
                 {currentStep === 3 && (
-                    <div className="grid gap-6 animate-in fade-in slide-in-from-right-5 duration-300">
+                    <div className="animate-in fade-in slide-in-from-right-5 grid gap-6 duration-300">
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
-                                required
                                 tabIndex={1}
                                 autoComplete="new-password"
                                 value={data.password}
@@ -261,7 +231,6 @@ export default function Register() {
                             <Input
                                 id="password_confirmation"
                                 type="password"
-                                required
                                 tabIndex={2}
                                 autoComplete="new-password"
                                 value={data.password_confirmation}
@@ -273,22 +242,11 @@ export default function Register() {
                         </div>
 
                         <div className="flex gap-4">
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                className="mt-2 w-full" 
-                                tabIndex={3} 
-                                onClick={prevStep}
-                            >
+                            <Button type="button" variant="outline" className="mt-2 w-full" tabIndex={3} onClick={prevStep}>
                                 Back
                             </Button>
-                            <Button 
-                                type="submit" 
-                                className="mt-2 w-full" 
-                                tabIndex={4} 
-                                disabled={processing}
-                            >
-                                {processing && <LoaderCircle className="h-4 w-4 animate-spin mr-2" />}
+                            <Button type="submit" className="mt-2 w-full" tabIndex={4} disabled={processing}>
+                                {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
                                 Create account
                             </Button>
                         </div>
