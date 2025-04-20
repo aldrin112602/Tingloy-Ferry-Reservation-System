@@ -12,9 +12,8 @@ import AuthLayout from '@/layouts/auth-layout';
 type RegisterForm = {
     name: string;
     residency_status: string;
-    role: string;
     age: number;
-    contact_number: number;
+    contact_number: string;
     address: string;
     email: string;
     password: string;
@@ -30,25 +29,24 @@ export default function Register() {
         name: '',
         email: '',
         password: '',
-        role: '',
         residency_status: '',
         age: 0,
-        contact_number: 0,
+        contact_number: '',
         address: '',
         password_confirmation: '',
     });
 
     const nextStep = () => {
         // Validate current step before proceeding
-        if (currentStep === 1) {
-            if (!data.name || !data.email || !data.role) {
-                return;
-            }
-        } else if (currentStep === 2) {
-            if (!data.age || !data.contact_number || !data.address || !data.residency_status) {
-                return;
-            }
-        }
+        // if (currentStep === 1) {
+        //     if (!data.name || !data.email) {
+        //         return;
+        //     }
+        // } else if (currentStep === 2) {
+        //     if (!data.age || !data.contact_number || !data.address || !data.residency_status) {
+        //         return;
+        //     }
+        // }
         
         if (currentStep < totalSteps) {
             setCurrentStep(currentStep + 1);
@@ -140,20 +138,6 @@ export default function Register() {
                             <InputError message={errors.name} className="mt-2" />
                         </div>
                         
-                        <div className="grid gap-2">
-                            <Label htmlFor="role">Role</Label>
-                            <Input
-                                id="role"
-                                type="text"
-                                required
-                                tabIndex={3}
-                                value={data.role}
-                                onChange={(e) => setData('role', e.target.value)}
-                                disabled={processing}
-                                placeholder="Your role"
-                            />
-                            <InputError message={errors.role} />
-                        </div>
                         
                         <Button 
                             type="button" 
@@ -193,7 +177,7 @@ export default function Register() {
                                 tabIndex={2}
                                 autoComplete="tel"
                                 value={data.contact_number || ''}
-                                onChange={(e) => setData('contact_number', Number(e.target.value))}
+                                onChange={(e) => setData('contact_number', e.target.value)}
                                 disabled={processing}
                                 placeholder="Your contact number"
                             />
