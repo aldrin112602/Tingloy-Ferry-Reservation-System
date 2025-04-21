@@ -2,7 +2,6 @@ import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Logo from '../images/logo.png';
-import Tingloy from '../images/tingloy.jpg';
 
 
 export default function Welcome() {
