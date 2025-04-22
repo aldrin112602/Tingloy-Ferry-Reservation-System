@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ship, Ticket, CreditCard } from 'lucide-react';
+import { Calendar, Ticket, BarChart2 } from 'lucide-react';
 import { BarChart, PieChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Pie, Cell } from 'recharts';
 
 // Sample data for charts - replace with actual data fetching
@@ -39,23 +39,23 @@ export default function AdminDashboard() {
                 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Active Ferries</CardTitle>
-                        <Ship className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Scheduled Trips</CardTitle>
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">5</div>
-                        <p className="text-xs text-muted-foreground">All operational</p>
+                        <div className="text-2xl font-bold">24</div>
+                        <p className="text-xs text-muted-foreground">This week</p>
                     </CardContent>
                 </Card>
                 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                        <CreditCard className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Total Passengers</CardTitle>
+                        <BarChart2 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">₱124,750</div>
-                        <p className="text-xs text-muted-foreground">+8% from last month</p>
+                        <div className="text-2xl font-bold">4,992</div>
+                        <p className="text-xs text-muted-foreground">This month</p>
                     </CardContent>
                 </Card>
             </div>

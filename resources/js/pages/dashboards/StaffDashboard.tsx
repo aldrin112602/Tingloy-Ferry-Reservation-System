@@ -1,12 +1,12 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
-import { Ship, Ticket, Users, Check, AlertCircle } from 'lucide-react';
+import { Users, Calendar, ScanLine, Check, AlertCircle } from 'lucide-react';
 
-const recentTrips = [
-    { id: 1, route: 'Tingloy to Mabini', time: '9:00 AM', status: 'Completed', date: '2025-04-21' },
-    { id: 2, route: 'Mabini to Tingloy', time: '11:30 AM', status: 'Boarding', date: '2025-04-22' },
-    { id: 3, route: 'Tingloy to Mabini', time: '2:00 PM', status: 'Scheduled', date: '2025-04-22' },
+const todayTrips = [
+    { id: 1, route: 'Tingloy to Mabini', time: '9:00 AM', status: 'Completed', passengers: '238/240' },
+    { id: 2, route: 'Mabini to Tingloy', time: '11:30 AM', status: 'Boarding', passengers: '156/240' },
+    { id: 3, route: 'Tingloy to Mabini', time: '2:00 PM', status: 'Scheduled', passengers: '182/240' },
 ];
 
 export default function StaffDashboard() {
@@ -20,30 +20,30 @@ export default function StaffDashboard() {
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">87</div>
-                        <p className="text-xs text-muted-foreground">56 boarded / 31 pending</p>
+                        <div className="text-2xl font-bold">576</div>
+                        <p className="text-xs text-muted-foreground">238 boarded / 338 expected</p>
                     </CardContent>
                 </Card>
                 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">Today's Trips</CardTitle>
-                        <Ship className="h-4 w-4 text-muted-foreground" />
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">4</div>
-                        <p className="text-xs text-muted-foreground">1 completed / 3 scheduled</p>
+                        <div className="text-2xl font-bold">3</div>
+                        <p className="text-xs text-muted-foreground">1 completed / 2 remaining</p>
                     </CardContent>
                 </Card>
                 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">QR Scans Today</CardTitle>
-                        <Ticket className="h-4 w-4 text-muted-foreground" />
+                        <ScanLine className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">56</div>
-                        <p className="text-xs text-muted-foreground">All valid</p>
+                        <div className="text-2xl font-bold">238</div>
+                        <p className="text-xs text-muted-foreground">235 valid / 3 invalid</p>
                     </CardContent>
                 </Card>
             </div>
@@ -57,11 +57,11 @@ export default function StaffDashboard() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {recentTrips.map(trip => (
+                            {todayTrips.map(trip => (
                                 <div key={trip.id} className="flex items-center justify-between border-b pb-2">
                                     <div>
                                         <p className="font-medium">{trip.route}</p>
-                                        <p className="text-sm text-muted-foreground">{trip.time} - {trip.date}</p>
+                                        <p className="text-sm text-muted-foreground">{trip.time} - {trip.passengers}</p>
                                     </div>
                                     <div className="flex items-center">
                                         <span className={`rounded-full px-2 py-1 text-xs ${
@@ -80,15 +80,15 @@ export default function StaffDashboard() {
                     </CardContent>
                     <CardFooter>
                         <Button asChild variant="outline" size="sm">
-                            <Link href="/staff/trip-schedules">View All Schedules</Link>
+                            <Link href="/staff/passengers">View Passenger List</Link>
                         </Button>
                     </CardFooter>
                 </Card>
                 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
-                        <CardDescription>QR scans and validations</CardDescription>
+                        <CardTitle>Recent Scans</CardTitle>
+                        <CardDescription>QR ticket validations</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">

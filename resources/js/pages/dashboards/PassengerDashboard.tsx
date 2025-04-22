@@ -4,22 +4,21 @@ import { Link } from '@inertiajs/react';
 import { Ticket, Clock, AlertCircle } from 'lucide-react';
 
 const upcomingSchedules = [
-    { id: 1, route: 'Mabini to Tingloy', time: '9:00 AM', capacity: '45/50', date: '2025-04-23' },
-    { id: 2, route: 'Tingloy to Mabini', time: '11:30 AM', capacity: '22/50', date: '2025-04-23' },
-    { id: 3, route: 'Mabini to Tingloy', time: '2:00 PM', capacity: '18/50', date: '2025-04-23' },
+    { id: 1, route: 'Mabini to Tingloy', time: '9:00 AM', capacity: '145/240', date: '2025-04-23' },
+    { id: 2, route: 'Tingloy to Mabini', time: '11:30 AM', capacity: '122/240', date: '2025-04-23' },
+    { id: 3, route: 'Mabini to Tingloy', time: '2:00 PM', capacity: '118/240', date: '2025-04-23' },
 ];
 
 const recentTrips = [
     { id: 1, route: 'Tingloy to Mabini', time: '9:00 AM', status: 'Completed', date: '2025-04-21' },
     { id: 2, route: 'Mabini to Tingloy', time: '11:30 AM', status: 'Boarding', date: '2025-04-22' },
-    { id: 3, route: 'Tingloy to Mabini', time: '2:00 PM', status: 'Scheduled', date: '2025-04-22' },
 ];
 
 export default function PassengerDashboard() {
     return (
         <>
             {/* Stats Section */}
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">My Bookings</CardTitle>
@@ -42,24 +41,15 @@ export default function PassengerDashboard() {
                     </CardContent>
                 </Card>
                 
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Weather Alert</CardTitle>
-                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-lg font-bold">Clear Skies</div>
-                        <p className="text-xs text-muted-foreground">All trips scheduled to run</p>
-                    </CardContent>
-                </Card>
+                
             </div>
 
             {/* Schedule and Trips Section */}
             <div className="grid gap-4 md:grid-cols-3">
                 <Card className="md:col-span-2">
                     <CardHeader>
-                        <CardTitle>Upcoming Schedule</CardTitle>
-                        <CardDescription>Ferry trips for the next days</CardDescription>
+                        <CardTitle>Available Trips</CardTitle>
+                        <CardDescription>Book your next trip</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
@@ -81,7 +71,7 @@ export default function PassengerDashboard() {
                     </CardContent>
                     <CardFooter>
                         <Button asChild variant="outline" size="sm">
-                            <Link href="/schedule">View Full Schedule</Link>
+                            <Link href="/book-ticket">Book Ticket</Link>
                         </Button>
                     </CardFooter>
                 </Card>

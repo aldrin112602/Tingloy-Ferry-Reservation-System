@@ -10,33 +10,24 @@ import AppLogo from './app-logo';
 // Passenger menu
 const passengerNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
-    { title: 'Book Ticket', href: '/book-ticket', icon: Ticket },
-    { title: 'Ferry Schedule', href: '/schedule', icon: Calendar },
+    { title: 'Book Ticket', href: '/passenger/book_ticket', icon: Ticket },
     { title: 'My Bookings', href: '/bookings', icon: BookOpen },
-    { title: 'Payment Options', href: '/payment-options', icon: CreditCard },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 
 // Staff (Verifier) menu
 const staffNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
-    { title: 'Scan QR Code', href: '/staff/scan', icon: ScanLine },
-    { title: 'Boarded Passengers', href: '/staff/boarded', icon: Users },
-    { title: 'Trip Schedules', href: '/staff/trip-schedules', icon: Compass },
+    { title: 'Scan Tickets', href: '/staff/scan', icon: ScanLine },
+    { title: 'Passenger List', href: '/staff/passengers', icon: Users },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 
 // Admin menu
 const adminNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
-    { title: 'Manage Ferries', href: '/admin/ferries', icon: Ship },
-    { title: 'Schedules', href: '/admin/schedules', icon: Calendar },
-    { title: 'User Management', href: '/admin/users', icon: UserCog },
-    { title: 'Ticket Management', href: '/admin/tickets', icon: Ticket },
-    { title: 'QR Validation Logs', href: '/admin/qr-logs', icon: ScanLine },
-    { title: 'Payment Settings', href: '/admin/payments', icon: CreditCard },
-    { title: 'Reports & Analytics', href: '/admin/reports', icon: BarChart2 },
-    { title: 'System Settings', href: '/admin/system-settings', icon: Settings2 },
+    { title: 'Manage Schedule', href: '/admin/schedule', icon: Calendar },
+    { title: 'Passenger Reports', href: '/admin/reports', icon: BarChart2 },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 
