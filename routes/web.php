@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\RouteController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -17,6 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('book_ticket', function () {
             return Inertia::render('features/passenger/BookTicket');
         })->name('passenger.book_ticket');
+
+        Route::get('routes', [RouteController::class, 'index'])->name('passenger.routes');
 
     });
 });
