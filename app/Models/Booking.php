@@ -21,8 +21,36 @@ class Booking extends Model
         'travel_date',
         'departure_time',
         'number_of_passengers',
-        'status',
+        'status'
     ];
+
+    protected $casts = [
+        'travel_date' => 'date',
+        'departure_time' => 'datetime',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function passengers()
+    {
+        return $this->hasMany(Passenger::class);
+    }
+
+    public function mainPassenger()
+    {
+        return $this->passengers()->where('is_main_passenger', true)->first();
+    }
+
+    // Generate ticket code automatically
+    protected static function booted()
+    {
+        static::creating(function ($booking) {
+            $booking->ticket_code = 'FT-' . strtoupper(uniqid());
+        });
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -33,9 +61,4 @@ class Booking extends Model
         'created_at',
         'updated_at',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }
