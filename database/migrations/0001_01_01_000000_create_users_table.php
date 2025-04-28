@@ -11,10 +11,6 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedTinyInteger('age')->nullable();
-            $table->string('address')->nullable();
-            $table->string('contact_number')->nullable();
-            $table->string('residency_status')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

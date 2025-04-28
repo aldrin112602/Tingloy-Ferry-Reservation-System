@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
 import axios from 'axios';
 import { Check, Plus, Trash2, Upload } from 'lucide-react';
@@ -32,11 +32,11 @@ interface Schedule {
 
 interface Passenger {
     id: number;
-    name: string;
+    full_name: string;
     age: string;
     address: string;
-    contact: string;
-    residencyStatus: string;
+    contact_number: string;
+    residency_status: string;
 }
 
 export default function BookTicket() {
@@ -47,77 +47,95 @@ export default function BookTicket() {
     const [receiptImage, setReceiptImage] = useState<string | null>(null);
     const [bookingComplete, setBookingComplete] = useState(false);
     const [qrCode, setQrCode] = useState<string | null>(null);
+    const [bookingReference, setBookingReference] = useState<string | null>(null);
     const [errors, setErrors] = useState<Record<string, boolean>>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Use Inertia form helper
+    const form = useForm({
+        route_id: '',
+        full_name: '',
+        age: '',
+        contact_number: '',
+        residency_status: 'non-resident',
+        address: '',
+        additional_passengers: [] as any[],
+        payment_method: 'gcash',
+        receipt_image: null as File | null
+    });
 
     useEffect(() => {
         axios
             .get(route('passenger.routes'))
             .then((response) => {
                 const schedules: Schedule[] = response.data.map((ferry: Ferry) => {
-                    const [date, time] = ferry.date_and_time.split(' ');
+                    const dateObj = new Date(ferry.date_and_time);
+    
                     return {
                         id: ferry.id,
                         route: `${ferry.start_location} to ${ferry.end_location}`,
-                        time: new Date(`1970-01-01T${time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                        date: date,
+                        time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        date: dateObj.toLocaleDateString(), // or manually format if needed
                         available: ferry.capacity - ferry.seats_occupied,
                     };
                 });
-
+    
                 setSchedules(schedules);
             })
             .catch((error) => {
                 console.error('Error fetching routes:', error);
             });
     }, []);
-
-    // Form data object to store form values
-    const [formData, setFormData] = useState({
-        name: '',
-        tripId: '',
-        age: '',
-        contact: '',
-        residencyStatus: 'non-resident',
-        address: '',
-    });
+    
 
     // Handle adding a passenger
     const addPassenger = () => {
         if (additionalPassengers.length < 9) {
             // Max 10 passengers including main passenger
-            setAdditionalPassengers([
-                ...additionalPassengers,
-                {
-                    id: Date.now(),
-                    name: '',
-                    age: '',
-                    address: '',
-                    contact: '',
-                    residencyStatus: 'non-resident',
-                },
-            ]);
+            const newPassenger = {
+                id: Date.now(),
+                full_name: '',
+                age: '',
+                address: '',
+                contact_number: '',
+                residency_status: 'non-resident',
+            };
+            
+            setAdditionalPassengers([...additionalPassengers, newPassenger]);
+            
+            // Update the form data for Inertia
+            const updatedPassengers = [...form.data.additional_passengers, {
+                full_name: '',
+                age: '',
+                address: '',
+                contact_number: '',
+                residency_status: 'non-resident'
+            }];
+            
+            form.setData('additional_passengers', updatedPassengers);
         }
     };
 
     // Handle removing a passenger
-    const removePassenger = (id: number) => {
+    const removePassenger = (id: number, index: number) => {
         setAdditionalPassengers(additionalPassengers.filter((passenger) => passenger.id !== id));
+        
+        // Update the form data for Inertia
+        const updatedPassengers = [...form.data.additional_passengers];
+        updatedPassengers.splice(index, 1);
+        form.setData('additional_passengers', updatedPassengers);
     };
 
     // Handle additional passenger info change
-    const handlePassengerChange = (id: number, field: string, value: string) => {
-        setAdditionalPassengers(additionalPassengers.map((passenger) => (passenger.id === id ? { ...passenger, [field]: value } : passenger)));
-    };
-
-    // Handle form field changes
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { id, value } = e.target;
-        setFormData({ ...formData, [id]: value });
-    };
-
-    // Handle select changes
-    const handleSelectChange = (field: string, value: string) => {
-        setFormData({ ...formData, [field]: value });
+    const handlePassengerChange = (id: number, index: number, field: string, value: string) => {
+        setAdditionalPassengers(
+            additionalPassengers.map((passenger) => (passenger.id === id ? { ...passenger, [field]: value } : passenger))
+        );
+        
+        // Update the form data for Inertia
+        const updatedPassengers = [...form.data.additional_passengers];
+        updatedPassengers[index] = { ...updatedPassengers[index], [field]: value };
+        form.setData('additional_passengers', updatedPassengers);
     };
 
     // Handle receipt upload
@@ -129,6 +147,7 @@ export default function BookTicket() {
                 setReceiptImage(reader.result as string);
             };
             reader.readAsDataURL(files[0]);
+            form.setData('receipt_image', files[0]);
         }
     };
 
@@ -136,11 +155,15 @@ export default function BookTicket() {
     const validateForm = () => {
         const newErrors: Record<string, boolean> = {};
 
-        if (!formData.name) newErrors.name = true;
-        if (!formData.tripId) newErrors.tripId = true;
-        if (!formData.age) newErrors.age = true;
-        if (!formData.contact) newErrors.contact = true;
-        if (!formData.address) newErrors.address = true;
+        if (!form.data.full_name) newErrors.full_name = true;
+        if (!form.data.route_id) newErrors.route_id = true;
+        if (!form.data.age) newErrors.age = true;
+        if (!form.data.contact_number) newErrors.contact_number = true;
+        if (!form.data.address) newErrors.address = true;
+
+        // Validate additional passengers
+        const invalidPassengers = additionalPassengers.some(p => !p.full_name || !p.age);
+        if (invalidPassengers) newErrors.additional_passengers = true;
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -155,30 +178,75 @@ export default function BookTicket() {
                 setStep(2);
             }
         } else if (step === 2) {
-            // In real implementation: send data to backend, process payment, generate QR
-            console.log('Booking data:', {
-                mainPassenger: formData,
-                additionalPassengers,
-                paymentMethod,
-                receiptImage,
-            });
-
-            // Simulate QR code generation after successful booking
-            setTimeout(() => {
+            setIsSubmitting(true);
+            
+            // Format the data for the backend
+            const formData = new FormData();
+            formData.append('route_id', form.data.route_id);
+            formData.append('full_name', form.data.full_name);
+            formData.append('age', form.data.age);
+            formData.append('contact_number', form.data.contact_number);
+            formData.append('residency_status', form.data.residency_status);
+            formData.append('address', form.data.address);
+            formData.append('payment_method', paymentMethod);
+            
+            // Add additional passengers
+            formData.append('additional_passengers', JSON.stringify(form.data.additional_passengers));
+            
+            // Add receipt image if available
+            if (form.data.receipt_image) {
+                formData.append('receipt_image', form.data.receipt_image);
+            }
+            
+            // Submit to backend
+            axios.post(route('bookings.store'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(response => {
+                // Handle successful booking
+                setBookingReference(response.data.booking_reference || `FT-${Date.now().toString().slice(-8)}`);
+                
+                // Generate QR code with booking reference
+                const qrData = JSON.stringify({
+                    bookingId: response.data.booking_reference,
+                    passengerCount: additionalPassengers.length + 1,
+                    mainPassenger: form.data.full_name,
+                    tripId: form.data.route_id,
+                    timestamp: new Date().toISOString(),
+                });
+                
                 setQrCode(
-                    'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' +
-                        encodeURIComponent(
-                            JSON.stringify({
-                                bookingId: 'TFS-' + Date.now(),
-                                passengerCount: additionalPassengers.length + 1,
-                                mainPassenger: formData.name,
-                                tripId: formData.tripId,
-                                timestamp: new Date().toISOString(),
-                            }),
-                        ),
+                    'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + 
+                    encodeURIComponent(qrData)
                 );
+                
                 setBookingComplete(true);
-            }, 1500);
+            })
+            .catch(error => {
+                console.error('Booking error:', error);
+                // Handle errors
+                if (error.response && error.response.data && error.response.data.errors) {
+                    // Map backend validation errors to our format
+                    const backendErrors = error.response.data.errors;
+                    const frontendErrors: Record<string, boolean> = {};
+                    
+                    Object.keys(backendErrors).forEach(key => {
+                        frontendErrors[key] = true;
+                    });
+                    
+                    setErrors(frontendErrors);
+                }
+                
+                // Go back to first step if there are critical errors
+                if (error.response && error.response.status === 422) {
+                    setStep(1);
+                }
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
         }
     };
 
@@ -206,7 +274,7 @@ export default function BookTicket() {
                                 <img src={qrCode || ''} alt="QR Code" className="h-64 w-64" />
                             </div>
                             <div className="mt-6 text-center">
-                                <p className="font-semibold">Booking Reference: TFS-{Date.now().toString().slice(-8)}</p>
+                                <p className="font-semibold">Booking Reference: {bookingReference}</p>
                                 <p className="text-muted-foreground mt-1">Total Passengers: {additionalPassengers.length + 1}</p>
                                 <Alert className="mt-4">
                                     <Check className="h-4 w-4" />
@@ -244,10 +312,13 @@ export default function BookTicket() {
                                 <>
                                     {/* Trip Selection Section */}
                                     <div className="mb-6">
-                                        <Label htmlFor="tripId" className="text-lg font-medium">
+                                        <Label htmlFor="route_id" className="text-lg font-medium">
                                             Select Trip
                                         </Label>
-                                        <Select value={formData.tripId} onValueChange={(value) => handleSelectChange('tripId', value)}>
+                                        <Select 
+                                            value={form.data.route_id} 
+                                            onValueChange={(value) => form.setData('route_id', value)}
+                                        >
                                             <SelectTrigger className="mt-2">
                                                 <SelectValue placeholder="Select a scheduled trip" />
                                             </SelectTrigger>
@@ -259,7 +330,7 @@ export default function BookTicket() {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {errors.tripId && <p className="mt-1 text-sm text-red-500">Please select a trip</p>}
+                                        {errors.route_id && <p className="mt-1 text-sm text-red-500">Please select a trip</p>}
                                     </div>
 
                                     {/* Main Passenger Information */}
@@ -267,25 +338,38 @@ export default function BookTicket() {
                                         <h3 className="mb-4 text-lg font-medium">Main Passenger Information</h3>
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                             <div className="space-y-2">
-                                                <Label htmlFor="name">Full Name</Label>
-                                                <Input id="name" value={formData.name} onChange={handleInputChange} />
-                                                {errors.name && <p className="text-sm text-red-500">Required</p>}
+                                                <Label htmlFor="full_name">Full Name</Label>
+                                                <Input 
+                                                    id="full_name" 
+                                                    value={form.data.full_name} 
+                                                    onChange={e => form.setData('full_name', e.target.value)} 
+                                                />
+                                                {errors.full_name && <p className="text-sm text-red-500">Required</p>}
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="age">Age</Label>
-                                                <Input id="age" type="number" value={formData.age} onChange={handleInputChange} />
+                                                <Input 
+                                                    id="age" 
+                                                    type="number" 
+                                                    value={form.data.age} 
+                                                    onChange={e => form.setData('age', e.target.value)} 
+                                                />
                                                 {errors.age && <p className="text-sm text-red-500">Required</p>}
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="contact">Contact Number</Label>
-                                                <Input id="contact" value={formData.contact} onChange={handleInputChange} />
-                                                {errors.contact && <p className="text-sm text-red-500">Required</p>}
+                                                <Label htmlFor="contact_number">Contact Number</Label>
+                                                <Input 
+                                                    id="contact_number" 
+                                                    value={form.data.contact_number} 
+                                                    onChange={e => form.setData('contact_number', e.target.value)} 
+                                                />
+                                                {errors.contact_number && <p className="text-sm text-red-500">Required</p>}
                                             </div>
                                             <div className="space-y-2">
-                                                <Label htmlFor="residencyStatus">Residency Status</Label>
+                                                <Label htmlFor="residency_status">Residency Status</Label>
                                                 <Select
-                                                    value={formData.residencyStatus}
-                                                    onValueChange={(value) => handleSelectChange('residencyStatus', value)}
+                                                    value={form.data.residency_status}
+                                                    onValueChange={(value) => form.setData('residency_status', value)}
                                                 >
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select status" />
@@ -298,7 +382,11 @@ export default function BookTicket() {
                                             </div>
                                             <div className="col-span-2 space-y-2">
                                                 <Label htmlFor="address">Address</Label>
-                                                <Textarea id="address" value={formData.address} onChange={handleInputChange} />
+                                                <Textarea 
+                                                    id="address" 
+                                                    value={form.data.address} 
+                                                    onChange={e => form.setData('address', e.target.value)} 
+                                                />
                                                 {errors.address && <p className="text-sm text-red-500">Required</p>}
                                             </div>
                                         </div>
@@ -321,7 +409,12 @@ export default function BookTicket() {
                                             <div key={passenger.id} className="mb-4 rounded-md border p-4">
                                                 <div className="mb-2 flex items-center justify-between">
                                                     <h4 className="font-medium">Passenger {index + 2}</h4>
-                                                    <Button type="button" onClick={() => removePassenger(passenger.id)} variant="ghost" size="sm">
+                                                    <Button 
+                                                        type="button" 
+                                                        onClick={() => removePassenger(passenger.id, index)} 
+                                                        variant="ghost" 
+                                                        size="sm"
+                                                    >
                                                         <Trash2 className="h-4 w-4 text-red-500" />
                                                     </Button>
                                                 </div>
@@ -329,8 +422,8 @@ export default function BookTicket() {
                                                     <div className="space-y-2">
                                                         <Label>Full Name</Label>
                                                         <Input
-                                                            value={passenger.name}
-                                                            onChange={(e) => handlePassengerChange(passenger.id, 'name', e.target.value)}
+                                                            value={passenger.full_name}
+                                                            onChange={(e) => handlePassengerChange(passenger.id, index, 'full_name', e.target.value)}
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
@@ -338,21 +431,21 @@ export default function BookTicket() {
                                                         <Input
                                                             type="number"
                                                             value={passenger.age}
-                                                            onChange={(e) => handlePassengerChange(passenger.id, 'age', e.target.value)}
+                                                            onChange={(e) => handlePassengerChange(passenger.id, index, 'age', e.target.value)}
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Contact Number</Label>
                                                         <Input
-                                                            value={passenger.contact}
-                                                            onChange={(e) => handlePassengerChange(passenger.id, 'contact', e.target.value)}
+                                                            value={passenger.contact_number}
+                                                            onChange={(e) => handlePassengerChange(passenger.id, index, 'contact_number', e.target.value)}
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Residency Status</Label>
                                                         <Select
-                                                            value={passenger.residencyStatus}
-                                                            onValueChange={(value) => handlePassengerChange(passenger.id, 'residencyStatus', value)}
+                                                            value={passenger.residency_status}
+                                                            onValueChange={(value) => handlePassengerChange(passenger.id, index, 'residency_status', value)}
                                                         >
                                                             <SelectTrigger>
                                                                 <SelectValue />
@@ -367,12 +460,15 @@ export default function BookTicket() {
                                                         <Label>Address</Label>
                                                         <Textarea
                                                             value={passenger.address}
-                                                            onChange={(e) => handlePassengerChange(passenger.id, 'address', e.target.value)}
+                                                            onChange={(e) => handlePassengerChange(passenger.id, index, 'address', e.target.value)}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
                                         ))}
+                                        {errors.additional_passengers && (
+                                            <p className="mt-1 text-sm text-red-500">All passenger information must be complete</p>
+                                        )}
                                     </div>
                                 </>
                             ) : (
@@ -410,7 +506,10 @@ export default function BookTicket() {
                                                             variant="ghost"
                                                             size="sm"
                                                             className="absolute top-0 right-0 rounded-full bg-white p-1"
-                                                            onClick={() => setReceiptImage(null)}
+                                                            onClick={() => {
+                                                                setReceiptImage(null);
+                                                                form.setData('receipt_image', null);
+                                                            }}
                                                         >
                                                             <Trash2 className="h-4 w-4 text-red-500" />
                                                         </Button>
@@ -421,7 +520,12 @@ export default function BookTicket() {
                                                         <p className="text-muted-foreground mb-2 text-center text-sm">
                                                             Click or drag to upload your GCash receipt
                                                         </p>
-                                                        <Input type="file" accept="image/*" className="max-w-xs" onChange={handleReceiptUpload} />
+                                                        <Input 
+                                                            type="file" 
+                                                            accept="image/*" 
+                                                            className="max-w-xs" 
+                                                            onChange={handleReceiptUpload} 
+                                                        />
                                                     </>
                                                 )}
                                             </div>
@@ -466,12 +570,12 @@ export default function BookTicket() {
 
                             <div className="mt-8 flex justify-between">
                                 {step === 2 && (
-                                    <Button type="button" variant="outline" onClick={() => setStep(1)}>
+                                    <Button type="button" variant="outline" onClick={() => setStep(1)} disabled={isSubmitting}>
                                         Back
                                     </Button>
                                 )}
-                                <Button type="submit" className="ml-auto">
-                                    {step === 1 ? 'Continue to Payment' : 'Complete Booking'}
+                                <Button type="submit" className="ml-auto" disabled={isSubmitting}>
+                                    {isSubmitting ? 'Please wait...' : (step === 1 ? 'Continue to Payment' : 'Complete Booking')}
                                 </Button>
                             </div>
                         </form>
