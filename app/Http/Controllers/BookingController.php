@@ -5,47 +5,66 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Passenger;
 use App\Models\Route;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
-
-    
     /**
      * Process the booking form
      */
     public function store(Request $request)
     {
-        $request->validate([
+
+        $messages = [
+            'additional_passengers.*.full_name.required' => 'All passenger names are required.',
+            'additional_passengers.*.age.required' => 'Age is required for all passengers.',
+            'additional_passengers.*.age.integer' => 'Age must be a number for all passengers.',
+            'additional_passengers.*.age.min' => 'Age cannot be negative for any passenger.',
+            'additional_passengers.*.contact_number.required' => 'Contact number is required for all passengers.',
+            'additional_passengers.*.residency_status.required' => 'Residency status is required for all passengers.',
+            'additional_passengers.*.address.required' => 'Address is required for all passengers.',
+        ];
+
+        $validator = $request->validate([
             'route_id' => 'required|exists:routes,id',
-            'full_name' => 'required|string|max:255',
+            'full_name' => 'required',
             'age' => 'required|integer|min:0',
             'contact_number' => 'required|string|max:20',
-            'residency_status' => 'required|in:resident,non-resident',
-            'address' => 'required|string',
-            'additional_passengers' => 'nullable|array',
-            'additional_passengers.*.full_name' => 'required|string|max:255',
-            'additional_passengers.*.age' => 'required|integer|min:0',
-        ]);
-        
-        // Get the selected route
+            'residency_status' => 'required',
+            'address' => 'required',
+            'payment_method' => 'required|string',
+            'receipt_image' => 'nullable|file|image',
+
+            'additional_passengers' => 'sometimes|array',
+            'additional_passengers.*.full_name' => 'required_with:additional_passengers',
+            'additional_passengers.*.age' => 'required_with:additional_passengers|integer|min:0',
+            'additional_passengers.*.contact_number' => 'required_with:additional_passengers|string|max:20',
+            'additional_passengers.*.residency_status' => 'required_with:additional_passengers',
+            'additional_passengers.*.address' => 'required_with:additional_passengers',
+        ], $messages);
+
         $route = Route::findOrFail($request->route_id);
-        
-        // Count total passengers
-        $additionalPassengersCount = is_array($request->additional_passengers) ? count($request->additional_passengers) : 0;
-        $totalPassengers = 1 + $additionalPassengersCount;
-        
-        // Check if selected route has enough capacity
+        $additionalCount = is_array($request->additional_passengers) ? count($request->additional_passengers) : 0;
+        $totalPassengers = 1 + $additionalCount;
+
         if ($route->availableSeats() < $totalPassengers) {
-            return back()->withErrors(['route_id' => 'Not enough seats available on this route.'])->withInput();
+            return response()->json([
+                'message' => 'Not enough seats available on this route.',
+            ], 422);
         }
-        
+
         DB::beginTransaction();
+
         try {
-            // Create booking
+            $receiptPath = null;
+            if ($request->hasFile('receipt_image')) {
+                $receiptPath = $request->file('receipt_image')->store('receipts', 'public');
+            }
+
             $booking = Booking::create([
                 'user_id' => Auth::id() ?? 1,
                 'origin' => $route->start_location,
@@ -53,10 +72,11 @@ class BookingController extends Controller
                 'travel_date' => $route->date_and_time->toDateString(),
                 'departure_time' => $route->date_and_time->toTimeString(),
                 'number_of_passengers' => $totalPassengers,
+                'payment_method' => $request->payment_method,
+                'receipt_image' => $receiptPath,
                 'status' => 'pending',
             ]);
-            
-            // Create main passenger
+
             Passenger::create([
                 'booking_id' => $booking->id,
                 'full_name' => $request->full_name,
@@ -66,81 +86,35 @@ class BookingController extends Controller
                 'residency_status' => $request->residency_status,
                 'is_main_passenger' => true,
             ]);
-            
-            // Create additional passengers
+
             if (!empty($request->additional_passengers)) {
-                foreach ($request->additional_passengers as $passengerData) {
+                foreach ($request->additional_passengers as $passenger) {
                     Passenger::create([
                         'booking_id' => $booking->id,
-                        'full_name' => $passengerData['full_name'],
-                        'age' => $passengerData['age'],
-                        'residency_status' => $request->residency_status,
+                        'full_name' => $passenger['full_name'],
+                        'age' => $passenger['age'],
+                        'contact_number' => $passenger['contact_number'],
+                        'address' => $passenger['address'],
+                        'residency_status' => $passenger['residency_status'],
                         'is_main_passenger' => false,
                     ]);
                 }
             }
-            
-            // Update route seats occupied
+
             $route->increment('seats_occupied', $totalPassengers);
-            
+
             DB::commit();
-            
-            // Redirect to payment page
-            return redirect()->route('bookings.payment', $booking->id)
-                ->with('success', 'Booking created successfully. Please proceed to payment.');
-                
+
+            return response()->json([
+                'message' => 'Booking successful. Proceed to payment.',
+                'booking' => $booking,
+            ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'An error occurred while processing your booking: ' . $e->getMessage()])->withInput();
-        }
-    }
-    
-    /**
-     * Add a passenger to an existing booking
-     */
-    public function addPassenger(Request $request, Booking $booking)
-    {
-        $request->validate([
-            'full_name' => 'required|string|max:255',
-            'age' => 'required|integer|min:0',
-        ]);
-        
-        // Check if the route associated with this booking has enough capacity
-        $route = Route::where('start_location', $booking->origin)
-            ->where('end_location', $booking->destination)
-            ->where('date_and_time', $booking->travel_date . ' ' . $booking->departure_time)
-            ->first();
-            
-        if ($route && $route->availableSeats() < 1) {
-            return back()->withErrors(['error' => 'No more seats available on this route.']);
-        }
-        
-        DB::beginTransaction();
-        try {
-            // Create new passenger
-            Passenger::create([
-                'booking_id' => $booking->id,
-                'full_name' => $request->full_name,
-                'age' => $request->age,
-                'residency_status' => $request->residency_status ?? 'non-resident',
-                'is_main_passenger' => false,
-            ]);
-            
-            // Update booking passenger count
-            $booking->increment('number_of_passengers');
-            
-            // Update route seats occupied if applicable
-            if ($route) {
-                $route->increment('seats_occupied');
-            }
-            
-            DB::commit();
-            
-            return back()->with('success', 'Passenger added successfully.');
-            
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => 'An error occurred while adding passenger: ' . $e->getMessage()]);
+            return response()->json([
+                'message' => 'Booking failed.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

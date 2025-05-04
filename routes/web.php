@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RouteController;
@@ -20,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('passenger.book_ticket');
 
         Route::get('routes', [RouteController::class, 'index'])->name('passenger.routes');
+        Route::post('book', [BookingController::class, 'store'])->name('bookings.store');
 
     });
 });

@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
+
 import axios from 'axios';
 import { Check, Plus, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -61,7 +62,7 @@ export default function BookTicket() {
         address: '',
         additional_passengers: [] as any[],
         payment_method: 'gcash',
-        receipt_image: null as File | null
+        receipt_image: null as File | null,
     });
 
     useEffect(() => {
@@ -70,7 +71,7 @@ export default function BookTicket() {
             .then((response) => {
                 const schedules: Schedule[] = response.data.map((ferry: Ferry) => {
                     const dateObj = new Date(ferry.date_and_time);
-    
+
                     return {
                         id: ferry.id,
                         route: `${ferry.start_location} to ${ferry.end_location}`,
@@ -79,14 +80,13 @@ export default function BookTicket() {
                         available: ferry.capacity - ferry.seats_occupied,
                     };
                 });
-    
+
                 setSchedules(schedules);
             })
             .catch((error) => {
                 console.error('Error fetching routes:', error);
             });
     }, []);
-    
 
     // Handle adding a passenger
     const addPassenger = () => {
@@ -100,18 +100,21 @@ export default function BookTicket() {
                 contact_number: '',
                 residency_status: 'non-resident',
             };
-            
+
             setAdditionalPassengers([...additionalPassengers, newPassenger]);
-            
+
             // Update the form data for Inertia
-            const updatedPassengers = [...form.data.additional_passengers, {
-                full_name: '',
-                age: '',
-                address: '',
-                contact_number: '',
-                residency_status: 'non-resident'
-            }];
-            
+            const updatedPassengers = [
+                ...form.data.additional_passengers,
+                {
+                    full_name: '',
+                    age: '',
+                    address: '',
+                    contact_number: '',
+                    residency_status: 'non-resident',
+                },
+            ];
+
             form.setData('additional_passengers', updatedPassengers);
         }
     };
@@ -119,7 +122,7 @@ export default function BookTicket() {
     // Handle removing a passenger
     const removePassenger = (id: number, index: number) => {
         setAdditionalPassengers(additionalPassengers.filter((passenger) => passenger.id !== id));
-        
+
         // Update the form data for Inertia
         const updatedPassengers = [...form.data.additional_passengers];
         updatedPassengers.splice(index, 1);
@@ -128,13 +131,13 @@ export default function BookTicket() {
 
     // Handle additional passenger info change
     const handlePassengerChange = (id: number, index: number, field: string, value: string) => {
-        setAdditionalPassengers(
-            additionalPassengers.map((passenger) => (passenger.id === id ? { ...passenger, [field]: value } : passenger))
-        );
-        
+        setAdditionalPassengers(additionalPassengers.map((passenger) => (passenger.id === id ? { ...passenger, [field]: value } : passenger)));
+
         // Update the form data for Inertia
         const updatedPassengers = [...form.data.additional_passengers];
         updatedPassengers[index] = { ...updatedPassengers[index], [field]: value };
+
+        
         form.setData('additional_passengers', updatedPassengers);
     };
 
@@ -162,7 +165,7 @@ export default function BookTicket() {
         if (!form.data.address) newErrors.address = true;
 
         // Validate additional passengers
-        const invalidPassengers = additionalPassengers.some(p => !p.full_name || !p.age);
+        const invalidPassengers = additionalPassengers.some((p) => !p.full_name || !p.age);
         if (invalidPassengers) newErrors.additional_passengers = true;
 
         setErrors(newErrors);
@@ -179,7 +182,7 @@ export default function BookTicket() {
             }
         } else if (step === 2) {
             setIsSubmitting(true);
-            
+
             // Format the data for the backend
             const formData = new FormData();
             formData.append('route_id', form.data.route_id);
@@ -189,64 +192,70 @@ export default function BookTicket() {
             formData.append('residency_status', form.data.residency_status);
             formData.append('address', form.data.address);
             formData.append('payment_method', paymentMethod);
-            
+
             // Add additional passengers
-            formData.append('additional_passengers', JSON.stringify(form.data.additional_passengers));
-            
+            // formData.append('additional_passengers', JSON.stringify(form.data.additional_passengers));
+            form.data.additional_passengers.forEach((passenger, index) => {
+                Object.keys(passenger).forEach(key => {
+                    formData.append(`additional_passengers[${index}][${key}]`, passenger[key]);
+                });
+            });
+
             // Add receipt image if available
             if (form.data.receipt_image) {
                 formData.append('receipt_image', form.data.receipt_image);
             }
+            console.log(form.data)
             
             // Submit to backend
-            axios.post(route('bookings.store'), formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-            .then(response => {
-                // Handle successful booking
-                setBookingReference(response.data.booking_reference || `FT-${Date.now().toString().slice(-8)}`);
-                
-                // Generate QR code with booking reference
-                const qrData = JSON.stringify({
-                    bookingId: response.data.booking_reference,
-                    passengerCount: additionalPassengers.length + 1,
-                    mainPassenger: form.data.full_name,
-                    tripId: form.data.route_id,
-                    timestamp: new Date().toISOString(),
-                });
-                
-                setQrCode(
-                    'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + 
-                    encodeURIComponent(qrData)
-                );
-                
-                setBookingComplete(true);
-            })
-            .catch(error => {
-                console.error('Booking error:', error);
-                // Handle errors
-                if (error.response && error.response.data && error.response.data.errors) {
-                    // Map backend validation errors to our format
-                    const backendErrors = error.response.data.errors;
-                    const frontendErrors: Record<string, boolean> = {};
+            axios
+                .post(route('bookings.store'), formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
+                .then((response) => {
+                    console.log(response.data)
                     
-                    Object.keys(backendErrors).forEach(key => {
-                        frontendErrors[key] = true;
+                    // Handle successful booking
+                    setBookingReference(response.data.booking_reference || `FT-${Date.now().toString().slice(-8)}`);
+
+                    // Generate QR code with booking reference
+                    const qrData = JSON.stringify({
+                        bookingId: response.data.booking_reference,
+                        passengerCount: additionalPassengers.length + 1,
+                        mainPassenger: form.data.full_name,
+                        tripId: form.data.route_id,
+                        timestamp: new Date().toISOString(),
                     });
-                    
-                    setErrors(frontendErrors);
-                }
-                
-                // Go back to first step if there are critical errors
-                if (error.response && error.response.status === 422) {
-                    setStep(1);
-                }
-            })
-            .finally(() => {
-                setIsSubmitting(false);
-            });
+
+                    setQrCode('https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(qrData));
+
+                    setBookingComplete(true);
+                })
+                .catch((error) => {
+                    console.error('Booking error:', error);
+                    // Handle errors
+                    if (error.response && error.response.data && error.response.data.errors) {
+                        // Map backend validation errors to our format
+                        const backendErrors = error.response.data.errors;
+                        const frontendErrors: Record<string, boolean> = {};
+
+                        Object.keys(backendErrors).forEach((key) => {
+                            frontendErrors[key] = true;
+                        });
+
+                        setErrors(frontendErrors);
+                    }
+
+                    // Go back to first step if there are critical errors
+                    if (error.response && error.response.status === 422) {
+                        setStep(1);
+                    }
+                })
+                .finally(() => {
+                    setIsSubmitting(false);
+                });
         }
     };
 
@@ -315,10 +324,7 @@ export default function BookTicket() {
                                         <Label htmlFor="route_id" className="text-lg font-medium">
                                             Select Trip
                                         </Label>
-                                        <Select 
-                                            value={form.data.route_id} 
-                                            onValueChange={(value) => form.setData('route_id', value)}
-                                        >
+                                        <Select value={form.data.route_id} onValueChange={(value) => form.setData('route_id', value)}>
                                             <SelectTrigger className="mt-2">
                                                 <SelectValue placeholder="Select a scheduled trip" />
                                             </SelectTrigger>
@@ -339,29 +345,29 @@ export default function BookTicket() {
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                             <div className="space-y-2">
                                                 <Label htmlFor="full_name">Full Name</Label>
-                                                <Input 
-                                                    id="full_name" 
-                                                    value={form.data.full_name} 
-                                                    onChange={e => form.setData('full_name', e.target.value)} 
+                                                <Input
+                                                    id="full_name"
+                                                    value={form.data.full_name}
+                                                    onChange={(e) => form.setData('full_name', e.target.value)}
                                                 />
                                                 {errors.full_name && <p className="text-sm text-red-500">Required</p>}
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="age">Age</Label>
-                                                <Input 
-                                                    id="age" 
-                                                    type="number" 
-                                                    value={form.data.age} 
-                                                    onChange={e => form.setData('age', e.target.value)} 
+                                                <Input
+                                                    id="age"
+                                                    type="number"
+                                                    value={form.data.age}
+                                                    onChange={(e) => form.setData('age', e.target.value)}
                                                 />
                                                 {errors.age && <p className="text-sm text-red-500">Required</p>}
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="contact_number">Contact Number</Label>
-                                                <Input 
-                                                    id="contact_number" 
-                                                    value={form.data.contact_number} 
-                                                    onChange={e => form.setData('contact_number', e.target.value)} 
+                                                <Input
+                                                    id="contact_number"
+                                                    value={form.data.contact_number}
+                                                    onChange={(e) => form.setData('contact_number', e.target.value)}
                                                 />
                                                 {errors.contact_number && <p className="text-sm text-red-500">Required</p>}
                                             </div>
@@ -382,10 +388,10 @@ export default function BookTicket() {
                                             </div>
                                             <div className="col-span-2 space-y-2">
                                                 <Label htmlFor="address">Address</Label>
-                                                <Textarea 
-                                                    id="address" 
-                                                    value={form.data.address} 
-                                                    onChange={e => form.setData('address', e.target.value)} 
+                                                <Textarea
+                                                    id="address"
+                                                    value={form.data.address}
+                                                    onChange={(e) => form.setData('address', e.target.value)}
                                                 />
                                                 {errors.address && <p className="text-sm text-red-500">Required</p>}
                                             </div>
@@ -409,10 +415,10 @@ export default function BookTicket() {
                                             <div key={passenger.id} className="mb-4 rounded-md border p-4">
                                                 <div className="mb-2 flex items-center justify-between">
                                                     <h4 className="font-medium">Passenger {index + 2}</h4>
-                                                    <Button 
-                                                        type="button" 
-                                                        onClick={() => removePassenger(passenger.id, index)} 
-                                                        variant="ghost" 
+                                                    <Button
+                                                        type="button"
+                                                        onClick={() => removePassenger(passenger.id, index)}
+                                                        variant="ghost"
                                                         size="sm"
                                                     >
                                                         <Trash2 className="h-4 w-4 text-red-500" />
@@ -438,14 +444,18 @@ export default function BookTicket() {
                                                         <Label>Contact Number</Label>
                                                         <Input
                                                             value={passenger.contact_number}
-                                                            onChange={(e) => handlePassengerChange(passenger.id, index, 'contact_number', e.target.value)}
+                                                            onChange={(e) =>
+                                                                handlePassengerChange(passenger.id, index, 'contact_number', e.target.value)
+                                                            }
                                                         />
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Residency Status</Label>
                                                         <Select
                                                             value={passenger.residency_status}
-                                                            onValueChange={(value) => handlePassengerChange(passenger.id, index, 'residency_status', value)}
+                                                            onValueChange={(value) =>
+                                                                handlePassengerChange(passenger.id, index, 'residency_status', value)
+                                                            }
                                                         >
                                                             <SelectTrigger>
                                                                 <SelectValue />
@@ -478,11 +488,11 @@ export default function BookTicket() {
                                         <h3 className="mb-4 text-lg font-medium">Payment Method</h3>
                                         <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="flex flex-col space-y-3">
                                             <div className="flex items-center space-x-2">
-                                                <RadioItem value="gcash" id="gcash" />
+                                                <RadioGroupItem value="gcash" id="gcash" />
                                                 <Label htmlFor="gcash">GCash (Upload Receipt)</Label>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                                <RadioItem value="cash" id="cash" />
+                                                <RadioGroupItem value="cash" id="cash" />
                                                 <Label htmlFor="cash">Cash (Pay at Terminal)</Label>
                                             </div>
                                         </RadioGroup>
@@ -520,12 +530,7 @@ export default function BookTicket() {
                                                         <p className="text-muted-foreground mb-2 text-center text-sm">
                                                             Click or drag to upload your GCash receipt
                                                         </p>
-                                                        <Input 
-                                                            type="file" 
-                                                            accept="image/*" 
-                                                            className="max-w-xs" 
-                                                            onChange={handleReceiptUpload} 
-                                                        />
+                                                        <Input type="file" accept="image/*" className="max-w-xs" onChange={handleReceiptUpload} />
                                                     </>
                                                 )}
                                             </div>
@@ -575,7 +580,7 @@ export default function BookTicket() {
                                     </Button>
                                 )}
                                 <Button type="submit" className="ml-auto" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Please wait...' : (step === 1 ? 'Continue to Payment' : 'Complete Booking')}
+                                    {isSubmitting ? 'Please wait...' : step === 1 ? 'Continue to Payment' : 'Complete Booking'}
                                 </Button>
                             </div>
                         </form>
