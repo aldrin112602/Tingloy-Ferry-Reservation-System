@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Notifications\BookingNotification;
 class BookingController extends Controller
 {
     /**
@@ -76,6 +77,13 @@ class BookingController extends Controller
                 'receipt_image' => $receiptPath,
                 'status' => 'pending',
             ]);
+
+
+            $ticketCode = $booking->ticket_code;
+            $qrcode = QrCode::format('svg')->size(300)->generate($ticketCode);
+            Storage::disk('public')->put('qrcodes/' . $ticketCode . '.svg', $qrcode);
+            $qrcodePath = 'qrcodes/' . $ticketCode . '.svg';
+            Auth::user()->notify(new BookingNotification($qrcodePath));
 
             Passenger::create([
                 'booking_id' => $booking->id,
