@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Route extends Model
 {
@@ -41,7 +42,7 @@ class Route extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->route_code = uniqid();
+            $model->route_code = 'CODE-' . Str::uuid();
         });
     }
 }
