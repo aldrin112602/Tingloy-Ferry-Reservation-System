@@ -1,16 +1,41 @@
 import { RouteProps } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import Swal from 'sweetalert2';
 
 const RouteItem = ({ route, onDelete }: { route: RouteProps; onDelete?: () => void }) => {
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const { delete: destroy, processing } = useForm();
 
-    const handleDelete = () => {
-        console.log('Deleting route:', route.id);
+    const handleDelete = async () => {
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: `You won't be able to revert this!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+        });
+    
+        if (result.isConfirmed) {
+            try {
+                destroy(`/admin/schedule/${route.id}`, {
+                    onSuccess: () => {
+                        Swal.fire('Deleted!', 'The route has been deleted.', 'success');
+                        onDelete?.();
+                    },
+                    onError: () => {
+                        Swal.fire('Error', 'Something went wrong while deleting.', 'error');
+                    },
+                    preserveScroll: true,
+                });
+            } catch (error) {
+                Swal.fire('Error', 'Failed to delete. Please try again.', 'error');
+            }
+        }
     };
 
     return (

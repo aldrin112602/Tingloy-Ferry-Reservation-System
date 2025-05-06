@@ -42,4 +42,15 @@ class RouteController extends Controller
         return redirect()->route('admin.schedule.index')
                          ->with('success', 'Route created successfully!');
     }
+
+    public function delete($id)
+    {
+        $route = Route::findOrFail($id);
+        $route->delete();
+
+        return redirect()->route('admin.schedule.index')
+                         ->with('success', 'Route deleted successfully!');
+    }
+
+    
 }
