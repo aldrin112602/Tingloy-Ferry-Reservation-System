@@ -7,11 +7,11 @@ import { LoaderCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface EditRouteFormData {
+    id: number;
     name: string;
     start_location: string;
     end_location: string;
     date_and_time: string;
-    route_id: number | string;
     [key: string]: string | number;
 }
 
@@ -33,21 +33,21 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
     };
 
     const [formData, setFormData] = useState<EditRouteFormData>({
+        id: routeObj?.id || 0,
         name: routeObj?.name || '',
         start_location: routeObj?.start_location || '',
         end_location: routeObj?.end_location || '',
         date_and_time: formatDateTimeForInput(routeObj?.date_and_time || ''),
-        route_id: routeObj?.id || '',
     });
 
     useEffect(() => {
         if (routeObj) {
             setFormData({
+                id: routeObj?.id || 0,
                 name: routeObj.name || '',
                 start_location: routeObj.start_location || '',
                 end_location: routeObj.end_location || '',
                 date_and_time: formatDateTimeForInput(routeObj.date_and_time || ''),
-                route_id: routeObj.id || '',
             });
             console.log('Form data updated with:', routeObj);
         }
@@ -73,7 +73,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
 
         console.log('Submitting form with data:', data);
 
-        put(route('admin.schedule.put', { id: data.route_id }), {
+        put(route('admin.schedule.put', { id: data.id }), {
             onSuccess: (response) => {
                 console.log('Route updated successfully:', response);
                 closeEditRouteModal();
@@ -113,6 +113,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
 
             <form onSubmit={handleSubmit} method="dialog">
                 <div className="mb-4">
+                    <Input type="hidden" name="id" value={data.id} />
                     <label className="mb-1 block text-sm font-medium text-gray-700">Schedule Name</label>
                     <Input
                         type="text"

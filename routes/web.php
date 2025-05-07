@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return Inertia::render('features/admin/ManageSchedule', ['paginatedResponseData' => $paginatedResponseData]);
         })->name('admin.schedule.index');
         Route::post('schedule', [RouteController::class, 'store'])->name('admin.schedule.store');
+        Route::put('schedule', [RouteController::class, 'put'])->name('admin.schedule.put');
         Route::delete('schedule/{id}', [RouteController::class, 'delete'])->name('admin.schedule.delete');
     });
 });

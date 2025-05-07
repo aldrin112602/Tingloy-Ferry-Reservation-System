@@ -40,7 +40,37 @@ class RouteController extends Controller
         );
 
         return redirect()->route('admin.schedule.index')
-                         ->with('success', 'Route created successfully!');
+            ->with('success', 'Route created successfully!');
+    }
+
+    public function put(Request $request)
+    {
+
+        $request->validate([
+            'name' => 'required|string',
+            'start_location' => 'required|string',
+            'end_location' => 'required|string',
+            'date_and_time' => 'required|string',
+        ]);
+
+        $route = Route::findOrFail($request->id);
+        if (!$route) {
+            return redirect()->route('admin.schedule.index')
+                ->with('error', 'Route not found!');
+        }
+
+
+        $route->update(
+            [
+                'name' => $request->name,
+                'start_location' => $request->start_location,
+                'end_location' => $request->end_location,
+                'date_and_time' => $request->date_and_time,
+            ]
+        );
+
+        return redirect()->route('admin.schedule.index')
+            ->with('success', 'Route updated successfully!');
     }
 
     public function delete($id)
@@ -49,8 +79,6 @@ class RouteController extends Controller
         $route->delete();
 
         return redirect()->route('admin.schedule.index')
-                         ->with('success', 'Route deleted successfully!');
+            ->with('success', 'Route deleted successfully!');
     }
-
-    
 }
