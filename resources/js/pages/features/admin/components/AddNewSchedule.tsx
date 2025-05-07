@@ -15,7 +15,7 @@ interface AddNewScheduleProps {
 
 const AddNewSchedule: React.FC<AddNewScheduleProps> = ({ dialogRefStore, closeAddRouteModal, handleSubmit, data, errors, setData, processing }) => {
     return (
-        <dialog ref={dialogRefStore} className="mx-auto my-auto w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+        <dialog ref={dialogRefStore} className="mx-auto my-auto w-full max-w-md overflow-y-hidden rounded-lg bg-white p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Add New Schedule</h2>
                 <Button onClick={closeAddRouteModal} className="bg-slate-50 text-black hover:text-white">

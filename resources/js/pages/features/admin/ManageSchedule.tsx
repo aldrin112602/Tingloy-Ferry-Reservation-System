@@ -2,9 +2,11 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { FerrySchedulePaginatedResponse } from '@/types';
 
+import { RouteProps } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 import AddNewSchedule from './components/AddNewSchedule';
+import EditSchedule from './components/EditSchedule';
 import RouteItem from './components/RouteItem';
 
 const breadcrumbs = [
@@ -23,7 +25,12 @@ interface AddRouteFormData {
 
 const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: FerrySchedulePaginatedResponse }) => {
     const [isAddRouteModalOpen, setIsAddRouteModalOpen] = useState(false);
-
+    const [routeObj, setRouteObj] = useState<RouteProps>({
+        name: '',
+        start_location: '',
+        end_location: '',
+        date_and_time: '',
+    });
     const { data, setData, post, processing, errors, reset } = useForm<Required<AddRouteFormData>>({
         name: '',
         route: '',
@@ -31,11 +38,20 @@ const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: Ferr
     });
 
     const dialogRefStore = useRef<HTMLDialogElement>(null);
+    const dialogRefEdit = useRef<HTMLDialogElement>(null);
 
     const openAddRouteModal = () => {
         setIsAddRouteModalOpen(true);
+
         if (dialogRefStore.current) {
             dialogRefStore.current.showModal();
+        }
+    };
+
+    const openEditRouteModal = (route: RouteProps) => {
+        setRouteObj(route);
+        if (dialogRefEdit.current) {
+            dialogRefEdit.current.showModal();
         }
     };
 
@@ -82,7 +98,7 @@ const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: Ferr
                 ) : (
                     <div className="space-y-4">
                         {paginatedResponseData.data.map((route) => (
-                            <RouteItem key={route.id} route={route} />
+                            <RouteItem key={route.id} route={route} openEditDialog={openEditRouteModal} />
                         ))}
                     </div>
                 )}
@@ -120,6 +136,8 @@ const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: Ferr
                     setData={setData}
                     processing={processing}
                 />
+
+                <EditSchedule dialogRefEdit={dialogRefEdit} routeObj={routeObj} />
             </div>
         </AppLayout>
     );

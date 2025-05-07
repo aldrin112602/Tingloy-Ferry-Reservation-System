@@ -43,15 +43,15 @@ export interface User {
 }
 
 export interface RouteProps {
-    id: number;
+    id?: number;
     name: string;
-    route_code: string;
+    route_code?: string;
     start_location: string;
     end_location: string;
     date_and_time: string;
-    capacity: number;
-    seats_occupied: number;
-    status: string;
+    capacity?: number;
+    seats_occupied?: number;
+    status?: string;
     [key: string]: unknown;
 }
 

@@ -1,10 +1,18 @@
 import { RouteProps } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 
-const RouteItem = ({ route, onDelete }: { route: RouteProps; onDelete?: () => void }) => {
+const RouteItem = ({
+    route,
+    onDelete,
+    openEditDialog,
+}: {
+    route: RouteProps;
+    onDelete?: () => void;
+    openEditDialog: (route: RouteProps) => void;
+}) => {
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const { delete: destroy, processing } = useForm();
@@ -19,7 +27,7 @@ const RouteItem = ({ route, onDelete }: { route: RouteProps; onDelete?: () => vo
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, delete it!',
         });
-    
+
         if (result.isConfirmed) {
             try {
                 destroy(`/admin/schedule/${route.id}`, {
@@ -68,9 +76,12 @@ const RouteItem = ({ route, onDelete }: { route: RouteProps; onDelete?: () => vo
             </div>
 
             <div className="mt-4 flex gap-2 md:mt-0">
-                <Link href={`/admin/${route.id}/edit`} className="rounded bg-yellow-50 px-3 py-1 text-xs text-yellow-600 hover:bg-yellow-100">
+                <button
+                    onClick={() => openEditDialog(route)}
+                    className="cursor-pointer rounded bg-yellow-50 px-3 py-1 text-xs text-yellow-600 hover:bg-yellow-100"
+                >
                     Edit
-                </Link>
+                </button>
                 <button
                     onClick={handleDelete}
                     disabled={processing}
