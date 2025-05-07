@@ -49,7 +49,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
                 end_location: routeObj.end_location || '',
                 date_and_time: formatDateTimeForInput(routeObj.date_and_time || ''),
             });
-            console.log('Form data updated with:', routeObj);
+            // console.log('Form data updated with:', routeObj);
         }
     }, [routeObj]);
 
@@ -71,7 +71,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log('Submitting form with data:', data);
+        // console.log('Submitting form with data:', data);
 
         put(route('admin.schedule.put', { id: data.id }), {
             onSuccess: (response) => {
