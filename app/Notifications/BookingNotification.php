@@ -6,16 +6,17 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Storage;
 
 class BookingNotification extends Notification
 {
     use Queueable;
 
-    public $qrcodePath;
+    public $base64Qr;
 
-    public function __construct($qrcodePath)
+    public function __construct($base64Qr)
     {
-        $this->qrcodePath = $qrcodePath;
+        $this->base64Qr = $base64Qr;
     }
 
     /**
@@ -33,11 +34,20 @@ class BookingNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        // Get the full server path for the SVG file
+        // $fullPath = Storage::disk('public')->path($this->base64Qr);
+        
+        // // Get the SVG content
+        // $svgContent = Storage::disk('public')->get($this->base64Qr);
+        
         return (new MailMessage)
             ->subject('Tingloy Ferry Ticket Confirmation')
             ->markdown('booking-notification', [
-                'qrcodePath' => asset('storage/' . $this->qrcodePath),
                 'name' => $notifiable->name,
+                'base64Qr' => $this->base64Qr,
+            ])
+            ->attachData($this->base64Qr, 'ticket-qrcode.png', [
+                'mime' => 'image/png'
             ]);
     }
 

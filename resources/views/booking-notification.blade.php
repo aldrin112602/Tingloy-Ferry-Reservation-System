@@ -1,17 +1,14 @@
 <x-mail::message>
-# Hello {{ $name }},
+# Tingloy Ferry Booking Confirmation
 
-Thank you for booking with **Tingloy Ferry Reservation**!
+Thank you for booking with Tingloy Ferry Reservation System.
 
-Please **keep the QR code below** – it will serve as your **ticket** for boarding.  
-Present this code at the terminal for quick and secure verification.
+Below is your QR code ticket. Please keep it safe — it is required for boarding.
 
-<img src="{{ $qrcodePath }}" style="max-width: 200px; margin: 20px 0;" alt="QR Code">
+<img src="{{ $base64Qr }}" alt="QR Code" width="200">
 
-<x-mail::button :url="'http://127.0.0.1:8000'">
-Visit Our Website
-</x-mail::button>
+If you have any questions, feel free to contact us.
 
-Safe travels,  
-**Tingloy Ferry Team**
+Thanks,<br>
+{{ config('app.name') }}
 </x-mail::message>

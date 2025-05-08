@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Notifications\BookingNotification;
+
 class BookingController extends Controller
 {
     /**
@@ -80,10 +81,12 @@ class BookingController extends Controller
 
 
             $ticketCode = $booking->ticket_code;
-            $qrcode = QrCode::format('svg')->size(300)->generate($ticketCode);
-            Storage::disk('public')->put('qrcodes/' . $ticketCode . '.svg', $qrcode);
-            $qrcodePath = 'qrcodes/' . $ticketCode . '.svg';
-            Auth::user()->notify(new BookingNotification($qrcodePath));
+            $png = QrCode::format('png')->size(300)->generate($ticketCode);
+            // Storage::disk('public')->put('qrcodes/' . $ticketCode . '.svg', $qrcode);
+            // $qrcodePath = 'qrcodes/' . $ticketCode . '.svg';
+            // Encode to base64 directly (no need to store on disk)
+            $base64Qr = 'data:image/png;base64,' . base64_encode($png);
+            Auth::user()->notify(new BookingNotification($base64Qr));
 
             Passenger::create([
                 'booking_id' => $booking->id,
