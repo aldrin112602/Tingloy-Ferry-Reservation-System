@@ -77,3 +77,19 @@ interface PaginationLink {
     total: number;
   }
 
+type MyBookingsProps = {
+    bookings: {
+        id: number;
+        ticket_code: string;
+        origin: string;
+        destination: string;
+        travel_date: string;
+        departure_time: string;
+        number_of_passengers: number;
+        status: string;
+        passengers: {
+            full_name: string;
+            is_main_passenger: boolean;
+        }[];
+    }[];
+};

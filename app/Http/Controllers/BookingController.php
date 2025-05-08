@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Notifications\BookingNotification;
+use Inertia\Inertia;
 
 class BookingController extends Controller
 {
@@ -127,5 +128,11 @@ class BookingController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function index()
+    {
+        $bookings = Booking::where('user_id', Auth::id())->with('passengers')->get();
+        return Inertia::render('features/passenger/MyBookings', ['bookings' => $bookings]);
     }
 }

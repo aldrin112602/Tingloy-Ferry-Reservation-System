@@ -24,6 +24,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return Inertia::render('features/passenger/BookTicket');
         })->name('passenger.book_ticket');
 
+        Route::get('bookings', [BookingController::class, 'index'])->name('passenger.bookings');
+
         Route::get('routes', [RouteController::class, 'index'])->name('passenger.routes');
         Route::post('book', [BookingController::class, 'store'])->name('bookings.store');
     });

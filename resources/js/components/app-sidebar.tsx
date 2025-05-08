@@ -11,7 +11,7 @@ import AppLogo from './app-logo';
 const passengerNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
     { title: 'Book Ticket', href: '/passenger/book_ticket', icon: Ticket },
-    { title: 'My Bookings', href: '/bookings', icon: BookOpen },
+    { title: 'My Bookings', href: '/passenger/bookings', icon: BookOpen },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 
