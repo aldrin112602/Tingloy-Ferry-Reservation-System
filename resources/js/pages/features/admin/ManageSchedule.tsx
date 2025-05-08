@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import type { FerrySchedulePaginatedResponse } from '@/types';
+import type { AddRouteFormData, FerrySchedulePaginatedResponse } from '@/types';
 
 import { RouteProps } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -16,12 +16,7 @@ const breadcrumbs = [
     },
 ];
 
-interface AddRouteFormData {
-    name: string;
-    route: string;
-    date_and_time: string;
-    [key: string]: string;
-}
+
 
 const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: FerrySchedulePaginatedResponse }) => {
     const [isAddRouteModalOpen, setIsAddRouteModalOpen] = useState(false);

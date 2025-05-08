@@ -1,24 +1,12 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { RouteProps } from '@/types';
+import { EditRouteFormData, EditScheduleProps } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-interface EditRouteFormData {
-    id: number;
-    name: string;
-    start_location: string;
-    end_location: string;
-    date_and_time: string;
-    [key: string]: string | number;
-}
 
-interface EditScheduleProps {
-    dialogRefEdit: React.RefObject<HTMLDialogElement | null>;
-    routeObj: RouteProps;
-}
 
 const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) => {
     const formatDateTimeForInput = (dateTimeStr: string): string => {

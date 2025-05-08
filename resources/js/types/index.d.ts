@@ -93,3 +93,67 @@ type MyBookingsProps = {
         }[];
     }[];
 };
+
+interface AddRouteFormData {
+    name: string;
+    route: string;
+    date_and_time: string;
+    [key: string]: string;
+}
+
+interface AddNewScheduleProps {
+    dialogRefStore: React.RefObject<HTMLDialogElement | null>;
+    closeAddRouteModal: () => void;
+    handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    data: { name: string; route: string; date_and_time: string };
+    errors: { name?: string; route?: string; date_and_time?: string };
+    setData: (field: string, value: string) => void;
+    processing: boolean;
+}
+
+
+interface EditRouteFormData {
+    id: number;
+    name: string;
+    start_location: string;
+    end_location: string;
+    date_and_time: string;
+    [key: string]: string | number;
+}
+
+interface EditScheduleProps {
+    dialogRefEdit: React.RefObject<HTMLDialogElement | null>;
+    routeObj: RouteProps;
+}
+
+interface RouteItemProps {
+    route: RouteProps;
+    onDelete?: () => void;
+    openEditDialog: (route: RouteProps) => void;
+}
+
+interface Ferry {
+    id: number;
+    date_and_time: string;
+    start_location: string;
+    end_location: string;
+    capacity: number;
+    seats_occupied: number;
+}
+
+interface Schedule {
+    id: number;
+    route: string;
+    time: string;
+    date: string;
+    available: number;
+}
+
+interface Passenger {
+    id: number;
+    full_name: string;
+    age: string;
+    address: string;
+    contact_number: string;
+    residency_status: string;
+}

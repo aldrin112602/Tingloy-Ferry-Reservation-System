@@ -7,38 +7,14 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { Ferry, Passenger, Schedule, type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 import axios from 'axios';
 import { Check, Plus, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-interface Ferry {
-    id: number;
-    date_and_time: string;
-    start_location: string;
-    end_location: string;
-    capacity: number;
-    seats_occupied: number;
-}
 
-interface Schedule {
-    id: number;
-    route: string;
-    time: string;
-    date: string;
-    available: number;
-}
-
-interface Passenger {
-    id: number;
-    full_name: string;
-    age: string;
-    address: string;
-    contact_number: string;
-    residency_status: string;
-}
 
 export default function BookTicket() {
     const [step, setStep] = useState(1);

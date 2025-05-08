@@ -42,9 +42,7 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
 
     const handleEdit = (id: number, e: React.MouseEvent) => {
         e.stopPropagation();
-        // Handle edit logic here - could redirect to edit page
-        console.log(`Editing booking ${id}`);
-        // Example: router.push(`/passenger/bookings/${id}/edit`);
+       
     };
 
     const handleDelete = async (id: number, e: React.MouseEvent) => {
@@ -57,7 +55,7 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
             confirmButtonText: 'Yes, delete it!',
             cancelButtonText: 'Cancel',
         });
-        if(!result.isConfirmed) return;
+        if (!result.isConfirmed) return;
         Swal.fire('Success!', 'Your booking has been deleted.', 'success');
     };
 
@@ -94,7 +92,7 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
                                             <Badge className={`${getStatusColor(booking.status)}`}>{booking.status}</Badge>
                                         </div>
                                         <div className="flex items-center justify-between">
-                                            <div className="lg:flex md:block items-center space-x-2 hidden">
+                                            <div className="hidden items-center space-x-2 md:block lg:flex">
                                                 <CardTitle className="text-lg">
                                                     {booking.origin} to {booking.destination}
                                                 </CardTitle>

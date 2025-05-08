@@ -1,17 +1,8 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AddNewScheduleProps } from '@/types';
 import { LoaderCircle } from 'lucide-react';
-
-interface AddNewScheduleProps {
-    dialogRefStore: React.RefObject<HTMLDialogElement | null>;
-    closeAddRouteModal: () => void;
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-    data: { name: string; route: string; date_and_time: string };
-    errors: { name?: string; route?: string; date_and_time?: string };
-    setData: (field: string, value: string) => void;
-    processing: boolean;
-}
 
 const AddNewSchedule: React.FC<AddNewScheduleProps> = ({ dialogRefStore, closeAddRouteModal, handleSubmit, data, errors, setData, processing }) => {
     return (

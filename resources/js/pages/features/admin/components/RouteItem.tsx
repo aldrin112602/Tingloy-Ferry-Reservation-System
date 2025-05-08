@@ -1,4 +1,4 @@
-import { RouteProps } from '@/types';
+import { RouteItemProps } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { useState } from 'react';
@@ -8,11 +8,7 @@ const RouteItem = ({
     route,
     onDelete,
     openEditDialog,
-}: {
-    route: RouteProps;
-    onDelete?: () => void;
-    openEditDialog: (route: RouteProps) => void;
-}) => {
+}: RouteItemProps) => {
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const { delete: destroy, processing } = useForm();
