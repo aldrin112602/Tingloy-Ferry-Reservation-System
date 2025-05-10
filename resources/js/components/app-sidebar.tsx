@@ -18,7 +18,7 @@ const passengerNavItems: NavItem[] = [
 // Staff (Verifier) menu
 const staffNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
-    { title: 'Scan Tickets', href: '/staff/scan', icon: ScanLine },
+    { title: 'Scan QR', href: '/staff/scan_qr', icon: ScanLine },
     { title: 'Passenger List', href: '/staff/passengers', icon: Users },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];

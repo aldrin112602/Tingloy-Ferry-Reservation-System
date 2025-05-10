@@ -4,6 +4,7 @@ use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RouteController;
+use App\Http\Controllers\StaffController;
 use App\Models\Route as RouteSchedule;
 
 Route::get('/', function () {
@@ -14,6 +15,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+
+
+
+    // STAFF ROUTES
+    Route::prefix('staff')->group(function () {
+        Route::get('passengers', [StaffController::class, 'passengerList'])->name('staff.passengers');
+        Route::get('scan_qr', [StaffController::class, 'scanQrCode'])->name('staff.scan_qr');
+    });
 
 
 
