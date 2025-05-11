@@ -2,10 +2,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { FerrySchedulePaginatedResponse, type BreadcrumbItem } from '@/types';
+import { FerrySchedulePaginatedResponse, Passenger, type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Calendar, ChevronLeft, ChevronRight, MapPin, Ship, Users } from 'lucide-react';
+import { useState } from 'react';
+import ViewPassengers from './components/ViewPassengers';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,6 +17,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const PassengerList = ({ paginatedResponseData }: { paginatedResponseData: FerrySchedulePaginatedResponse }) => {
+    console.log(paginatedResponseData);
+
+    const [isOpenDialog, setISOpenDialog] = useState(false);
+    const [passengersArr, setPassengersArr] = useState<Passenger[]>([]);
+
     const formatScheduleDate = (dateString: string | number | Date) => {
         try {
             const date = new Date(dateString);
@@ -116,7 +123,10 @@ const PassengerList = ({ paginatedResponseData }: { paginatedResponseData: Ferry
                                 </CardContent>
 
                                 <CardFooter>
-                                    <Button className="w-full" variant="outline">
+                                    <Button onClick={() => {
+                                        setPassengersArr(route.passengers as Passenger[]);
+                                        setISOpenDialog(true)
+                                    }} className="w-full" variant="outline">
                                         View Passenger List
                                     </Button>
                                 </CardFooter>
@@ -176,6 +186,8 @@ const PassengerList = ({ paginatedResponseData }: { paginatedResponseData: Ferry
                     </div>
                 )}
             </div>
+
+            <ViewPassengers isOpenDialog={isOpenDialog} setISOpenDialog={setISOpenDialog} passengersArr={passengersArr} />
         </AppLayout>
     );
 };

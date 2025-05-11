@@ -21,10 +21,15 @@ const breadcrumbs = [
 const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: FerrySchedulePaginatedResponse }) => {
     const [isAddRouteModalOpen, setIsAddRouteModalOpen] = useState(false);
     const [routeObj, setRouteObj] = useState<RouteProps>({
+        id: 0,
+        route_code: '',
         name: '',
         start_location: '',
         end_location: '',
         date_and_time: '',
+        capacity: 0,
+        seats_occupied: 0,
+        status: '',
     });
     const { data, setData, post, processing, errors, reset } = useForm<Required<AddRouteFormData>>({
         name: '',

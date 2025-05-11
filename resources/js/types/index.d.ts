@@ -154,3 +154,11 @@ interface Passenger {
     residency_status: string;
     is_main_passenger: boolean;
 }
+
+
+
+interface ViewPassengersProps {
+    isOpenDialog: boolean;
+    setISOpenDialog: (value: boolean) => void;
+    passengersArr: Passenger[];
+}

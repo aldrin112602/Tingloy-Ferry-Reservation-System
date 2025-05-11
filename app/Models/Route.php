@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Booking;
+use App\Models\Passenger;
 
 class Route extends Model
 {
@@ -26,6 +28,19 @@ class Route extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function passengers()
+    {
+        return $this->hasManyThrough(
+            Passenger::class,
+            Booking::class,
+            'route_id',
+            'booking_id',
+            'id',
+            'id'
+        );
+    }
+
 
     public function availableSeats()
     {
