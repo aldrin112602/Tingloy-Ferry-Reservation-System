@@ -55,13 +55,13 @@ export interface RouteProps {
     [key: string]: unknown;
 }
 
-interface PaginationLink {
+export interface PaginationLink {
     url: string | null;
     label: string;
     active: boolean;
-  }
-  
-  interface FerrySchedulePaginatedResponse {
+}
+
+export interface FerrySchedulePaginatedResponse {
     current_page: number;
     data: RouteProps[];
     first_page_url: string;
@@ -75,9 +75,10 @@ interface PaginationLink {
     prev_page_url: string | null;
     to: number;
     total: number;
-  }
+    passengers?: Passenger[];
+}
 
-type MyBookingsProps = {
+export type MyBookingsProps = {
     bookings: {
         id: number;
         ticket_code: string;
@@ -86,18 +87,18 @@ type MyBookingsProps = {
         passengers: Passenger[];
         route: RouteProps;
     }[];
-    
+
     [key: string]: unknown;
 };
 
-interface AddRouteFormData {
+export interface AddRouteFormData {
     name: string;
     route: string;
     date_and_time: string;
     [key: string]: string;
 }
 
-interface AddNewScheduleProps {
+export interface AddNewScheduleProps {
     dialogRefStore: React.RefObject<HTMLDialogElement | null>;
     closeAddRouteModal: () => void;
     handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -107,8 +108,7 @@ interface AddNewScheduleProps {
     processing: boolean;
 }
 
-
-interface EditRouteFormData {
+export interface EditRouteFormData {
     id: number;
     name: string;
     start_location: string;
@@ -117,18 +117,18 @@ interface EditRouteFormData {
     [key: string]: string | number;
 }
 
-interface EditScheduleProps {
+export interface EditScheduleProps {
     dialogRefEdit: React.RefObject<HTMLDialogElement | null>;
     routeObj: RouteProps;
 }
 
-interface RouteItemProps {
+export interface RouteItemProps {
     route: RouteProps;
     onDelete?: () => void;
     openEditDialog: (route: RouteProps) => void;
 }
 
-interface Ferry {
+export interface Ferry {
     id: number;
     date_and_time: string;
     start_location: string;
@@ -137,7 +137,7 @@ interface Ferry {
     seats_occupied: number;
 }
 
-interface Schedule {
+export interface Schedule {
     id: number;
     route: string;
     time: string;
@@ -145,7 +145,7 @@ interface Schedule {
     available: number;
 }
 
-interface Passenger {
+export interface Passenger {
     id: number;
     full_name: string;
     age: string;
@@ -155,9 +155,7 @@ interface Passenger {
     is_main_passenger: boolean;
 }
 
-
-
-interface ViewPassengersProps {
+export interface ViewPassengersProps {
     isOpenDialog: boolean;
     setISOpenDialog: (value: boolean) => void;
     passengersArr: Passenger[];
