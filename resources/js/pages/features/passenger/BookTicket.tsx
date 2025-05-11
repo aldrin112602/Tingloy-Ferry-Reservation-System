@@ -256,7 +256,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                                 <Link href="/dashboard">Back to Dashboard</Link>
                             </Button>
                             <Button variant="outline" asChild>
-                                <Link href="/my-bookings">View My Bookings</Link>
+                                <Link href="/passenger/bookings">View My Bookings</Link>
                             </Button>
                         </CardFooter>
                     </Card>

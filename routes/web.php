@@ -37,18 +37,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('passenger.book_ticket');
 
         Route::get('bookings', [BookingController::class, 'index'])->name('passenger.bookings');
-
-        Route::get('routes', [RouteController::class, 'index'])->name('passenger.routes');
         Route::post('book', [BookingController::class, 'store'])->name('bookings.store');
     });
 
 
     // ADMIN ROUTES
     Route::prefix('admin')->group(function () {
-        Route::get('schedule', function () {
-            $paginatedResponseData = RouteSchedule::latest()->paginate(10);
-            return Inertia::render('features/admin/ManageSchedule', ['paginatedResponseData' => $paginatedResponseData]);
-        })->name('admin.schedule.index');
+        Route::get('schedule', [RouteController::class, 'index'])->name('admin.schedule.index');
         Route::post('schedule', [RouteController::class, 'store'])->name('admin.schedule.store');
         Route::put('schedule', [RouteController::class, 'put'])->name('admin.schedule.put');
         Route::delete('schedule/{id}', [RouteController::class, 'delete'])->name('admin.schedule.delete');

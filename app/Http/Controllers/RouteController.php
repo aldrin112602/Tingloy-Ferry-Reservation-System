@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Route;
 use Illuminate\Http\Request;
-
+use Inertia\Inertia;
 
 class RouteController extends Controller
 {
     public function index()
     {
-        $routes = Route::all();
-        return response()->json($routes, 200);
+        $paginatedResponseData = Route::latest()->paginate(10);
+        return Inertia::render('features/admin/ManageSchedule', ['paginatedResponseData' => $paginatedResponseData]);
     }
 
     public function store(Request $request)
