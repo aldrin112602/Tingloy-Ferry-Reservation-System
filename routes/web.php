@@ -31,7 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // PASSENGER ROUTES
     Route::prefix('passenger')->group(function () {
         Route::get('book_ticket', function () {
-            return Inertia::render('features/passenger/BookTicket');
+            $routes = RouteSchedule::latest()->get();
+            
+            return Inertia::render('features/passenger/BookTicket', ['routes' => $routes]);
         })->name('passenger.book_ticket');
 
         Route::get('bookings', [BookingController::class, 'index'])->name('passenger.bookings');

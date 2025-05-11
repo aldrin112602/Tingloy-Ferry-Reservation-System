@@ -7,23 +7,20 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import { Ferry, Passenger, Schedule, type BreadcrumbItem } from '@/types';
+import { Passenger, RouteProps, Schedule, type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 import axios from 'axios';
 import { Check, Plus, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-
-
-export default function BookTicket() {
+export default function BookTicket({ routes }: { routes: RouteProps[] }) {
     const [step, setStep] = useState(1);
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [additionalPassengers, setAdditionalPassengers] = useState<Passenger[]>([]);
     const [paymentMethod, setPaymentMethod] = useState('gcash');
     const [receiptImage, setReceiptImage] = useState<string | null>(null);
     const [bookingComplete, setBookingComplete] = useState(false);
-    const [qrCode, setQrCode] = useState<string | null>(null);
     const [bookingReference, setBookingReference] = useState<string | null>(null);
     const [errors, setErrors] = useState<Record<string, boolean>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,26 +39,19 @@ export default function BookTicket() {
     });
 
     useEffect(() => {
-        axios
-            .get(route('passenger.routes'))
-            .then((response) => {
-                const schedules: Schedule[] = response.data.map((ferry: Ferry) => {
-                    const dateObj = new Date(ferry.date_and_time);
+        const schedules: Schedule[] = routes.map((route: RouteProps) => {
+            const dateObj = new Date(route.date_and_time);
 
-                    return {
-                        id: ferry.id,
-                        route: `${ferry.start_location} to ${ferry.end_location}`,
-                        time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                        date: dateObj.toLocaleDateString(), // or manually format if needed
-                        available: ferry.capacity - ferry.seats_occupied,
-                    };
-                });
+            return {
+                id: route.id,
+                route: `${route.start_location} to ${route.end_location}`,
+                time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                date: dateObj.toLocaleDateString(),
+                available: route.capacity - route.seats_occupied,
+            };
+        });
 
-                setSchedules(schedules);
-            })
-            .catch((error) => {
-                console.error('Error fetching routes:', error);
-            });
+        setSchedules(schedules);
     }, []);
 
     // Handle adding a passenger
@@ -75,6 +65,7 @@ export default function BookTicket() {
                 address: '',
                 contact_number: '',
                 residency_status: 'non-resident',
+                is_main_passenger: false
             };
 
             setAdditionalPassengers([...additionalPassengers, newPassenger]);
@@ -88,6 +79,7 @@ export default function BookTicket() {
                     address: '',
                     contact_number: '',
                     residency_status: 'non-resident',
+                    is_main_passenger: false
                 },
             ];
 
@@ -113,7 +105,6 @@ export default function BookTicket() {
         const updatedPassengers = [...form.data.additional_passengers];
         updatedPassengers[index] = { ...updatedPassengers[index], [field]: value };
 
-        
         form.setData('additional_passengers', updatedPassengers);
     };
 
@@ -169,20 +160,17 @@ export default function BookTicket() {
             formData.append('address', form.data.address);
             formData.append('payment_method', paymentMethod);
 
-            // Add additional passengers
-            // formData.append('additional_passengers', JSON.stringify(form.data.additional_passengers));
             form.data.additional_passengers.forEach((passenger, index) => {
-                Object.keys(passenger).forEach(key => {
+                Object.keys(passenger).forEach((key) => {
                     formData.append(`additional_passengers[${index}][${key}]`, passenger[key]);
                 });
             });
 
-            // Add receipt image if available
             if (form.data.receipt_image) {
                 formData.append('receipt_image', form.data.receipt_image);
             }
-            console.log(form.data)
-            
+            console.log(form.data);
+
             // Submit to backend
             axios
                 .post(route('bookings.store'), formData, {
@@ -191,22 +179,10 @@ export default function BookTicket() {
                     },
                 })
                 .then((response) => {
-                    console.log(response.data)
-                    
+                    console.log(response.data);
+
                     // Handle successful booking
                     setBookingReference(response.data.booking_reference || `FT-${Date.now().toString().slice(-8)}`);
-
-                    // Generate QR code with booking reference
-                    const qrData = JSON.stringify({
-                        bookingId: response.data.booking_reference,
-                        passengerCount: additionalPassengers.length + 1,
-                        mainPassenger: form.data.full_name,
-                        tripId: form.data.route_id,
-                        timestamp: new Date().toISOString(),
-                    });
-
-                    setQrCode('https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(qrData));
-
                     setBookingComplete(true);
                 })
                 .catch((error) => {
@@ -243,35 +219,44 @@ export default function BookTicket() {
         },
     ];
 
-    // Render success screen with QR code
+    // Render success screen
     if (bookingComplete) {
         return (
             <AppLayout breadcrumbs={breadcrumbs}>
-                <Head title="Booking Confirmed" />
+                <Head title="Booking Submitted" />
                 <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                     <Card className="mx-auto w-full max-w-2xl">
                         <CardHeader>
-                            <CardTitle className="text-center text-2xl">Booking Successful!</CardTitle>
-                            <CardDescription className="text-center">Your ferry ticket has been confirmed.</CardDescription>
+                            <CardTitle className="text-center text-2xl">Booking Submitted Successfully!</CardTitle>
+                            <CardDescription className="text-center">Your booking request has been received and is pending approval.</CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center justify-center pb-4">
-                            <div className="rounded-lg bg-white p-2 shadow-sm">
-                                <img src={qrCode || ''} alt="QR Code" className="h-64 w-64" />
-                            </div>
                             <div className="mt-6 text-center">
-                                <p className="font-semibold">Booking Reference: {bookingReference}</p>
+                                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mx-auto">
+                                    <Check className="h-8 w-8 text-green-600" />
+                                </div>
+                                
+                                <p className="font-semibold text-lg">Booking Reference: {bookingReference}</p>
                                 <p className="text-muted-foreground mt-1">Total Passengers: {additionalPassengers.length + 1}</p>
-                                <Alert className="mt-4">
-                                    <Check className="h-4 w-4" />
-                                    <AlertTitle>Important</AlertTitle>
-                                    <AlertDescription>Please save or screenshot this QR code. It will be required for boarding.</AlertDescription>
+                                
+                                <Alert className="mt-6 text-left">
+                                    <AlertTitle>What happens next?</AlertTitle>
+                                    <AlertDescription>
+                                        <ul className="list-disc pl-5 space-y-1 mt-2">
+                                            <li>Your booking request will be reviewed by our staff.</li>
+                                            <li>Once approved, you will receive an email with your QR code ticket.</li>
+                                            <li>Please check your email regularly and keep your booking reference for future inquiries.</li>
+                                        </ul>
+                                    </AlertDescription>
                                 </Alert>
                             </div>
                         </CardContent>
                         <CardFooter className="flex justify-center gap-4">
-                            <Button onClick={() => window.print()}>Print Ticket</Button>
-                            <Button variant="outline" asChild>
+                            <Button asChild>
                                 <Link href="/dashboard">Back to Dashboard</Link>
+                            </Button>
+                            <Button variant="outline" asChild>
+                                <Link href="/my-bookings">View My Bookings</Link>
                             </Button>
                         </CardFooter>
                     </Card>

@@ -8,10 +8,6 @@ use App\Models\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\Notifications\BookingNotification;
 use Inertia\Inertia;
 
 class BookingController extends Controller
@@ -70,24 +66,12 @@ class BookingController extends Controller
 
             $booking = Booking::create([
                 'user_id' => Auth::id() ?? 1,
-                'origin' => $route->start_location,
-                'destination' => $route->end_location,
-                'travel_date' => $route->date_and_time->toDateString(),
-                'departure_time' => $route->date_and_time->toTimeString(),
+                'route_id' => (int) $request->route_id,
                 'number_of_passengers' => $totalPassengers,
                 'payment_method' => $request->payment_method,
                 'receipt_image' => $receiptPath,
                 'status' => 'pending',
             ]);
-
-
-            $ticketCode = $booking->ticket_code;
-            $png = QrCode::format('png')->size(300)->generate($ticketCode);
-            // Storage::disk('public')->put('qrcodes/' . $ticketCode . '.svg', $qrcode);
-            // $qrcodePath = 'qrcodes/' . $ticketCode . '.svg';
-            // Encode to base64 directly (no need to store on disk)
-            $base64Qr = 'data:image/png;base64,' . base64_encode($png);
-            Auth::user()->notify(new BookingNotification($base64Qr));
 
             Passenger::create([
                 'booking_id' => $booking->id,
@@ -132,7 +116,7 @@ class BookingController extends Controller
 
     public function index()
     {
-        $bookings = Booking::where('user_id', Auth::id())->with('passengers')->get();
+        $bookings = Booking::where('user_id', Auth::id())->with('passengers')->with('route')->get();
         return Inertia::render('features/passenger/MyBookings', ['bookings' => $bookings]);
     }
 }

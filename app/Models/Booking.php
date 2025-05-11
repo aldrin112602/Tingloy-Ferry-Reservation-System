@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Route;
+use App\Models\Passenger;
 
 class Booking extends Model
 {
@@ -15,23 +17,21 @@ class Booking extends Model
 
     protected $fillable = [
         'user_id',
+        'route_id',
         'ticket_code',
-        'origin',
-        'destination',
-        'travel_date',
-        'departure_time',
         'number_of_passengers',
         'status'
     ];
 
-    protected $casts = [
-        'travel_date' => 'date',
-        'departure_time' => 'datetime',
-    ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function route()
+    {
+        return $this->belongsTo(Route::class);
     }
 
     public function passengers()

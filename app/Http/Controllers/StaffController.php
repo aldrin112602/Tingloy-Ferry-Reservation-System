@@ -10,7 +10,7 @@ class StaffController extends Controller
 {
     public function passengerList()
     {
-        $paginatedResponseData = Route::latest()->paginate(10);
+        $paginatedResponseData = Route::with('passengers')->latest()->paginate(10);
         return Inertia::render('features/staff/PassengerList', 
         ['paginatedResponseData' => $paginatedResponseData]);
     }

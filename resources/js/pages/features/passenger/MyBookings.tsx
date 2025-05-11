@@ -36,6 +36,11 @@ const getStatusColor = (status: string) => {
 export default function MyBookings({ bookings }: MyBookingsProps) {
     const [expandedBooking, setExpandedBooking] = useState<number | null>(null);
 
+
+    console.log(bookings)
+   
+
+
     const toggleBooking = (id: number) => {
         setExpandedBooking(expandedBooking === id ? null : id);
     };
@@ -63,7 +68,7 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="My Bookings" />
 
-            <div className="mx-auto max-w-5xl p-4 md:p-6">
+            <div className="mx-auto p-4 md:p-6 w-full">
                 <div className="mb-8 flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-gray-800">My Bookings</h1>
                     <Badge className="px-3 py-1 text-sm">
@@ -87,14 +92,14 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
                                     <CardHeader className="bg-gray-50 py-2">
                                         <div className="flex items-center justify-between md:hidden">
                                             <CardTitle className="text-lg">
-                                                {booking.origin} to {booking.destination}
+                                                {booking.route.start_location} to {booking.route.end_location}
                                             </CardTitle>
                                             <Badge className={`${getStatusColor(booking.status)}`}>{booking.status}</Badge>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <div className="hidden items-center space-x-2 md:block lg:flex">
                                                 <CardTitle className="text-lg">
-                                                    {booking.origin} to {booking.destination}
+                                                    {booking.route.start_location} to {booking.route.end_location}
                                                 </CardTitle>
                                                 <Badge className={`${getStatusColor(booking.status)}`}>{booking.status}</Badge>
                                             </div>
@@ -135,12 +140,12 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
                                         <div className="flex flex-wrap gap-6">
                                             <div className="flex items-center">
                                                 <Calendar size={16} className="mr-2 text-gray-500" />
-                                                <span>{formatDate(booking.travel_date)}</span>
+                                                <span>{formatDate(booking.route.date_and_time)}</span>
                                             </div>
                                             <div className="flex items-center">
                                                 <Clock size={16} className="mr-2 text-gray-500" />
                                                 <span>
-                                                    {new Date(booking.departure_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    {new Date(booking.route.date_and_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
                                             <div className="flex items-center">
@@ -152,9 +157,9 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
                                             <div className="flex items-center">
                                                 <MapPin size={16} className="mr-2 text-gray-500" />
                                                 <span className="flex items-center">
-                                                    <span className="font-medium">{booking.origin}</span>
+                                                    <span className="font-medium">{booking.route.start_location}</span>
                                                     <span className="mx-2">→</span>
-                                                    <span className="font-medium">{booking.destination}</span>
+                                                    <span className="font-medium">{booking.route.end_location}</span>
                                                 </span>
                                             </div>
                                         </div>

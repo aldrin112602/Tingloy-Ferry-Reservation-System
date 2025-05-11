@@ -43,15 +43,15 @@ export interface User {
 }
 
 export interface RouteProps {
-    id?: number;
+    id: number;
     name: string;
-    route_code?: string;
+    route_code: string;
     start_location: string;
     end_location: string;
     date_and_time: string;
-    capacity?: number;
-    seats_occupied?: number;
-    status?: string;
+    capacity: number;
+    seats_occupied: number;
+    status: string;
     [key: string]: unknown;
 }
 
@@ -81,17 +81,13 @@ type MyBookingsProps = {
     bookings: {
         id: number;
         ticket_code: string;
-        origin: string;
-        destination: string;
-        travel_date: string;
-        departure_time: string;
         number_of_passengers: number;
         status: string;
-        passengers: {
-            full_name: string;
-            is_main_passenger: boolean;
-        }[];
+        passengers: Passenger[];
+        route: RouteProps;
     }[];
+    
+    [key: string]: unknown;
 };
 
 interface AddRouteFormData {
@@ -156,4 +152,5 @@ interface Passenger {
     address: string;
     contact_number: string;
     residency_status: string;
+    is_main_passenger: boolean;
 }
