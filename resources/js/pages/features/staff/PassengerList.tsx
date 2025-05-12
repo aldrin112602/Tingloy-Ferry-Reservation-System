@@ -126,7 +126,7 @@ const PassengerList = ({ paginatedResponseData }: { paginatedResponseData: Ferry
                                     <Button onClick={() => {
                                         setPassengersArr(route.passengers as Passenger[]);
                                         setISOpenDialog(true)
-                                    }} className="w-full" variant="outline">
+                                    }} className="w-full">
                                         View Passenger List
                                     </Button>
                                 </CardFooter>

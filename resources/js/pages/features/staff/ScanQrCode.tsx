@@ -13,7 +13,6 @@ const ScanQrCode = () => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Scan QR Code" />
-
         </AppLayout>
     );
 };
