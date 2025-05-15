@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\StaffController;
 use App\Models\Route as RouteSchedule;
+use App\Http\Controllers\AdminBookingController;
 
 
 Route::get('/', function () {
@@ -41,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('schedule', [RouteController::class, 'store'])->name('admin.schedule.store');
         Route::put('schedule', [RouteController::class, 'put'])->name('admin.schedule.put');
         Route::delete('schedule/{id}', [RouteController::class, 'delete'])->name('admin.schedule.delete');
+        Route::get('bookings', [AdminBookingController::class, 'index'])->name('admin.bookings');
     });
 });
 

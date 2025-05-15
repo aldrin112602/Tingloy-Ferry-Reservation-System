@@ -27,7 +27,7 @@ const staffNavItems: NavItem[] = [
 const adminNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
     { title: 'Manage Schedule', href: '/admin/schedule', icon: Calendar },
-    { title: 'Passenger Reports', href: '/admin/reports', icon: BarChart2 },
+    { title: 'Manage Bookings', href: '/admin/bookings', icon: BookOpen },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 

@@ -39,6 +39,7 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    role?: string;
     [key: string]: unknown;
 }
 
@@ -78,16 +79,19 @@ export interface FerrySchedulePaginatedResponse {
     passengers?: Passenger[];
 }
 
-export type MyBookingsProps = {
-    bookings: {
-        id: number;
-        ticket_code: string;
-        number_of_passengers: number;
-        status: string;
-        passengers: Passenger[];
-        route: RouteProps;
-    }[];
+export interface BookingProps {
+    id: number;
+    user_id: number;
+    route_id: number;
+    ticket_code: string;
+    number_of_passengers: number;
+    status: string;
+    passengers?: Passenger[];
+    route?: RouteProps;
+}
 
+export type MyBookingsProps = {
+    bookings: BookingProps[];
     [key: string]: unknown;
 };
 
@@ -159,4 +163,44 @@ export interface ViewPassengersProps {
     isOpenDialog: boolean;
     setISOpenDialog: (value: boolean) => void;
     passengersArr: Passenger[];
+}
+
+export interface BookingRowProps {
+    booking: BookingProps;
+}
+
+export interface ManageBookingsProps extends User {
+    booking: BookingProps[];
+}
+
+export interface BookingTableProps {
+    users: ManageBookingsProps[];
+    expandedUser: number | null;
+    toggleUserExpand: (userId: number) => void;
+}
+
+export interface EmptyStateProps {
+    message: string;
+}
+
+export interface SearchFiltersProps {
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+    statusFilter: string;
+    setStatusFilter: (status: string) => void;
+}
+
+export interface UserBookingsProps {
+    bookings: BookingProps[];
+}
+
+
+export interface ManageBookingsProps extends User {
+    booking: BookingProps[];
+}
+
+export interface UserRowProps {
+    user: ManageBookingsProps;
+    isExpanded: boolean;
+    toggleExpand: () => void;
 }
