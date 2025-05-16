@@ -204,7 +204,6 @@ export interface UserRowProps {
     toggleExpand: () => void;
 }
 
-
 export interface DisplayBookingsProps {
     bookings: BookingProps[];
     toggleBooking: (id: number) => void;
@@ -213,4 +212,60 @@ export interface DisplayBookingsProps {
     expandedBooking: number | null;
     handleDelete: (id: number, e: React.MouseEvent) => void;
     formatDate: (dateString: string | number | Date) => string;
+}
+
+export interface BookingCompleteDisplayProps {
+    breadcrumbs: BreadcrumbItem[];
+    additionalPassengers: Passenger[];
+    bookingReference: string | null;
+}
+
+export interface PaymentSectionProps {
+    paymentMethod: string;
+    setPaymentMethod: (value: string) => void;
+    additionalPassengers: Passenger[];
+    receiptImage: string | null;
+    setReceiptImage: (image: string | null) => void;
+    form: {
+        setData: (key: string, value: any) => void;
+    };
+    handleReceiptUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export interface FormDataProps {
+    route_id: string;
+    full_name: string;
+    age: string;
+    contact_number: string;
+    residency_status: string;
+    address: string;
+    additional_passengers: Passenger[];
+    payment_method: string;
+    receipt_image: File | null;
+}
+
+export interface MainPassengerInformationProps {
+    form: {
+        setData: (key: string, value: any) => void;
+        data: FormDataProps;
+    };
+    errors: { [key: string]: boolean };
+}
+
+export interface TripSelectionProps {
+    form: {
+        setData: (key: string, value: any) => void;
+        data: FormDataProps;
+    };
+    schedules: Schedule[];
+    errors: { [key: string]: boolean };
+}
+
+
+interface AdditionalPassengerProps {
+    addPassenger: () => void;
+    additionalPassengers: Passenger[];
+    removePassenger: (id: number, index: number) => void;
+    handlePassengerChange: (id: number, index: number, field: string, value: string) => void;
+    errors: { [key: string]: boolean };
 }
