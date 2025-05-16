@@ -9,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { Passenger, RouteProps, Schedule, type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-
 import axios from 'axios';
 import { Check, Plus, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';

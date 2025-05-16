@@ -92,7 +92,7 @@ export interface BookingProps {
 
 export type MyBookingsProps = {
     bookings: BookingProps[];
-    [key: string]: unknown;
+    [key: string]: unknown | any;
 };
 
 export interface AddRouteFormData {
@@ -194,7 +194,6 @@ export interface UserBookingsProps {
     bookings: BookingProps[];
 }
 
-
 export interface ManageBookingsProps extends User {
     booking: BookingProps[];
 }
@@ -203,4 +202,15 @@ export interface UserRowProps {
     user: ManageBookingsProps;
     isExpanded: boolean;
     toggleExpand: () => void;
+}
+
+
+export interface DisplayBookingsProps {
+    bookings: BookingProps[];
+    toggleBooking: (id: number) => void;
+    handleEdit: (id: number, e: React.MouseEvent) => void;
+    getStatusColor: (status: string) => string;
+    expandedBooking: number | null;
+    handleDelete: (id: number, e: React.MouseEvent) => void;
+    formatDate: (dateString: string | number | Date) => string;
 }
