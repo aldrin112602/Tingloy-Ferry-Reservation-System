@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('schedule', [RouteController::class, 'put'])->name('admin.schedule.put');
         Route::delete('schedule/{id}', [RouteController::class, 'delete'])->name('admin.schedule.delete');
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('admin.bookings');
+        Route::get('bookings/details/{id}', [AdminBookingController::class, 'show'])->name('admin.bookings.show');
     });
 });
 

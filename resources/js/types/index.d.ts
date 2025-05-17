@@ -90,6 +90,11 @@ export interface BookingProps {
     route?: RouteProps;
 }
 
+
+interface BookingDetailsProps {
+    booking: BookingProps
+}
+
 export type MyBookingsProps = {
     bookings: BookingProps[];
     [key: string]: unknown | any;
