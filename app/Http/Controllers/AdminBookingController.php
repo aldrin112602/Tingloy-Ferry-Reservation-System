@@ -23,4 +23,38 @@ class AdminBookingController extends Controller
         $booking = Booking::with('passengers')->with('route')->findOrFail($id);
         return Inertia::render('features/admin/BookingDetails', ['booking' => $booking]);
     }
+
+
+    public function approve($id)
+    {
+        $booking = Booking::findOrFail($id);
+        if ($booking->status == 'approved') {
+            return redirect()->back()->with('error', 'Booking already approved');
+        }
+
+        if ($booking->status == 'rejected') {
+            return redirect()->back()->with('error', 'Booking already rejected');
+        }
+    
+        $booking->status = 'approved';
+        $booking->save();
+        return redirect()->back()->with('success', 'Booking approved successfully');
+    }
+
+
+    public function reject($id)
+    {
+        $booking = Booking::findOrFail($id);
+        if ($booking->status == 'rejected') {
+            return redirect()->back()->with('error', 'Booking already rejected');
+        }
+
+        if ($booking->status == 'approved') {
+            return redirect()->back()->with('error', 'Booking already approved');
+        }
+    
+        $booking->status = 'rejected';
+        $booking->save();
+        return redirect()->back()->with('success', 'Booking rejected successfully');
+    }
 }

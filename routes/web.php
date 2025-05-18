@@ -42,12 +42,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('schedule', [RouteController::class, 'store'])->name('admin.schedule.store');
         Route::put('schedule', [RouteController::class, 'put'])->name('admin.schedule.put');
         Route::delete('schedule/{id}', [RouteController::class, 'delete'])->name('admin.schedule.delete');
-        Route::get('bookings', [AdminBookingController::class, 'index'])->name('admin.bookings');
-        Route::get('bookings/details/{id}', [AdminBookingController::class, 'show'])->name('admin.bookings.show');
+
+
+        Route::prefix('bookings')->group(function () {
+            Route::get('/', [AdminBookingController::class, 'index'])->name('admin.bookings');
+            Route::get('details/{id}', [AdminBookingController::class, 'show'])->name('admin.bookings.show');
+            Route::post('approve/{id}', [AdminBookingController::class, 'approve'])->name('admin.bookings.approve');
+            Route::post('reject/{id}', [AdminBookingController::class, 'reject'])->name('admin.bookings.reject');
+        });
+
+
+        
     });
 });
 
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
-

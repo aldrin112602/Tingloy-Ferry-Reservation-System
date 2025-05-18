@@ -1,49 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
+import { BookingDetailsProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { AlertCircle, Calendar, Clock, MapPin, User, Users } from 'lucide-react';
 import { useState } from 'react';
-
-interface Passenger {
-    id: number;
-    booking_id: number;
-    full_name: string;
-    age: number;
-    contact_number: string;
-    address: string;
-    residency_status: string;
-    is_main_passenger: boolean;
-    created_at: string;
-    updated_at: string;
-}
-
-interface Route {
-    id: number;
-    name: string;
-    route_code: string;
-    start_location: string;
-    end_location: string;
-    capacity: number;
-    date_and_time: string;
-    seats_occupied: number;
-    status: string;
-    created_at: string;
-    updated_at: string;
-}
-
-interface BookingData {
-    id: number;
-    user_id: number;
-    route_id: number;
-    ticket_code: string;
-    number_of_passengers: number;
-    status: string;
-    passengers: Passenger[];
-    route: Route;
-}
-
-export interface BookingDetailsProps {
-    booking: BookingData;
-}
 
 const breadcrumbs = [
     { title: 'Bookings Management', href: '/admin/bookings' },
@@ -52,7 +11,7 @@ const breadcrumbs = [
 
 const BookingDetails = ({ booking }: BookingDetailsProps) => {
     const [processing, setProcessing] = useState(false);
-    const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: 'approve' | 'decline' | null }>({
+    const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: 'approved' | 'rejected' | null }>({
         open: false,
         action: null,
     });
@@ -87,17 +46,21 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
         }
     };
 
-    const handleAction = async (action: 'approve' | 'decline') => {
+    const handleAction = async (action: 'approved' | 'rejected') => {
         setProcessing(true);
         try {
             // Replace with your actual endpoint
             await router.post(
-                `/admin/bookings/${booking.id}/${action}`,
+                action === 'approved' ? route('admin.bookings.approve', booking.id) : route('admin.bookings.reject', booking.id),
                 {},
                 {
-                    onSuccess: () => {
-                        setConfirmModal({ open: false, action: null });
-                        // You might want to refresh the page or update the data
+                    onSuccess: (page) => {
+                        if (Object.keys(page.props.errors || {}).length === 0) {
+                            setConfirmModal({ open: false, action: null });
+                            // Additional success handling
+                        } else {
+                            // Handle validation errors
+                        }
                     },
                     onError: () => {
                         // Handle errors
@@ -118,13 +81,13 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                     {booking.status.toLowerCase() === 'pending' && (
                         <div className="space-x-3">
                             <button
-                                onClick={() => setConfirmModal({ open: true, action: 'approve' })}
+                                onClick={() => setConfirmModal({ open: true, action: 'approved' })}
                                 className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
                             >
                                 Approve Booking
                             </button>
                             <button
-                                onClick={() => setConfirmModal({ open: true, action: 'decline' })}
+                                onClick={() => setConfirmModal({ open: true, action: 'rejected' })}
                                 className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                             >
                                 Decline Booking
@@ -312,7 +275,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                         </div>
                                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                             <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                                {confirmModal.action === 'approve' ? 'Approve Booking' : 'Decline Booking'}
+                                                {confirmModal.action === 'approved' ? 'Approve Booking' : 'Decline Booking'}
                                             </h3>
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500">
@@ -328,10 +291,10 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                         disabled={processing}
                                         onClick={() => handleAction(confirmModal.action!)}
                                         className={`inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm ${
-                                            confirmModal.action === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+                                            confirmModal.action === 'approved' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
                                         } ${processing ? 'opacity-75' : ''}`}
                                     >
-                                        {processing ? 'Processing...' : confirmModal.action === 'approve' ? 'Approve' : 'Decline'}
+                                        {processing ? 'Processing...' : confirmModal.action === 'approved' ? 'Approve' : 'Decline'}
                                     </button>
                                     <button
                                         type="button"

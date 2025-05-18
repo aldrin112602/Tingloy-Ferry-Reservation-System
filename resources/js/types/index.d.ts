@@ -86,8 +86,8 @@ export interface BookingProps {
     ticket_code: string;
     number_of_passengers: number;
     status: string;
-    passengers?: Passenger[];
-    route?: RouteProps;
+    passengers: Passenger[];
+    route: RouteProps;
 }
 
 
@@ -267,10 +267,18 @@ export interface TripSelectionProps {
 }
 
 
-interface AdditionalPassengerProps {
+export interface AdditionalPassengerProps {
     addPassenger: () => void;
     additionalPassengers: Passenger[];
     removePassenger: (id: number, index: number) => void;
     handlePassengerChange: (id: number, index: number, field: string, value: string) => void;
     errors: { [key: string]: boolean };
 }
+
+
+export interface BookingDetailsProps {
+    booking: BookingProps;
+}
+
+
+
