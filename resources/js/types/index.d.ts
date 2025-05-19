@@ -241,6 +241,7 @@ export interface FormDataProps {
     route_id: string;
     full_name: string;
     age: string;
+    passenger_fare_type: string;
     contact_number: string;
     residency_status: string;
     address: string;
@@ -250,6 +251,17 @@ export interface FormDataProps {
 }
 
 export interface MainPassengerInformationProps {
+    isLabel?: boolean;
+    form: {
+        setData: (key: string, value: any) => void;
+        data: FormDataProps;
+    };
+    errors: { [key: string]: boolean };
+}
+
+
+
+export interface PassengerFareTypeProps {
     form: {
         setData: (key: string, value: any) => void;
         data: FormDataProps;
@@ -269,6 +281,11 @@ export interface TripSelectionProps {
 
 export interface AdditionalPassengerProps {
     addPassenger: () => void;
+    form: {
+        setData: (key: string, value: any) => void;
+        data: FormDataProps;
+    };
+
     additionalPassengers: Passenger[];
     removePassenger: (id: number, index: number) => void;
     handlePassengerChange: (id: number, index: number, field: string, value: string) => void;

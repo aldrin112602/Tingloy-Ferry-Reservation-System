@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import AdditionalPassengers from './components/book-ticket/AdditionalPassengers';
 import BookingCompleteDisplay from './components/book-ticket/BookingCompleteDisplay';
 import MainPassengerInformation from './components/book-ticket/MainPassengerInformation';
+import PassengerFareType from './components/book-ticket/PassengerFareType';
 import PaymentSection from './components/book-ticket/PaymentSection';
 import TripSelection from './components/book-ticket/TripSelection';
 
@@ -27,6 +28,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
         route_id: '',
         full_name: '',
         age: '',
+        passenger_fare_type: '',
         contact_number: '',
         residency_status: 'non-resident',
         address: '',
@@ -60,6 +62,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                 full_name: '',
                 age: '',
                 address: '',
+                passenger_fare_type: '',
                 contact_number: '',
                 residency_status: 'non-resident',
                 is_main_passenger: false,
@@ -74,6 +77,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                     full_name: '',
                     age: '',
                     address: '',
+                    passenger_fare_type: '',
                     contact_number: '',
                     residency_status: 'non-resident',
                     is_main_passenger: false,
@@ -127,6 +131,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
         if (!form.data.age) newErrors.age = true;
         if (!form.data.contact_number) newErrors.contact_number = true;
         if (!form.data.address) newErrors.address = true;
+        if (!form.data.passenger_fare_type) newErrors.passenger_fare_type = true;
 
         // Validate additional passengers
         const invalidPassengers = additionalPassengers.some((p) => !p.full_name || !p.age);
@@ -155,6 +160,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
             formData.append('contact_number', form.data.contact_number);
             formData.append('residency_status', form.data.residency_status);
             formData.append('address', form.data.address);
+            formData.append('passenger_fare_type', form.data.passenger_fare_type);
             formData.append('payment_method', paymentMethod);
 
             form.data.additional_passengers.forEach((passenger, index) => {
@@ -237,12 +243,14 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                                 <>
                                     {/* Trip Selection Section */}
                                     <TripSelection form={form} schedules={schedules} errors={errors} />
-
+                                    {/* Passenger Fare Type */}
+                                    <PassengerFareType form={form} errors={errors} />
                                     {/* Main Passenger Information */}
                                     <MainPassengerInformation form={form} errors={errors} />
 
                                     {/* Additional Passengers */}
                                     <AdditionalPassengers
+                                        form={form}
                                         addPassenger={addPassenger}
                                         additionalPassengers={additionalPassengers}
                                         removePassenger={removePassenger}
