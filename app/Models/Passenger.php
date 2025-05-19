@@ -12,6 +12,9 @@ class Passenger extends Model
         'age',
         'contact_number',
         'address',
+        'file',
+        'passenger_fare',
+        'passenger_fare_type',
         'residency_status',
         'is_main_passenger',
     ];

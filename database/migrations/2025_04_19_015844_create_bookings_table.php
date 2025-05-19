@@ -16,6 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('route_id')->constrained()->onDelete('cascade');
             $table->string('ticket_code')->unique();
+            $table->string('payment_method')->default('cash');
+            $table->string('receipt_image')->nullable();
+            $table->integer('total_fee')->default(160);
+            $table->boolean('is_paid')->default(false);
             $table->integer('number_of_passengers')->default(1);
             $table->string('status')->default('pending');
             $table->timestamps();

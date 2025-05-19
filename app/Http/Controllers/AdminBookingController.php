@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Booking;
+use App\Notifications\BookingNotification;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
+
 
 class AdminBookingController extends Controller
 {
@@ -27,7 +31,7 @@ class AdminBookingController extends Controller
 
     public function approve($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with('user')->findOrFail($id);
         if ($booking->status == 'approved') {
             return redirect()->back()->with('error', 'Booking already approved');
         }
@@ -35,7 +39,21 @@ class AdminBookingController extends Controller
         if ($booking->status == 'rejected') {
             return redirect()->back()->with('error', 'Booking already rejected');
         }
-    
+
+
+        $data = "Booking ID: {$booking->id}\n"
+            . "Route Code: {$booking->route->route_code}\n"
+            . "Date: {$booking->date}\n"
+            . "Time: {$booking->time}\n"
+            . "Ticket Code: {$booking->ticket_code}";
+
+        $encrypted = Crypt::encryptString($data);
+
+        $qrURL = "https://quickchart.io/qr?text=" . urlencode($encrypted) . "&size=500&download=true";
+
+ 
+        $booking->user->notify(new BookingNotification($qrURL, $booking));
+
         $booking->status = 'approved';
         $booking->save();
         return redirect()->back()->with('success', 'Booking approved successfully');
@@ -44,7 +62,7 @@ class AdminBookingController extends Controller
 
     public function reject($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with('user')->findOrFail($id);
         if ($booking->status == 'rejected') {
             return redirect()->back()->with('error', 'Booking already rejected');
         }
@@ -52,7 +70,7 @@ class AdminBookingController extends Controller
         if ($booking->status == 'approved') {
             return redirect()->back()->with('error', 'Booking already approved');
         }
-    
+
         $booking->status = 'rejected';
         $booking->save();
         return redirect()->back()->with('success', 'Booking rejected successfully');

@@ -19,6 +19,10 @@ class Booking extends Model
         'user_id',
         'route_id',
         'ticket_code',
+        'payment_method',
+        'receipt_image',
+        'total_fee',
+        'is_paid',
         'number_of_passengers',
         'status'
     ];
