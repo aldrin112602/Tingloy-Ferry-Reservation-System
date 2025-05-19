@@ -90,9 +90,8 @@ export interface BookingProps {
     route: RouteProps;
 }
 
-
-interface BookingDetailsProps {
-    booking: BookingProps
+export interface BookingDetailsProps {
+    booking: BookingProps;
 }
 
 export type MyBookingsProps = {
@@ -259,8 +258,6 @@ export interface MainPassengerInformationProps {
     errors: { [key: string]: boolean };
 }
 
-
-
 export interface PassengerFareTypeProps {
     form: {
         setData: (key: string, value: any) => void;
@@ -278,7 +275,6 @@ export interface TripSelectionProps {
     errors: { [key: string]: boolean };
 }
 
-
 export interface AdditionalPassengerProps {
     addPassenger: () => void;
     form: {
@@ -292,10 +288,12 @@ export interface AdditionalPassengerProps {
     errors: { [key: string]: boolean };
 }
 
-
 export interface BookingDetailsProps {
     booking: BookingProps;
 }
 
-
-
+export interface CardDisplayDataProps {
+    paginatedResponseData: FerrySchedulePaginatedResponse;
+    setPassengersArr: (passengers: Passenger[]) => void;
+    setISOpenDialog: (isOpen: boolean) => void;
+}
