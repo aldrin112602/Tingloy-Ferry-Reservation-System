@@ -163,6 +163,7 @@ export interface Passenger {
     is_main_passenger: boolean;
     passenger_fare_type: string;
     passenger_fare?: number;
+    file?: file | string | null;
 }
 
 export interface ViewPassengersProps {

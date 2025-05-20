@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { BookingDetailsProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { AlertCircle, Calendar, Clock, MapPin, User, Users } from 'lucide-react';
+import { AlertCircle, Calendar, Clock, LoaderCircle, MapPin, User, Users } from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs = [
@@ -209,6 +209,15 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                         Address
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                        File
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                        Type
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                        Fare Type
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Residency Status
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
@@ -219,15 +228,46 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                             <tbody className="divide-y divide-gray-200 bg-white">
                                 {booking.passengers.map((passenger) => (
                                     <tr key={passenger.id}>
+                                        {/* Full Name with icon */}
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
                                                 <User className="mr-2 h-4 w-4 text-gray-500" />
                                                 <div className="text-sm font-medium text-gray-900">{passenger.full_name}</div>
                                             </div>
                                         </td>
+
+                                        {/* Age */}
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">{passenger.age}</td>
+
+                                        {/* Contact Number */}
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">{passenger.contact_number}</td>
+
+                                        {/* Address */}
                                         <td className="px-6 py-4 text-sm text-gray-500">{passenger.address}</td>
+
+                                        {/* File (download link) */}
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-blue-600">
+                                            {passenger.file ? (
+                                                <a
+                                                    href={passenger.file}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="underline hover:text-blue-800"
+                                                >
+                                                    View File
+                                                </a>
+                                            ) : (
+                                                <span className="text-gray-400 italic">No File</span>
+                                            )}
+                                        </td>
+
+                                        {/* Fare */}
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">₱{passenger.passenger_fare}</td>
+
+                                        {/* Fare Type */}
+                                        <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">{passenger.passenger_fare_type}</td>
+
+                                        {/* Residency Status */}
                                         <td className="px-6 py-4 text-sm whitespace-nowrap">
                                             <span
                                                 className={`rounded-full px-2 py-1 text-xs font-medium ${
@@ -239,6 +279,8 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                                 {passenger.residency_status}
                                             </span>
                                         </td>
+
+                                        {/* Passenger Type (Main or Additional) */}
                                         <td className="px-6 py-4 text-sm whitespace-nowrap">
                                             {passenger.is_main_passenger ? (
                                                 <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">Main</span>
@@ -294,6 +336,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                             confirmModal.action === 'approved' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
                                         } ${processing ? 'opacity-75' : ''}`}
                                     >
+                                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                         {processing ? 'Processing...' : confirmModal.action === 'approved' ? 'Approve' : 'Decline'}
                                     </button>
                                     <button
