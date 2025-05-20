@@ -38,31 +38,11 @@ const BookingActions: React.FC<BookingRowProps> = ({ booking }) => {
         router.get(route('admin.bookings.show', booking.id), {}, { preserveState: true, preserveScroll: true });
     };
 
-    const handleConfirm = () => {
-        console.log('Confirm booking', booking.id);
-        // Implement confirm logic here
-    };
-
-    const handleCancel = () => {
-        console.log('Cancel booking', booking.id);
-        // Implement cancel logic here
-    };
-
     return (
         <div className="flex space-x-2">
             <button className="text-blue-600 hover:text-blue-900" onClick={handleView}>
                 View
             </button>
-            {booking.status === 'pending' && (
-                <>
-                    <button className="text-green-600 hover:text-green-900" onClick={handleConfirm}>
-                        Confirm
-                    </button>
-                    <button className="text-red-600 hover:text-red-900" onClick={handleCancel}>
-                        Cancel
-                    </button>
-                </>
-            )}
         </div>
     );
 };

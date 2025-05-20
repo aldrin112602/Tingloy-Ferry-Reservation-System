@@ -106,7 +106,7 @@ const DisplayBookings = ({
                                             <th className="px-4 py-2">Fare</th>
                                             <th className="px-4 py-2">Fare Type</th>
                                             <th className="px-4 py-2">Residency</th>
-                                            <th className="px-4 py-2">Main</th>
+                                            <th className="px-4 py-2">Type</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-100">
@@ -120,7 +120,7 @@ const DisplayBookings = ({
                                                 <td className="px-4 py-2">{passenger.passenger_fare_type}</td>
                                                 <td className="px-4 py-2">{passenger.residency_status}</td>
                                                 <td className="px-4 py-2">
-                                                    <Badge className={`bg-blue-100 ${passenger.is_main_passenger ? 'text-blue-800' : 'text-green-800' }`}>{passenger.is_main_passenger ? 'Main' : 'Member'}</Badge>
+                                                    <Badge className={`bg-blue-100 ${passenger.is_main_passenger ? 'text-blue-800' : 'text-green-800' }`}>{passenger.is_main_passenger ? 'Main' : 'Additional'}</Badge>
                                                 </td>
                                             </tr>
                                         ))}
