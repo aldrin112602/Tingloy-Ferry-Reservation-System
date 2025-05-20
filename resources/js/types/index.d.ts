@@ -161,6 +161,8 @@ export interface Passenger {
     contact_number: string;
     residency_status: string;
     is_main_passenger: boolean;
+    passenger_fare_type: string;
+    passenger_fare?: number;
 }
 
 export interface ViewPassengersProps {
@@ -250,7 +252,6 @@ export interface FormDataProps {
 }
 
 export interface MainPassengerInformationProps {
-    isLabel?: boolean;
     form: {
         setData: (key: string, value: any) => void;
         data: FormDataProps;
@@ -296,4 +297,9 @@ export interface CardDisplayDataProps {
     paginatedResponseData: FerrySchedulePaginatedResponse;
     setPassengersArr: (passengers: Passenger[]) => void;
     setISOpenDialog: (isOpen: boolean) => void;
+}
+
+export interface Html5QrScannerProps {
+    onScanSuccess: (decodedText: string) => void;
+    onScanFailure?: (error: string) => void;
 }

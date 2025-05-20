@@ -1,8 +1,7 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { type DisplayBookingsProps } from '@/types';
-import { Calendar, ChevronDown, ChevronRight, Clock, Edit, MapPin, Trash2, Users } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronRight, Clock, MapPin, Users } from 'lucide-react';
 
 const DisplayBookings = ({
     bookings,
@@ -34,7 +33,7 @@ const DisplayBookings = ({
                                 </div>
                                 <div className="flex items-center space-x-3">
                                     <span className="hidden text-sm font-medium text-gray-500 lg:inline">Ticket: {booking.ticket_code}</span>
-                                    <div className="flex space-x-2">
+                                    {/* <div className="flex space-x-2">
                                         <Button
                                             variant="outline"
                                             size="sm"
@@ -53,7 +52,7 @@ const DisplayBookings = ({
                                             <Trash2 size={16} className="mr-1" />
                                             Delete
                                         </Button>
-                                    </div>
+                                    </div> */}
                                     {expandedBooking === booking.id ? (
                                         <ChevronDown size={20} className="text-gray-400" />
                                     ) : (
@@ -96,14 +95,38 @@ const DisplayBookings = ({
                     {expandedBooking === booking.id && (
                         <CardFooter className="block border-t border-gray-100 bg-gray-50 p-4">
                             <h4 className="mb-3 font-medium">Passenger Information</h4>
-                            <ul className="divide-y divide-gray-100">
-                                {booking?.passengers?.map((passenger, index) => (
-                                    <li key={index} className="flex justify-between py-2">
-                                        <span>{passenger.full_name}</span>
-                                        {passenger.is_main_passenger && <Badge className="bg-blue-100 text-blue-800">Main Passenger</Badge>}
-                                    </li>
-                                ))}
-                            </ul>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full table-auto text-left text-sm">
+                                    <thead className="bg-gray-200 text-gray-700">
+                                        <tr>
+                                            <th className="px-4 py-2">Full Name</th>
+                                            <th className="px-4 py-2">Age</th>
+                                            <th className="px-4 py-2">Contact Number</th>
+                                            <th className="px-4 py-2">Address</th>
+                                            <th className="px-4 py-2">Fare</th>
+                                            <th className="px-4 py-2">Fare Type</th>
+                                            <th className="px-4 py-2">Residency</th>
+                                            <th className="px-4 py-2">Main</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {booking?.passengers?.map((passenger, index) => (
+                                            <tr key={index}>
+                                                <td className="px-4 py-2">{passenger.full_name}</td>
+                                                <td className="px-4 py-2">{passenger.age}</td>
+                                                <td className="px-4 py-2">{passenger.contact_number}</td>
+                                                <td className="px-4 py-2">{passenger.address}</td>
+                                                <td className="px-4 py-2">PHP {passenger.passenger_fare}</td>
+                                                <td className="px-4 py-2">{passenger.passenger_fare_type}</td>
+                                                <td className="px-4 py-2">{passenger.residency_status}</td>
+                                                <td className="px-4 py-2">
+                                                    <Badge className={`bg-blue-100 ${passenger.is_main_passenger ? 'text-blue-800' : 'text-green-800' }`}>{passenger.is_main_passenger ? 'Main' : 'Member'}</Badge>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </CardFooter>
                     )}
                 </Card>

@@ -68,7 +68,7 @@ export default function MyBookings({ bookings }: MyBookingsProps) {
                 <div className="mb-8 flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-gray-800">My Bookings</h1>
                     <Badge className="px-3 py-1 text-sm">
-                        {bookings.length} {bookings.length === 1 ? 'Booking' : 'Bookings'}
+                        {bookings.length} <span className="ml-1"></span> {bookings.length === 1 ? 'Booking' : 'Bookings'}
                     </Badge>
                 </div>
 

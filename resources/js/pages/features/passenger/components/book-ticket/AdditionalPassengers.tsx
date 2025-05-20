@@ -5,9 +5,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { AdditionalPassengerProps } from '@/types';
 import { Plus, Trash2 } from 'lucide-react';
-import PassengerFareType from './PassengerFareType';
+import { fareTypes } from './PassengerFareType';
 
-const AdditionalPassengers = ({ addPassenger, additionalPassengers, removePassenger, handlePassengerChange, form, errors }: AdditionalPassengerProps) => {
+const AdditionalPassengers = ({
+    addPassenger,
+    additionalPassengers,
+    removePassenger,
+    handlePassengerChange,
+    form,
+    errors,
+}: AdditionalPassengerProps) => {
     return (
         <div className="mb-6">
             <div className="mb-4 flex items-center justify-between">
@@ -74,11 +81,23 @@ const AdditionalPassengers = ({ addPassenger, additionalPassengers, removePassen
                         </div>
 
                         <div className="col-span-2 space-y-2">
-                            <PassengerFareType isLabel={true} form={form} errors={errors} />
+                            <Label>Select Passenger Fare Type</Label>
+                            <Select
+                                value={passenger.passenger_fare_type}
+                                onValueChange={(value) => handlePassengerChange(passenger.id, index, 'passenger_fare_type', value)}
+                            >
+                                <SelectTrigger className="mt-2">
+                                    <SelectValue placeholder="Select fare type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {fareTypes.map((fare) => (
+                                        <SelectItem key={fare.id} value={fare.name}>
+                                            {fare.name} - PHP {fare.price}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
-
-
-                        
                     </div>
                 </div>
             ))}

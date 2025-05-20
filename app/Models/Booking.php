@@ -24,7 +24,7 @@ class Booking extends Model
         'total_fee',
         'is_paid',
         'number_of_passengers',
-        'status'
+        'status',   
     ];
 
 

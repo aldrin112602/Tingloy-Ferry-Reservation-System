@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import AdditionalPassengers from './components/book-ticket/AdditionalPassengers';
 import BookingCompleteDisplay from './components/book-ticket/BookingCompleteDisplay';
 import MainPassengerInformation from './components/book-ticket/MainPassengerInformation';
-import PassengerFareType from './components/book-ticket/PassengerFareType';
+import { PassengerFareType } from './components/book-ticket/PassengerFareType';
 import PaymentSection from './components/book-ticket/PaymentSection';
 import TripSelection from './components/book-ticket/TripSelection';
 
@@ -173,6 +173,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                 formData.append('receipt_image', form.data.receipt_image);
             }
             console.log(form.data);
+
 
             // Submit to backend
             axios

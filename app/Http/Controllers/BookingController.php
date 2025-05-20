@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
+
 class BookingController extends Controller
 {
     /**
@@ -26,7 +27,18 @@ class BookingController extends Controller
             'additional_passengers.*.contact_number.required' => 'Contact number is required for all passengers.',
             'additional_passengers.*.residency_status.required' => 'Residency status is required for all passengers.',
             'additional_passengers.*.address.required' => 'Address is required for all passengers.',
+            'additional_passengers.*.passenger_fare_type.required' => 'Passenger fare type is required for all passengers.',
         ];
+
+
+        $fare_types = [
+            'Full fare' => 160,
+            'Senior/PWD with valid ID' => 104,
+            'Student with valid ID' => 116,
+            'Children 3ys-12yrs old' => 72
+        ];
+
+        $total_fee = 0;
 
         $validator = $request->validate([
             'route_id' => 'required|exists:routes,id',
@@ -35,6 +47,7 @@ class BookingController extends Controller
             'contact_number' => 'required|string|max:20',
             'residency_status' => 'required',
             'address' => 'required',
+            'passenger_fare_type' => 'required',
             'payment_method' => 'required|string',
             'receipt_image' => 'nullable|file|image',
 
@@ -73,24 +86,32 @@ class BookingController extends Controller
                 'status' => 'pending',
             ]);
 
+            $total_fee = $total_fee + $fare_types[$request->passenger_fare_type];
+
             Passenger::create([
                 'booking_id' => $booking->id,
                 'full_name' => $request->full_name,
                 'age' => $request->age,
                 'contact_number' => $request->contact_number,
                 'address' => $request->address,
+                'passenger_fare_type' => $request->passenger_fare_type,
+                'passenger_fare' => $fare_types[$request->passenger_fare_type],
                 'residency_status' => $request->residency_status,
                 'is_main_passenger' => true,
             ]);
 
             if (!empty($request->additional_passengers)) {
                 foreach ($request->additional_passengers as $passenger) {
+                    $total_fee = $total_fee + $fare_types[$passenger['passenger_fare_type']];
+
                     Passenger::create([
                         'booking_id' => $booking->id,
                         'full_name' => $passenger['full_name'],
                         'age' => $passenger['age'],
                         'contact_number' => $passenger['contact_number'],
                         'address' => $passenger['address'],
+                        'passenger_fare_type' => $passenger['passenger_fare_type'],
+                        'passenger_fare' => $fare_types[$passenger['passenger_fare_type']],
                         'residency_status' => $passenger['residency_status'],
                         'is_main_passenger' => false,
                     ]);
@@ -98,6 +119,10 @@ class BookingController extends Controller
             }
 
             $route->increment('seats_occupied', $totalPassengers);
+            $booking->update([
+                'total_fee' => $total_fee
+            ]);
+            $booking->save();
 
             DB::commit();
 

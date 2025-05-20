@@ -1,10 +1,6 @@
+import { Html5QrScannerProps } from '@/types';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { useEffect, useRef } from 'react';
-
-interface Html5QrScannerProps {
-    onScanSuccess: (decodedText: string) => void;
-    onScanFailure?: (error: string) => void;
-}
 
 export const Html5QrScanner = ({ onScanSuccess, onScanFailure }: Html5QrScannerProps) => {
     const scannerRef = useRef<HTMLDivElement>(null);
