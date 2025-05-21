@@ -7,6 +7,7 @@ use App\Http\Controllers\RouteController;
 use App\Http\Controllers\StaffController;
 use App\Models\Route as RouteSchedule;
 use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\QrController;
 
 
 Route::get('/', function () {
@@ -23,6 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('staff')->middleware('role:staff')->group(function () {
         Route::get('passengers', [StaffController::class, 'passengerList'])->name('staff.passengers');
         Route::get('scan_qr', [StaffController::class, 'scanQrCode'])->name('staff.scan_qr');
+        Route::post('qr_validation', [QrController::class, 'validate'])->name('qr.validation');
+        Route::post('booking/{id}', [QrController::class, 'bookingPaid'])->name('booking.paid');
+
     });
 
     // PASSENGER ROUTES
@@ -34,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('bookings', [BookingController::class, 'index'])->name('passenger.bookings');
         Route::post('book', [BookingController::class, 'store'])->name('bookings.store');
+
+        
     });
 
     // ADMIN ROUTES

@@ -43,8 +43,6 @@ class AdminBookingController extends Controller
 
         $data = "Booking ID: {$booking->id}\n"
             . "Route Code: {$booking->route->route_code}\n"
-            . "Date: {$booking->date}\n"
-            . "Time: {$booking->time}\n"
             . "Ticket Code: {$booking->ticket_code}";
 
         $encrypted = Crypt::encryptString($data);
