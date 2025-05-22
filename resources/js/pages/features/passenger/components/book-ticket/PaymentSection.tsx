@@ -5,17 +5,32 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PaymentSectionProps } from '@/types';
 import { Trash2, Upload } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import BookingSummary from './BookingSummary';
+import { fareTypes } from './PassengerFareType';
 
 const PaymentSection = ({
     paymentMethod,
     setPaymentMethod,
     additionalPassengers,
     receiptImage,
+    mainPassengerFare,
     setReceiptImage,
     form,
     handleReceiptUpload,
 }: PaymentSectionProps) => {
+    const [totalFare, setTotalFare] = useState(0);
+
+    useEffect(() => {
+        const mainFare = fareTypes.find((item) => item.name === mainPassengerFare)?.price || 160;
+        const additionalFare = additionalPassengers.reduce((total, passenger) => {
+            return total + (fareTypes.find((item) => item.name === passenger.passenger_fare_type)?.price || 160);
+        }, 0);
+
+        const total = mainFare + additionalFare;
+        setTotalFare(total);
+    }, [mainPassengerFare, additionalPassengers]);
+
     return (
         <>
             {/* Payment Section */}
@@ -39,7 +54,7 @@ const PaymentSection = ({
                     <p className="text-muted-foreground mb-4">
                         Please send payment to: 09123456789 (Juan Dela Cruz)
                         <br />
-                        Amount: ₱{(additionalPassengers.length + 1) * 100}.00
+                        Amount: ₱{totalFare}.00
                     </p>
 
                     <div className="mb-4 flex flex-col items-center justify-center rounded-md border-2 border-dashed p-6">
@@ -76,13 +91,13 @@ const PaymentSection = ({
                     <AlertDescription>
                         Payment will be collected at the terminal before boarding.
                         <br />
-                        Amount Due: ₱{(additionalPassengers.length + 1) * 100}.00
+                        Amount Due: ₱{totalFare}.00
                     </AlertDescription>
                 </Alert>
             )}
 
             {/* Booking Summary */}
-            <BookingSummary additionalPassengers={additionalPassengers} />
+            <BookingSummary additionalPassengers={additionalPassengers} totalFare={totalFare} />
         </>
     );
 };

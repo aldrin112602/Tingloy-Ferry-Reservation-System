@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import { BookingDetailsProps } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { AlertCircle, Calendar, Clock, LoaderCircle, MapPin, User, Users } from 'lucide-react';
+import { AlertCircle, Calendar, Clock, HandCoins, LoaderCircle, MapPin, PhilippinePeso, User, Users } from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs = [
@@ -15,6 +15,8 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
         open: false,
         action: null,
     });
+
+    const baseUrl = window.location.origin;
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -47,28 +49,25 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
     };
 
     const handleAction = async (action: 'approved' | 'rejected') => {
-        setProcessing(true);
-        try {
-            // Replace with your actual endpoint
-            await router.post(
-                action === 'approved' ? route('admin.bookings.approve', booking.id) : route('admin.bookings.reject', booking.id),
-                {},
-                {
-                    onSuccess: (page) => {
-                        if (Object.keys(page.props.errors || {}).length === 0) {
-                            setConfirmModal({ open: false, action: null });
-                            // Additional success handling
-                        } else {
-                            // Handle validation errors
-                        }
+        if (!processing) {
+            setProcessing(true);
+            try {
+                await router.post(
+                    action === 'approved' ? route('admin.bookings.approve', booking.id) : route('admin.bookings.reject', booking.id),
+                    {},
+                    {
+                        onSuccess: (page) => {
+                            if (Object.keys(page.props.errors || {}).length === 0) {
+                                setConfirmModal({ open: false, action: null });
+                            } else {
+                            }
+                        },
+                        onError: () => {},
                     },
-                    onError: () => {
-                        // Handle errors
-                    },
-                },
-            );
-        } finally {
-            setProcessing(false);
+                );
+            } finally {
+                setProcessing(false);
+            }
         }
     };
 
@@ -118,6 +117,43 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                     <Users className="mr-2 h-4 w-4 text-gray-500" />
                                     <p>{booking.number_of_passengers}</p>
                                 </div>
+                            </div>
+
+                            <div>
+                                <p className="text-sm font-medium text-gray-500">Mode of Payment</p>
+                                <div className="mt-1 flex items-center">
+                                    <HandCoins className="mr-2 h-4 w-4 text-gray-500" />
+                                    <p>{booking.payment_method}</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-sm font-medium text-gray-500">Total Fare</p>
+                                <div className="mt-1 flex items-center">
+                                    <PhilippinePeso className="mr-2 h-4 w-4 text-gray-500" />
+                                    <p>{booking.total_fee}</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-sm font-medium text-gray-500">Uploaded Receipt</p>
+                                {booking.receipt_image ? (
+                                    <a
+                                        className="inline-block hover:shadow-lg"
+                                        href={`${baseUrl}/storage/${booking.receipt_image}`}
+                                        title="Open Image to a new tab?"
+                                        target="_blank"
+                                    >
+                                        <img
+                                            src={`${baseUrl}/storage/${booking.receipt_image}`}
+                                            width={'50px'}
+                                            height={'50px'}
+                                            className="cursor-pointer object-cover"
+                                        />
+                                    </a>
+                                ) : (
+                                    'No Image Uploaded'
+                                )}
                             </div>
                         </div>
                     </div>
@@ -192,7 +228,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                 <div className="mt-6 rounded-lg bg-white p-6 shadow-md">
                     <h2 className="mb-4 text-lg font-semibold">Passenger Information</h2>
 
-                    <div className="overflow-x-auto">
+                    <div className="mx-auto overflow-x-auto lg:max-w-5xl">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
@@ -331,8 +367,11 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                     <button
                                         type="button"
                                         disabled={processing}
-                                        onClick={() => handleAction(confirmModal.action!)}
-                                        className={`inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm ${
+                                        onClick={() => {
+                                            setProcessing(true);
+                                            handleAction(confirmModal.action!);
+                                        }}
+                                        className={`inline-flex w-full items-center justify-center gap-3 rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm ${
                                             confirmModal.action === 'approved' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
                                         } ${processing ? 'opacity-75' : ''}`}
                                     >

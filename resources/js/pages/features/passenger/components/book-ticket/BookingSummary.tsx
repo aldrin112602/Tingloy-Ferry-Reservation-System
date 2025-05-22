@@ -1,6 +1,6 @@
 import { Passenger } from '@/types';
 
-const BookingSummary = ({ additionalPassengers }: { additionalPassengers: Passenger[] }) => {
+const BookingSummary = ({ additionalPassengers, totalFare }: { additionalPassengers: Passenger[]; totalFare: number }) => {
     return (
         <div className="mb-6">
             <h3 className="mb-4 text-lg font-medium">Booking Summary</h3>
@@ -19,7 +19,7 @@ const BookingSummary = ({ additionalPassengers }: { additionalPassengers: Passen
                 </div>
                 <div className="mt-2 flex justify-between border-t pt-2">
                     <span className="font-medium">Total Amount:</span>
-                    <span className="font-bold">₱{(additionalPassengers.length + 1) * 100}.00</span>
+                    <span className="font-bold">₱{totalFare}.00</span>
                 </div>
             </div>
         </div>

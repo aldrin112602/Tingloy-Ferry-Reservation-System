@@ -84,6 +84,10 @@ export interface BookingProps {
     user_id: number;
     route_id: number;
     ticket_code: string;
+    payment_method: string;
+    receipt_image: file | null;
+    total_fee: number;
+    is_paid: boolean;
     number_of_passengers: number;
     status: string;
     passengers: Passenger[];
@@ -229,6 +233,7 @@ export interface BookingCompleteDisplayProps {
 
 export interface PaymentSectionProps {
     paymentMethod: string;
+    mainPassengerFare: string;
     setPaymentMethod: (value: string) => void;
     additionalPassengers: Passenger[];
     receiptImage: string | null;

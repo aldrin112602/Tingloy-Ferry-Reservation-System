@@ -18,10 +18,16 @@ const UserBookings: React.FC<UserBookingsProps> = ({ bookings }) => {
                             Ticket Code
                         </th>
                         <th scope="col" className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                            Route ID
+                            Passengers
                         </th>
                         <th scope="col" className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                            Passengers
+                            Receipt
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                            Payment Method
+                        </th>
+                        <th scope="col" className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                            Total fare
                         </th>
                         <th scope="col" className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                             Status

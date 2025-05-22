@@ -261,6 +261,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                                 </>
                             ) : (
                                 <PaymentSection
+                                mainPassengerFare={form.data.passenger_fare_type}
                                     paymentMethod={paymentMethod}
                                     setPaymentMethod={setPaymentMethod}
                                     additionalPassengers={additionalPassengers}
