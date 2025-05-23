@@ -67,10 +67,10 @@ export default function Dashboard() {
             return (
                 <>
                     <Button asChild className="justify-start">
-                        <Link href="/book-ticket"><Ticket className="mr-2 h-4 w-4" /> Book New Ticket</Link>
+                        <Link href={route('passenger.book_ticket')}><Ticket className="mr-2 h-4 w-4" /> Book New Ticket</Link>
                     </Button>
                     <Button asChild variant="outline" className="justify-start">
-                        <Link href="/bookings"><ClockIcon className="mr-2 h-4 w-4" /> View My Bookings</Link>
+                        <Link href={route('passenger.bookings')}><ClockIcon className="mr-2 h-4 w-4" /> View My Bookings</Link>
                     </Button>
                 </>
             );

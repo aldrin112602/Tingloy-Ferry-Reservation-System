@@ -71,7 +71,7 @@ export default function PassengerDashboard() {
                     </CardContent>
                     <CardFooter>
                         <Button asChild variant="outline" size="sm">
-                            <Link href="/book-ticket">Book Ticket</Link>
+                            <Link href={route('passenger.book_ticket')}>Book Ticket</Link>
                         </Button>
                     </CardFooter>
                 </Card>

@@ -8,6 +8,7 @@ use App\Http\Controllers\StaffController;
 use App\Models\Route as RouteSchedule;
 use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\QrController;
+use App\Http\Controllers\DashBoardController;
 
 
 Route::get('/', function () {
@@ -16,9 +17,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashBoardController::class, 'index'])->name('dashboard');
 
     // STAFF ROUTES
     Route::prefix('staff')->middleware('role:staff')->group(function () {
