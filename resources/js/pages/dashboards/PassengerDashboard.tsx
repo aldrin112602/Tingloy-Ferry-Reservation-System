@@ -1,23 +1,20 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { DashBoardProps } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Ticket, Clock, AlertCircle } from 'lucide-react';
-import { UserBookingsProps } from '@/types';
-
-const upcomingSchedules = [
-    { id: 1, route: 'Mabini to Tingloy', time: '9:00 AM', capacity: '145/240', date: '2025-04-23' },
-    { id: 2, route: 'Tingloy to Mabini', time: '11:30 AM', capacity: '122/240', date: '2025-04-23' },
-    { id: 3, route: 'Mabini to Tingloy', time: '2:00 PM', capacity: '118/240', date: '2025-04-23' },
-];
+import { format } from 'date-fns';
+import { Clock, Ticket } from 'lucide-react';
 
 const recentTrips = [
     { id: 1, route: 'Tingloy to Mabini', time: '9:00 AM', status: 'Completed', date: '2025-04-21' },
     { id: 2, route: 'Mabini to Tingloy', time: '11:30 AM', status: 'Boarding', date: '2025-04-22' },
 ];
 
-export default function PassengerDashboard({ bookings }: UserBookingsProps) {
+export default function PassengerDashboard({ bookings, nextTrip, upcomingTrips }: DashBoardProps) {
+    console.log(bookings);
+    console.log(nextTrip);
+    console.log(upcomingTrips);
 
-    console.log(bookings)
     return (
         <>
             {/* Stats Section */}
@@ -25,79 +22,100 @@ export default function PassengerDashboard({ bookings }: UserBookingsProps) {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">My Bookings</CardTitle>
-                        <Ticket className="h-4 w-4 text-muted-foreground" />
+                        <Ticket className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{bookings.length}</div>
-                        <p className="text-xs text-muted-foreground">2 upcoming / 1 completed</p>
+                        <p className="text-muted-foreground text-xs">Your Total Bookings</p>
                     </CardContent>
                 </Card>
-                
+
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">Next Trip</CardTitle>
-                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <Clock className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">April 23</div>
-                        <p className="text-xs text-muted-foreground">9:00 AM - Mabini to Tingloy</p>
+                        {nextTrip ? (
+                            <>
+                                <div className="text-2xl font-bold">
+                                    {new Date(nextTrip.date_and_time).toLocaleDateString('en-US', {
+                                        month: 'long',
+                                        day: 'numeric',
+                                        year: 'numeric',
+                                    })}
+                                </div>
+                                <p className="text-muted-foreground text-xs">
+                                    {new Date(nextTrip.date_and_time).toLocaleTimeString('en-US', {
+                                        hour: 'numeric',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                    })}{' '}
+                                    – {nextTrip.start_location} to {nextTrip.end_location}
+                                </p>
+                            </>
+                        ) : (
+                            <p className="text-muted-foreground text-sm">No upcoming trip</p>
+                        )}
                     </CardContent>
                 </Card>
-                
-                
             </div>
 
             {/* Schedule and Trips Section */}
-            <div className="grid gap-4 md:grid-cols-3">
-                <Card className="md:col-span-2">
-                    <CardHeader>
-                        <CardTitle>Available Trips</CardTitle>
-                        <CardDescription>Book your next trip</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {upcomingSchedules.map(schedule => (
-                                <div key={schedule.id} className="flex items-center justify-between border-b pb-2">
-                                    <div>
-                                        <p className="font-medium">{schedule.route}</p>
-                                        <p className="text-sm text-muted-foreground">{schedule.time} - {schedule.date}</p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-sm text-muted-foreground">
-                                            {schedule.capacity}
-                                        </span>
-                                        <Button size="sm">Book</Button>
-                                    </div>
+
+            <Card className="p-5 py-10">
+                <CardHeader>
+                    <CardTitle>Available Trips</CardTitle>
+                    <CardDescription>Book your next trip</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {upcomingTrips.map((schedule) => (
+                            <div key={schedule.id} className="flex flex-col justify-between gap-2 border-b pb-4 md:flex-row md:items-center">
+                                <div>
+                                    <p className="text-lg font-semibold">{schedule.name}</p>
+                                    <p className="text-muted-foreground text-sm">
+                                        {format(new Date(schedule.date_and_time), 'MMMM d, yyyy - h:mm a')}
+                                    </p>
+                                    <p className="text-muted-foreground text-sm">
+                                        {schedule.start_location} ➜ {schedule.end_location}
+                                    </p>
                                 </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button asChild variant="outline" size="sm">
-                            <Link href={route('passenger.book_ticket')}>Book Ticket</Link>
-                        </Button>
-                    </CardFooter>
-                </Card>
-                
-                <Card>
+                                <div className="flex items-center gap-4">
+                                    <span className="text-muted-foreground text-sm">
+                                        Capacity: {schedule.capacity} | Occupied: {schedule.seats_occupied}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <Button asChild variant="outline" size="sm">
+                        <Link href={route('passenger.book_ticket')}>Book Ticket</Link>
+                    </Button>
+                </CardFooter>
+            </Card>
+
+            {/* <Card>
                     <CardHeader>
                         <CardTitle>My Recent Trips</CardTitle>
                         <CardDescription>Past and upcoming bookings</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {recentTrips.map(trip => (
+                            {recentTrips.map((trip) => (
                                 <div key={trip.id} className="flex items-center gap-2">
-                                    <div className={`h-2 w-2 rounded-full ${
-                                        trip.status === 'Completed' 
-                                            ? 'bg-green-500' 
-                                            : trip.status === 'Boarding' 
-                                                ? 'bg-blue-500'
-                                                : 'bg-gray-500'
-                                    }`} />
+                                    <div
+                                        className={`h-2 w-2 rounded-full ${
+                                            trip.status === 'Completed' ? 'bg-green-500' : trip.status === 'Boarding' ? 'bg-blue-500' : 'bg-gray-500'
+                                        }`}
+                                    />
                                     <div>
                                         <p className="text-sm">{trip.route}</p>
-                                        <p className="text-xs text-muted-foreground">{trip.time} - {trip.date}</p>
+                                        <p className="text-muted-foreground text-xs">
+                                            {trip.time} - {trip.date}
+                                        </p>
                                     </div>
                                 </div>
                             ))}
@@ -105,11 +123,10 @@ export default function PassengerDashboard({ bookings }: UserBookingsProps) {
                     </CardContent>
                     <CardFooter>
                         <Button asChild variant="outline" size="sm">
-                            <Link href="/bookings">View All Bookings</Link>
+                            <Link href={route('passenger.bookings')}>View All Bookings</Link>
                         </Button>
                     </CardFooter>
-                </Card>
-            </div>
+                </Card> */}
         </>
     );
 }

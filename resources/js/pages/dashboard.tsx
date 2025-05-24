@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { BookingProps, UserBookingsProps, type BreadcrumbItem, type SharedData } from '@/types';
+import { BookingProps, DashBoardProps, RouteProps, UserBookingsProps, type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -19,7 +19,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard({ bookings }: UserBookingsProps) {
+
+ 
+export default function Dashboard({ bookings, nextTrip, upcomingTrips }: DashBoardProps) {
     const { auth } = usePage<SharedData>().props;
     const { role } = auth.user;
     const isAdmin = role === 'admin';
@@ -89,13 +91,13 @@ export default function Dashboard({ bookings }: UserBookingsProps) {
     };
 
     // Render the dashboard content based on user role
-    const renderDashboardContent = ({ bookings }: UserBookingsProps) => {
+    const renderDashboardContent = ({ bookings, nextTrip, upcomingTrips }: DashBoardProps) => {
         if (isAdmin) {
             return <AdminDashboard />;
         } else if (isStaff) {
             return <StaffDashboard />;
         } else if (isPassenger) {
-            return <PassengerDashboard bookings={bookings}/>;
+            return <PassengerDashboard bookings={bookings} nextTrip={nextTrip} upcomingTrips={upcomingTrips}/>;
         }
         return null;
     };
@@ -132,7 +134,7 @@ export default function Dashboard({ bookings }: UserBookingsProps) {
                 </div>
 
                 {/* Role-specific dashboard content */}
-                {renderDashboardContent({ bookings })}
+                {renderDashboardContent({ bookings, nextTrip, upcomingTrips })}
             </div>
         </AppLayout>
     );

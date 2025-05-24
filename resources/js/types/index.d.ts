@@ -53,7 +53,7 @@ export interface RouteProps {
     capacity: number;
     seats_occupied: number;
     status: string;
-    [key: string]: unknown;
+    [key: string]: string;
 }
 
 export interface PaginationLink {
@@ -204,6 +204,13 @@ export interface SearchFiltersProps {
 export interface UserBookingsProps {
     bookings: BookingProps[];
 }
+
+interface DashBoardProps {
+    bookings: BookingProps[];
+    nextTrip: RouteProps;
+    upcomingTrips: RouteProps[];
+}
+
 
 export interface ManageBookingsProps extends User {
     booking: BookingProps[];
