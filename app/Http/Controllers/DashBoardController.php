@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
+use App\Models\Booking;
+use Illuminate\Support\Facades\Auth;
 
 class DashBoardController extends Controller
 {
     public function index()
     {
-        return Inertia::render('dashboard');
+        $bookings = Booking::where('user_id', Auth::id())->get();
+        
+        return Inertia::render('dashboard', ['bookings' => $bookings]);
     }
 }

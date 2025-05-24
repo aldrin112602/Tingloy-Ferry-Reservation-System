@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
 import { Ticket, Clock, AlertCircle } from 'lucide-react';
+import { UserBookingsProps } from '@/types';
 
 const upcomingSchedules = [
     { id: 1, route: 'Mabini to Tingloy', time: '9:00 AM', capacity: '145/240', date: '2025-04-23' },
@@ -14,7 +15,9 @@ const recentTrips = [
     { id: 2, route: 'Mabini to Tingloy', time: '11:30 AM', status: 'Boarding', date: '2025-04-22' },
 ];
 
-export default function PassengerDashboard() {
+export default function PassengerDashboard({ bookings }: UserBookingsProps) {
+
+    console.log(bookings)
     return (
         <>
             {/* Stats Section */}
@@ -25,7 +28,7 @@ export default function PassengerDashboard() {
                         <Ticket className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">3</div>
+                        <div className="text-2xl font-bold">{bookings.length}</div>
                         <p className="text-xs text-muted-foreground">2 upcoming / 1 completed</p>
                     </CardContent>
                 </Card>

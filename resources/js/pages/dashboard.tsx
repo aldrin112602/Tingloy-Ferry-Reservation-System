@@ -1,17 +1,16 @@
-import { Head, usePage } from '@inertiajs/react';
-import { type BreadcrumbItem } from '@/types';
-import AppLayout from '@/layouts/app-layout';
-import { type SharedData } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
+import { BookingProps, UserBookingsProps, type BreadcrumbItem, type SharedData } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
 import { Clock } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AdminDashboard from './dashboards/AdminDashboard';
-import StaffDashboard from './dashboards/StaffDashboard';
 import PassengerDashboard from './dashboards/PassengerDashboard';
+import StaffDashboard from './dashboards/StaffDashboard';
 
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
-import { Ticket, Calendar, Clock as ClockIcon, Users, TrendingUp } from 'lucide-react';
+import { Calendar, Clock as ClockIcon, Ticket, TrendingUp, Users } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,20 +19,20 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+export default function Dashboard({ bookings }: UserBookingsProps) {
     const { auth } = usePage<SharedData>().props;
     const { role } = auth.user;
     const isAdmin = role === 'admin';
     const isStaff = role === 'staff';
     const isPassenger = role === 'passenger';
-    
+
     const [currentTime, setCurrentTime] = useState(new Date());
-    
+
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 60000); // Update every minute
-        
+
         return () => {
             clearInterval(timer);
         };
@@ -45,10 +44,14 @@ export default function Dashboard() {
             return (
                 <>
                     <Button asChild className="justify-start">
-                        <Link href="/admin/schedules"><Calendar className="mr-2 h-4 w-4" /> Manage Schedules</Link>
+                        <Link href="/admin/schedules">
+                            <Calendar className="mr-2 h-4 w-4" /> Manage Schedules
+                        </Link>
                     </Button>
                     <Button asChild variant="outline" className="justify-start">
-                        <Link href="/admin/reports"><TrendingUp className="mr-2 h-4 w-4" /> View Reports</Link>
+                        <Link href="/admin/reports">
+                            <TrendingUp className="mr-2 h-4 w-4" /> View Reports
+                        </Link>
                     </Button>
                 </>
             );
@@ -56,10 +59,14 @@ export default function Dashboard() {
             return (
                 <>
                     <Button asChild className="justify-start">
-                        <Link href="/staff/scan"><Ticket className="mr-2 h-4 w-4" /> Scan QR Code</Link>
+                        <Link href="/staff/scan">
+                            <Ticket className="mr-2 h-4 w-4" /> Scan QR Code
+                        </Link>
                     </Button>
                     <Button asChild variant="outline" className="justify-start">
-                        <Link href="/staff/boarded"><Users className="mr-2 h-4 w-4" /> View Boarded Passengers</Link>
+                        <Link href="/staff/boarded">
+                            <Users className="mr-2 h-4 w-4" /> View Boarded Passengers
+                        </Link>
                     </Button>
                 </>
             );
@@ -67,10 +74,14 @@ export default function Dashboard() {
             return (
                 <>
                     <Button asChild className="justify-start">
-                        <Link href={route('passenger.book_ticket')}><Ticket className="mr-2 h-4 w-4" /> Book New Ticket</Link>
+                        <Link href={route('passenger.book_ticket')}>
+                            <Ticket className="mr-2 h-4 w-4" /> Book New Ticket
+                        </Link>
                     </Button>
                     <Button asChild variant="outline" className="justify-start">
-                        <Link href={route('passenger.bookings')}><ClockIcon className="mr-2 h-4 w-4" /> View My Bookings</Link>
+                        <Link href={route('passenger.bookings')}>
+                            <ClockIcon className="mr-2 h-4 w-4" /> View My Bookings
+                        </Link>
                     </Button>
                 </>
             );
@@ -78,13 +89,13 @@ export default function Dashboard() {
     };
 
     // Render the dashboard content based on user role
-    const renderDashboardContent = () => {
+    const renderDashboardContent = ({ bookings }: UserBookingsProps) => {
         if (isAdmin) {
             return <AdminDashboard />;
         } else if (isStaff) {
             return <StaffDashboard />;
         } else if (isPassenger) {
-            return <PassengerDashboard />;
+            return <PassengerDashboard bookings={bookings}/>;
         }
         return null;
     };
@@ -110,20 +121,18 @@ export default function Dashboard() {
                             </div>
                         </CardContent>
                     </Card>
-                    
+
                     {/* Quick Actions Card */}
                     <Card>
                         <CardHeader>
                             <CardTitle>Quick Actions</CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-col gap-2">
-                            {getQuickActionButtons()}
-                        </CardContent>
+                        <CardContent className="flex flex-col gap-2">{getQuickActionButtons()}</CardContent>
                     </Card>
                 </div>
-                
+
                 {/* Role-specific dashboard content */}
-                {renderDashboardContent()}
+                {renderDashboardContent({ bookings })}
             </div>
         </AppLayout>
     );
