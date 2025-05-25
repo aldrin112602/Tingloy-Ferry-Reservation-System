@@ -206,9 +206,10 @@ export interface UserBookingsProps {
 }
 
 interface DashBoardProps {
-    bookings: BookingProps[];
-    nextTrip: RouteProps;
-    upcomingTrips: RouteProps[];
+    bookings?: BookingProps[];
+    allBookings?: BookingProps[];
+    nextTrip?: RouteProps;
+    upcomingTrips?: RouteProps[];
 }
 
 

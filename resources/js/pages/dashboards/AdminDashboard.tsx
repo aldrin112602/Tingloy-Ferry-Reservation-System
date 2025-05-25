@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Ticket, BarChart2 } from 'lucide-react';
-import { BarChart, PieChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Pie, Cell } from 'recharts';
+import { BookingProps, DashBoardProps } from '@/types';
+import { BarChart2, Calendar, Ticket } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 // Sample data for charts - replace with actual data fetching
 const bookingData = [
@@ -21,7 +22,8 @@ const passengerData = [
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ allBookings }: DashBoardProps) {
+    console.log(allBookings)
     return (
         <>
             {/* Stats Section */}
@@ -29,33 +31,33 @@ export default function AdminDashboard() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-                        <Ticket className="h-4 w-4 text-muted-foreground" />
+                        <Ticket className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">1,248</div>
-                        <p className="text-xs text-muted-foreground">+12% from last month</p>
+                        <div className="text-2xl font-bold">{allBookings?.length || 0}</div>
+                        <p className="text-muted-foreground text-xs">This month</p>
                     </CardContent>
                 </Card>
-                
+
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">Scheduled Trips</CardTitle>
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <Calendar className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">24</div>
-                        <p className="text-xs text-muted-foreground">This week</p>
+                        <p className="text-muted-foreground text-xs">This week</p>
                     </CardContent>
                 </Card>
-                
+
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <CardTitle className="text-sm font-medium">Total Passengers</CardTitle>
-                        <BarChart2 className="h-4 w-4 text-muted-foreground" />
+                        <BarChart2 className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">4,992</div>
-                        <p className="text-xs text-muted-foreground">This month</p>
+                        <p className="text-muted-foreground text-xs">This month</p>
                     </CardContent>
                 </Card>
             </div>
@@ -80,7 +82,7 @@ export default function AdminDashboard() {
                         </div>
                     </CardContent>
                 </Card>
-                
+
                 <Card>
                     <CardHeader>
                         <CardTitle>Passenger Types</CardTitle>
@@ -89,15 +91,7 @@ export default function AdminDashboard() {
                     <CardContent>
                         <div className="flex h-80 items-center justify-center">
                             <PieChart width={250} height={250}>
-                                <Pie
-                                    data={passengerData}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                >
+                                <Pie data={passengerData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value">
                                     {passengerData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}

@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import AppLayout from '@/layouts/app-layout';
 import { BookingProps, DashBoardProps, RouteProps, UserBookingsProps, type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { Clock } from 'lucide-react';
+import { BookA, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import AdminDashboard from './dashboards/AdminDashboard';
 import PassengerDashboard from './dashboards/PassengerDashboard';
@@ -21,7 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 
  
-export default function Dashboard({ bookings, nextTrip, upcomingTrips }: DashBoardProps) {
+export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookings }: DashBoardProps) {
     const { auth } = usePage<SharedData>().props;
     const { role } = auth.user;
     const isAdmin = role === 'admin';
@@ -46,13 +46,13 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips }: DashBoa
             return (
                 <>
                     <Button asChild className="justify-start">
-                        <Link href="/admin/schedules">
+                        <Link href={route('admin.schedule.index')}>
                             <Calendar className="mr-2 h-4 w-4" /> Manage Schedules
                         </Link>
                     </Button>
                     <Button asChild variant="outline" className="justify-start">
-                        <Link href="/admin/reports">
-                            <TrendingUp className="mr-2 h-4 w-4" /> View Reports
+                        <Link href={route('admin.bookings')}>
+                            <BookA className="mr-2 h-4 w-4" /> Manage Bookings
                         </Link>
                     </Button>
                 </>
@@ -91,9 +91,9 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips }: DashBoa
     };
 
     // Render the dashboard content based on user role
-    const renderDashboardContent = ({ bookings, nextTrip, upcomingTrips }: DashBoardProps) => {
+    const renderDashboardContent = ({ bookings, nextTrip, upcomingTrips, allBookings }: DashBoardProps) => {
         if (isAdmin) {
-            return <AdminDashboard />;
+            return <AdminDashboard bookings={bookings} allBookings={allBookings}/>;
         } else if (isStaff) {
             return <StaffDashboard />;
         } else if (isPassenger) {
@@ -134,7 +134,7 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips }: DashBoa
                 </div>
 
                 {/* Role-specific dashboard content */}
-                {renderDashboardContent({ bookings, nextTrip, upcomingTrips })}
+                {renderDashboardContent({ bookings, nextTrip, upcomingTrips, allBookings })}
             </div>
         </AppLayout>
     );

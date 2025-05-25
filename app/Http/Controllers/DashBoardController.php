@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Booking;
+use App\Models\Passenger;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Route as Schedule;
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ class DashBoardController extends Controller
     public function index()
     {
         $bookings = Booking::where('user_id', Auth::id())->get();
+        $allBookings = Booking::all();
         $now = Carbon::now();
 
         $nextTrip = Schedule::where('date_and_time', '>', $now)
@@ -24,10 +26,14 @@ class DashBoardController extends Controller
             ->take(5)
             ->get();
 
+        $passengers = Passenger::all();
+
         return Inertia::render('dashboard', [
             'bookings' => $bookings,
             'nextTrip' => $nextTrip,
             'upcomingTrips' => $upcomingTrips,
+            'passengers' => $passengers,
+            'allBookings' => $allBookings
         ]);
     }
 }

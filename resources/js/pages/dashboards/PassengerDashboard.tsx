@@ -25,7 +25,7 @@ export default function PassengerDashboard({ bookings, nextTrip, upcomingTrips }
                         <Ticket className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{bookings.length}</div>
+                        <div className="text-2xl font-bold">{bookings?.length}</div>
                         <p className="text-muted-foreground text-xs">Your Total Bookings</p>
                     </CardContent>
                 </Card>
@@ -70,7 +70,7 @@ export default function PassengerDashboard({ bookings, nextTrip, upcomingTrips }
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        {upcomingTrips.map((schedule) => (
+                        {upcomingTrips?.map((schedule) => (
                             <div key={schedule.id} className="flex flex-col justify-between gap-2 border-b pb-4 md:flex-row md:items-center">
                                 <div>
                                     <p className="text-lg font-semibold">{schedule.name}</p>
