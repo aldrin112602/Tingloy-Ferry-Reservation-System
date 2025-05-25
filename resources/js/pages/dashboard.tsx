@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { BookingProps, DashBoardProps, RouteProps, UserBookingsProps, type BreadcrumbItem, type SharedData } from '@/types';
+import { DashBoardProps, type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { BookA, Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ import StaffDashboard from './dashboards/StaffDashboard';
 
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
-import { Calendar, Clock as ClockIcon, Ticket, TrendingUp, Users } from 'lucide-react';
+import { Calendar, Clock as ClockIcon, Ticket, Users } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,9 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-
- 
-export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookings }: DashBoardProps) {
+export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookings, passengers }: DashBoardProps) {
     const { auth } = usePage<SharedData>().props;
     const { role } = auth.user;
     const isAdmin = role === 'admin';
@@ -91,13 +89,13 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookin
     };
 
     // Render the dashboard content based on user role
-    const renderDashboardContent = ({ bookings, nextTrip, upcomingTrips, allBookings }: DashBoardProps) => {
+    const renderDashboardContent = ({ bookings, nextTrip, upcomingTrips, allBookings, passengers }: DashBoardProps) => {
         if (isAdmin) {
-            return <AdminDashboard bookings={bookings} allBookings={allBookings}/>;
+            return <AdminDashboard bookings={bookings} upcomingTrips={upcomingTrips} allBookings={allBookings} passengers={passengers} />;
         } else if (isStaff) {
             return <StaffDashboard />;
         } else if (isPassenger) {
-            return <PassengerDashboard bookings={bookings} nextTrip={nextTrip} upcomingTrips={upcomingTrips}/>;
+            return <PassengerDashboard bookings={bookings} nextTrip={nextTrip} upcomingTrips={upcomingTrips} />;
         }
         return null;
     };
@@ -134,7 +132,7 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookin
                 </div>
 
                 {/* Role-specific dashboard content */}
-                {renderDashboardContent({ bookings, nextTrip, upcomingTrips, allBookings })}
+                {renderDashboardContent({ bookings, nextTrip, upcomingTrips, allBookings, passengers })}
             </div>
         </AppLayout>
     );

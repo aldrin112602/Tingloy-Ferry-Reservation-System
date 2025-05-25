@@ -22,8 +22,8 @@ const passengerData = [
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
-export default function AdminDashboard({ allBookings }: DashBoardProps) {
-    console.log(allBookings)
+export default function AdminDashboard({ allBookings, passengers, upcomingTrips }: DashBoardProps) {
+    
     return (
         <>
             {/* Stats Section */}
@@ -45,8 +45,8 @@ export default function AdminDashboard({ allBookings }: DashBoardProps) {
                         <Calendar className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">24</div>
-                        <p className="text-muted-foreground text-xs">This week</p>
+                        <div className="text-2xl font-bold">{upcomingTrips?.length}</div>
+                        <p className="text-muted-foreground text-xs">This month</p>
                     </CardContent>
                 </Card>
 
@@ -56,7 +56,7 @@ export default function AdminDashboard({ allBookings }: DashBoardProps) {
                         <BarChart2 className="text-muted-foreground h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">4,992</div>
+                        <div className="text-2xl font-bold">{passengers?.length}</div>
                         <p className="text-muted-foreground text-xs">This month</p>
                     </CardContent>
                 </Card>

@@ -210,6 +210,7 @@ interface DashBoardProps {
     allBookings?: BookingProps[];
     nextTrip?: RouteProps;
     upcomingTrips?: RouteProps[];
+    passengers?: Passenger[];
 }
 
 
