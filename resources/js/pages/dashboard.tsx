@@ -19,7 +19,16 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookings, passengers }: DashBoardProps) {
+export default function Dashboard({
+    bookings,
+    nextTrip,
+    upcomingTrips,
+    allBookings,
+    passengers,
+    boardedCount,
+    todaysTripCount,
+    qrScannedCountToday,
+}: DashBoardProps) {
     const { auth } = usePage<SharedData>().props;
     const { role } = auth.user;
     const isAdmin = role === 'admin';
@@ -31,14 +40,13 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookin
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date());
-        }, 60000); // Update every minute
+        }, 60000); 
 
         return () => {
             clearInterval(timer);
         };
     }, []);
 
-    // Get quick action buttons based on user role
     const getQuickActionButtons = () => {
         if (isAdmin) {
             return (
@@ -89,11 +97,11 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookin
     };
 
     // Render the dashboard content based on user role
-    const renderDashboardContent = ({ bookings, nextTrip, upcomingTrips, allBookings, passengers }: DashBoardProps) => {
+    const renderDashboardContent = ({ bookings, nextTrip, upcomingTrips, allBookings, passengers, boardedCount }: DashBoardProps) => {
         if (isAdmin) {
             return <AdminDashboard bookings={bookings} upcomingTrips={upcomingTrips} allBookings={allBookings} passengers={passengers} />;
         } else if (isStaff) {
-            return <StaffDashboard />;
+            return <StaffDashboard boardedCount={boardedCount} todaysTripCount={todaysTripCount} qrScannedCountToday={qrScannedCountToday} />;
         } else if (isPassenger) {
             return <PassengerDashboard bookings={bookings} nextTrip={nextTrip} upcomingTrips={upcomingTrips} />;
         }
@@ -132,7 +140,16 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookin
                 </div>
 
                 {/* Role-specific dashboard content */}
-                {renderDashboardContent({ bookings, nextTrip, upcomingTrips, allBookings, passengers })}
+                {renderDashboardContent({
+                    bookings,
+                    nextTrip,
+                    upcomingTrips,
+                    allBookings,
+                    passengers,
+                    boardedCount,
+                    todaysTripCount,
+                    qrScannedCountToday,
+                })}
             </div>
         </AppLayout>
     );

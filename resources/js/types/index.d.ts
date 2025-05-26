@@ -205,12 +205,15 @@ export interface UserBookingsProps {
     bookings: BookingProps[];
 }
 
-interface DashBoardProps {
+export interface DashBoardProps {
     bookings?: BookingProps[];
     allBookings?: BookingProps[];
     nextTrip?: RouteProps;
     upcomingTrips?: RouteProps[];
     passengers?: Passenger[];
+    boardedCount?: number;
+    todaysTripCount?: number;
+    qrScannedCountToday?: number;
 }
 
 

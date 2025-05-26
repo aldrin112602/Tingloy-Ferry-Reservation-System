@@ -5,16 +5,7 @@ import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Clock, Ticket } from 'lucide-react';
 
-const recentTrips = [
-    { id: 1, route: 'Tingloy to Mabini', time: '9:00 AM', status: 'Completed', date: '2025-04-21' },
-    { id: 2, route: 'Mabini to Tingloy', time: '11:30 AM', status: 'Boarding', date: '2025-04-22' },
-];
-
 export default function PassengerDashboard({ bookings, nextTrip, upcomingTrips }: DashBoardProps) {
-    console.log(bookings);
-    console.log(nextTrip);
-    console.log(upcomingTrips);
-
     return (
         <>
             {/* Stats Section */}
@@ -96,37 +87,6 @@ export default function PassengerDashboard({ bookings, nextTrip, upcomingTrips }
                     </Button>
                 </CardFooter>
             </Card>
-
-            {/* <Card>
-                    <CardHeader>
-                        <CardTitle>My Recent Trips</CardTitle>
-                        <CardDescription>Past and upcoming bookings</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {recentTrips.map((trip) => (
-                                <div key={trip.id} className="flex items-center gap-2">
-                                    <div
-                                        className={`h-2 w-2 rounded-full ${
-                                            trip.status === 'Completed' ? 'bg-green-500' : trip.status === 'Boarding' ? 'bg-blue-500' : 'bg-gray-500'
-                                        }`}
-                                    />
-                                    <div>
-                                        <p className="text-sm">{trip.route}</p>
-                                        <p className="text-muted-foreground text-xs">
-                                            {trip.time} - {trip.date}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button asChild variant="outline" size="sm">
-                            <Link href={route('passenger.bookings')}>View All Bookings</Link>
-                        </Button>
-                    </CardFooter>
-                </Card> */}
         </>
     );
 }

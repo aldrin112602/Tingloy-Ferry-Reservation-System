@@ -1,7 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookingProps, DashBoardProps } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DashBoardProps } from '@/types';
 import { BarChart2, Calendar, Ticket } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, Cell, Legend, Pie, PieChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 // Sample data for charts - replace with actual data fetching
 const bookingData = [
@@ -23,7 +22,6 @@ const passengerData = [
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
 export default function AdminDashboard({ allBookings, passengers, upcomingTrips }: DashBoardProps) {
-    
     return (
         <>
             {/* Stats Section */}
@@ -61,48 +59,6 @@ export default function AdminDashboard({ allBookings, passengers, upcomingTrips 
                     </CardContent>
                 </Card>
             </div>
-
-            {/* Charts & Tables Section 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Card className="col-span-2">
-                    <CardHeader>
-                        <CardTitle>Booking Trends</CardTitle>
-                        <CardDescription>Weekly booking statistics</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="h-80">
-                            <BarChart width={550} height={300} data={bookingData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="count" fill="#8884d8" />
-                            </BarChart>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Passenger Types</CardTitle>
-                        <CardDescription>Breakdown by category</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex h-80 items-center justify-center">
-                            <PieChart width={250} height={250}>
-                                <Pie data={passengerData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value">
-                                    {passengerData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                                <Legend />
-                            </PieChart>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div> */}
         </>
     );
 }

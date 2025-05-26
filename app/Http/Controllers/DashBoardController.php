@@ -28,7 +28,11 @@ class DashBoardController extends Controller
 
         $passengers = Passenger::all();
 
-        $boardedCount = Booking::where('status', 'boarded')->count();
+        $boardedCount = Passenger::count();
+
+        $todaysTripCount = Schedule::whereDate('updated_at', Carbon::today())->count();
+
+        $qrScannedCountToday = Booking::whereDate('updated_at', Carbon::today())->where('status', 'boarded')->count();
 
         return Inertia::render('dashboard', [
             'bookings' => $bookings,
@@ -36,7 +40,9 @@ class DashBoardController extends Controller
             'upcomingTrips' => $upcomingTrips,
             'passengers' => $passengers,
             'allBookings' => $allBookings,
-            'boardedCount' => $boardedCount
+            'boardedCount' => $boardedCount,
+            'todaysTripCount' => $todaysTripCount,
+            'qrScannedCountToday' => $qrScannedCountToday
         ]);
     }
 }
