@@ -28,12 +28,15 @@ class DashBoardController extends Controller
 
         $passengers = Passenger::all();
 
+        $boardedCount = Booking::where('status', 'boarded')->count();
+
         return Inertia::render('dashboard', [
             'bookings' => $bookings,
             'nextTrip' => $nextTrip,
             'upcomingTrips' => $upcomingTrips,
             'passengers' => $passengers,
-            'allBookings' => $allBookings
+            'allBookings' => $allBookings,
+            'boardedCount' => $boardedCount
         ]);
     }
 }

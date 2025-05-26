@@ -62,7 +62,7 @@ export default function AdminDashboard({ allBookings, passengers, upcomingTrips 
                 </Card>
             </div>
 
-            {/* Charts & Tables Section */}
+            {/* Charts & Tables Section 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card className="col-span-2">
                     <CardHeader>
@@ -102,7 +102,7 @@ export default function AdminDashboard({ allBookings, passengers, upcomingTrips 
                         </div>
                     </CardContent>
                 </Card>
-            </div>
+            </div> */}
         </>
     );
 }

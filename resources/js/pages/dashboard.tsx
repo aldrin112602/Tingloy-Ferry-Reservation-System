@@ -59,12 +59,12 @@ export default function Dashboard({ bookings, nextTrip, upcomingTrips, allBookin
             return (
                 <>
                     <Button asChild className="justify-start">
-                        <Link href="/staff/scan">
+                        <Link href={route('staff.scan_qr')}>
                             <Ticket className="mr-2 h-4 w-4" /> Scan QR Code
                         </Link>
                     </Button>
                     <Button asChild variant="outline" className="justify-start">
-                        <Link href="/staff/boarded">
+                        <Link href={route('staff.passengers')}>
                             <Users className="mr-2 h-4 w-4" /> View Boarded Passengers
                         </Link>
                     </Button>

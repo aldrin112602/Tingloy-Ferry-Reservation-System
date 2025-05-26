@@ -38,7 +38,7 @@ export default function StaffDashboard() {
                 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">QR Scans Today</CardTitle>
+                        <CardTitle className="text-sm font-medium">QR Scans</CardTitle>
                         <ScanLine className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -48,7 +48,7 @@ export default function StaffDashboard() {
                 </Card>
             </div>
 
-            {/* Trip Schedule and Activity Section */}
+            {/* Trip Schedule and Activity Section 
             <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>
@@ -122,6 +122,7 @@ export default function StaffDashboard() {
                     </CardFooter>
                 </Card>
             </div>
+            */}
         </>
     );
 }
