@@ -110,12 +110,50 @@ export interface AddRouteFormData {
     [key: string]: string;
 }
 
+export interface AddAccountFormData {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    [key: string]: string;
+}
+
+export interface PaginatedAccountData {
+    current_page: number;
+    data: AccountProps[];
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
+    next_page_url: string | null;
+    path: string;
+    per_page: number;
+    prev_page_url: string | null;
+    to: number;
+    total: number;
+}
+
 export interface AddNewScheduleProps {
     dialogRefStore: React.RefObject<HTMLDialogElement | null>;
     closeAddRouteModal: () => void;
     handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
     data: { name: string; route: string; date_and_time: string };
     errors: { name?: string; route?: string; date_and_time?: string };
+    setData: (field: string, value: string) => void;
+    processing: boolean;
+}
+
+export interface AddNewAccountProps {
+    dialogRefStore: React.RefObject<HTMLDialogElement | null>;
+    closeAddRouteModal: () => void;
+    handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    data: { name: string; email: string; password: string; role: string };
+    errors: { name?: string; email?: string; password?: string; role?: string };
     setData: (field: string, value: string) => void;
     processing: boolean;
 }
@@ -129,9 +167,30 @@ export interface EditRouteFormData {
     [key: string]: string | number;
 }
 
+export interface EditAccountFormData {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    [key: string]: string | number;
+}
+
+export interface AccountProps {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    [key: string]: string | number;
+}
+
 export interface EditScheduleProps {
     dialogRefEdit: React.RefObject<HTMLDialogElement | null>;
-    routeObj: RouteProps;
+    routeObj: any;
+}
+
+export interface EditAccountProps {
+    dialogRefEdit: React.RefObject<HTMLDialogElement | null>;
+    accountObj: EditAccountFormData;
 }
 
 export interface RouteItemProps {
@@ -215,7 +274,6 @@ export interface DashBoardProps {
     todaysTripCount?: number;
     qrScannedCountToday?: number;
 }
-
 
 export interface ManageBookingsProps extends User {
     booking: BookingProps[];

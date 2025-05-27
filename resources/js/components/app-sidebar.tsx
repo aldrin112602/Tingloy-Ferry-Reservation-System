@@ -28,6 +28,7 @@ const adminNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
     { title: 'Manage Schedule', href: '/admin/schedule', icon: Calendar },
     { title: 'Manage Bookings', href: '/admin/bookings', icon: BookOpen },
+    { title: 'Manage Accounts', href: '/admin/accounts_management', icon: UserCog },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 
