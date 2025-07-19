@@ -111,9 +111,9 @@ const EditAccount: React.FC<UpdatedEditAccountProps> = ({ isOpen, onOpenChange, 
                             <option value="" disabled className="hidden">
                                 -- Select role --
                             </option>
-                            <option value="admin">Admin</option>
-                            <option value="staff">Staff</option>
-                            <option value="passenger">Passenger</option>
+                            <option value="admin" className='dark:bg-gray-900'>Admin</option>
+                            <option value="staff" className='dark:bg-gray-900'>Staff</option>
+                            <option value="passenger" className='dark:bg-gray-900'>Passenger</option>
                         </select>
                         <InputError message={errors.role} />
                     </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Route;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
 class RouteController extends Controller
 {
@@ -51,6 +52,11 @@ class RouteController extends Controller
             'start_location' => 'required|string',
             'end_location' => 'required|string',
             'date_and_time' => 'required|string',
+            'status' => [
+                'required',
+                'string',
+                Rule::in(['scheduled', 'departed', 'in_transit', 'arrived', 'cancelled']),
+            ],
         ]);
 
         $route = Route::findOrFail($request->id);
@@ -66,6 +72,7 @@ class RouteController extends Controller
                 'start_location' => $request->start_location,
                 'end_location' => $request->end_location,
                 'date_and_time' => $request->date_and_time,
+                'status' => $request->status,
             ]
         );
 

@@ -62,16 +62,17 @@ const AddNewAccount: React.FC<UpdatedAddNewAccountProps> = ({
                             value={data.role}
                             name="role"
                             onChange={(e) => setData('role', e.target.value)}
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-gray-500 focus:outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none text-gray-900 focus:border-gray-500 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-100 dark:border-gray-600 dark:focus:border-gray-400"
                             required
                         >
                             <option value="" disabled className="hidden">
                                 -- Select role --
                             </option>
-                            <option value="admin">Admin</option>
-                            <option value="staff">Staff</option>
-                            <option value="passenger">Passenger</option>
+                            <option value="admin" className='dark:bg-gray-900'>Admin</option>
+                            <option value="staff" className='dark:bg-gray-900'>Staff</option>
+                            <option value="passenger" className='dark:bg-gray-900'>Passenger</option>
                         </select>
+
                         <InputError message={errors.role} />
                     </div>
 

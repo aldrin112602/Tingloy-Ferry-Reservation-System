@@ -48,10 +48,10 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                 date: dateObj.toLocaleDateString(),
                 available: route.capacity - route.seats_occupied,
             };
-        });
+        }).filter(route => route.available > 0);
 
         setSchedules(schedules);
-    }, []);
+    }, [routes]);
 
     // Handle adding a passenger
     const addPassenger = (): void => {

@@ -26,6 +26,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
         start_location: routeObj?.start_location || '',
         end_location: routeObj?.end_location || '',
         date_and_time: formatDateTimeForInput(routeObj?.date_and_time || ''),
+        status: routeObj?.status || 'scheduled',
     });
 
     useEffect(() => {
@@ -36,6 +37,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
                 start_location: routeObj.start_location || '',
                 end_location: routeObj.end_location || '',
                 date_and_time: formatDateTimeForInput(routeObj.date_and_time || ''),
+                status: routeObj.status || 'scheduled',
             });
             // console.log('Form data updated with:', routeObj);
         }
@@ -91,10 +93,13 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
     };
 
     return (
-        <dialog ref={dialogRefEdit} className="mx-auto my-auto w-full max-w-md overflow-y-hidden rounded-lg bg-white p-6 shadow-lg">
+        <dialog
+            ref={dialogRefEdit}
+            className="mx-auto my-auto w-full max-w-md overflow-y-hidden rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800"
+        >
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Edit Schedule</h2>
-                <Button onClick={closeEditRouteModal} className="bg-slate-50 text-black hover:text-white">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Schedule</h2>
+                <Button onClick={closeEditRouteModal} className="bg-slate-50 text-black hover:text-white dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
                     ✕
                 </Button>
             </div>
@@ -102,7 +107,9 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
             <form onSubmit={handleSubmit} method="dialog">
                 <div className="mb-4">
                     <Input type="hidden" name="id" value={data.id} />
-                    <label className="mb-1 block text-sm font-medium text-gray-700">Schedule Name</label>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Schedule Name
+                    </label>
                     <Input
                         type="text"
                         name="name"
@@ -112,17 +119,20 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
                             setData('name', e.target.value);
                         }}
                         required
+                        className="dark:bg-gray-900 dark:text-white"
                     />
                     <InputError message={errors.name} />
                 </div>
 
                 <div className="mb-4">
-                    <label className="mb-1 block text-sm font-medium text-gray-700">Select Route</label>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Select Route
+                    </label>
                     <select
                         value={getRouteDisplayValue()}
                         name="route"
                         onChange={(e) => handleRouteChange(e.target.value)}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-gray-500 focus:outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:border-0 file:bg-transparent file:text-sm file:font-medium focus:border-gray-500 focus:outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-900 dark:text-white dark:border-gray-600"
                         required
                     >
                         <option value="" disabled className="hidden">
@@ -136,7 +146,32 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
                 </div>
 
                 <div className="mb-4">
-                    <label className="mb-1 block text-sm font-medium text-gray-700">Date and Time</label>
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Status
+                    </label>
+                    <select
+                        value={data.status}
+                        onChange={(e) => {
+                            setFormData((prev) => ({ ...prev, status: e.target.value as EditRouteFormData['status'] }));
+                            setData('status', e.target.value as EditRouteFormData['status']);
+                        }}
+                        className="w-full rounded-md border border-gray-300 px-3 py-2 dark:bg-gray-900 dark:text-white dark:border-gray-600"
+                        required
+                    >
+                        <option value="scheduled">Scheduled</option>
+                        <option value="departed">Departed</option>
+                        <option value="in_transit">In Transit</option>
+                        <option value="arrived">Arrived</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <InputError message={errors.status} />
+                </div>
+
+
+                <div className="mb-4">
+                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Date and Time
+                    </label>
                     <Input
                         type="datetime-local"
                         value={data.date_and_time}
@@ -146,18 +181,18 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
                         }}
                         required
                         name="date_and_time"
+                        className="dark:bg-gray-900 dark:text-white"
                     />
                     <InputError message={errors.date_and_time} />
                 </div>
 
-                {/* Hidden field to ensure route_id is submitted */}
                 <input type="hidden" name="route_id" value={data.route_id} />
 
                 <div className="mt-6 flex justify-end space-x-3">
                     <Button
                         onClick={closeEditRouteModal}
                         type="button"
-                        className="border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
+                        className="border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
                         tabIndex={5}
                         disabled={processing}
                     >
@@ -171,6 +206,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
                 </div>
             </form>
         </dialog>
+
     );
 };
 

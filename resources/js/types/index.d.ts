@@ -165,6 +165,7 @@ export interface EditRouteFormData {
     start_location: string;
     end_location: string;
     date_and_time: string;
+    status: 'scheduled' | 'departed' | 'in_transit' | 'arrived' | 'cancelled';
     [key: string]: string | number;
 }
 

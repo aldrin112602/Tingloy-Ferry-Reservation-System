@@ -32,13 +32,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // PASSENGER ROUTES
     Route::prefix('passenger')->middleware('role:passenger')->group(function () {
         Route::get('book_ticket', function () {
-            $routes = RouteSchedule::latest()->get();
+            $routes = RouteSchedule::where('status', 'scheduled')->latest()->get();
             return Inertia::render('features/passenger/BookTicket', ['routes' => $routes]);
         })->name('passenger.book_ticket');
-
         Route::get('bookings', [BookingController::class, 'index'])->name('passenger.bookings');
         Route::post('book', [BookingController::class, 'store'])->name('bookings.store');
-
         Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
         
@@ -46,12 +44,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ADMIN ROUTES
     Route::prefix('admin')->middleware('role:admin')->group(function () {
-
         Route::get('accounts_management', [AccountsManagementController::class, 'index'])->name('admin.account.index');
         Route::post('accounts_management', [AccountsManagementController::class, 'store'])->name('admin.account.store');
         Route::delete('accounts_management/{id}', [AccountsManagementController::class, 'destroy'])->name('admin.account.destroy');
         Route::put('accounts_management/{id}', [AccountsManagementController::class, 'put'])->name('admin.account.put');
-
         Route::get('schedule', [RouteController::class, 'index'])->name('admin.schedule.index');
         Route::post('schedule', [RouteController::class, 'store'])->name('admin.schedule.store');
         Route::put('schedule', [RouteController::class, 'put'])->name('admin.schedule.put');
