@@ -28,7 +28,8 @@ const ManageBookings = ({ users }: { users: ManageBookingsProps[] }) => {
 
     const filteredUsers = users.filter((user) => {
         const matchesSearch =
-            user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase());
+            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase());
 
         if (statusFilter === 'all') return matchesSearch;
 
@@ -39,9 +40,11 @@ const ManageBookings = ({ users }: { users: ManageBookingsProps[] }) => {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Bookings Management" />
 
-            <div className="rounded-lg bg-white p-6 shadow-md">
+            <div className="rounded-lg bg-white dark:bg-gray-900 p-6 shadow-md">
                 <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row">
-                    <h1 className="text-2xl font-bold text-gray-800">Bookings Management</h1>
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+                        Bookings Management
+                    </h1>
 
                     <SearchFilters
                         searchTerm={searchTerm}
@@ -54,7 +57,11 @@ const ManageBookings = ({ users }: { users: ManageBookingsProps[] }) => {
                 {filteredUsers.length === 0 ? (
                     <EmptyState message="No bookings match your search criteria" />
                 ) : (
-                    <BookingTable users={filteredUsers} expandedUser={expandedUser} toggleUserExpand={toggleUserExpand} />
+                    <BookingTable
+                        users={filteredUsers}
+                        expandedUser={expandedUser}
+                        toggleUserExpand={toggleUserExpand}
+                    />
                 )}
             </div>
         </AppLayout>

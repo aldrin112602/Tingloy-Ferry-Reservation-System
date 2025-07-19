@@ -10,24 +10,28 @@ const UserRow: React.FC<UserRowProps> = ({ user, isExpanded, toggleExpand }) => 
 
     return (
         <React.Fragment>
-            <tr className="hover:bg-gray-50">
+            <tr className="hover:bg-gray-50 dark:bg-gray-800">
                 <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-200">
-                            <span className="font-medium text-gray-700">{userInitials}</span>
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+                            <span className="font-medium text-gray-700 dark:text-gray-200">{userInitials}</span>
                         </div>
                         <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
                         </div>
                     </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex rounded-full bg-blue-100 px-2 text-xs leading-5 font-semibold text-blue-800">{user.role}</span>
+                    <span className="inline-flex rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 text-xs leading-5 font-semibold text-blue-800 dark:text-blue-300">
+                        {user.role}
+                    </span>
                 </td>
-                <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">{user.booking.length}</td>
+                <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
+                    {user.booking.length}
+                </td>
                 <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
-                    <button onClick={toggleExpand} className="flex items-center gap-1 text-blue-600 hover:text-blue-900">
+                    <button onClick={toggleExpand} className="flex items-center gap-1 text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
                         {isExpanded ? (
                             <>
                                 Hide Details
@@ -48,9 +52,9 @@ const UserRow: React.FC<UserRowProps> = ({ user, isExpanded, toggleExpand }) => 
             </tr>
             {isExpanded && (
                 <tr>
-                    <td colSpan={4} className="bg-gray-50 px-6 py-4">
+                    <td colSpan={4} className="bg-gray-50 dark:bg-gray-800 px-6 py-4">
                         <div className="py-2">
-                            <h3 className="mb-2 text-sm font-medium text-gray-700">Booking History</h3>
+                            <h3 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Booking History</h3>
                             <UserBookings bookings={user.booking} />
                         </div>
                     </td>

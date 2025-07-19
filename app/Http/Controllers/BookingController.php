@@ -144,4 +144,49 @@ class BookingController extends Controller
         $bookings = Booking::where('user_id', Auth::id())->with('passengers')->with('route')->get();
         return Inertia::render('features/passenger/MyBookings', ['bookings' => $bookings]);
     }
+
+    public function cancel(Request $request, Booking $booking)
+    {
+        if (Auth::id() !== $booking->user_id) {
+            return response()->json([
+                'message' => 'You are not authorized to cancel this booking.',
+            ], 403);
+        }
+
+        if ($booking->status === 'confirmed' || $booking->status === 'completed') {
+            return response()->json([
+                'message' => 'This booking cannot be canceled as it is already ' . $booking->status . '.',
+            ], 400);
+        }
+
+        $request->validate([
+            'cancellation_reason' => 'nullable|string|max:1000',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $route = Route::find($booking->route_id);
+            $booking->status = 'canceled';
+            $booking->cancellation_reason = $request->cancellation_reason;
+            $booking->save();
+
+            if ($route) {
+                $route->decrement('seats_occupied', $booking->number_of_passengers);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Booking successfully canceled.',
+                'booking' => $booking,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to cancel booking.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

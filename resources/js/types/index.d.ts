@@ -92,6 +92,7 @@ export interface BookingProps {
     status: string;
     passengers: Passenger[];
     route: RouteProps;
+    cancellation_reason: string | null;
 }
 
 export interface BookingDetailsProps {
@@ -288,6 +289,7 @@ export interface UserRowProps {
 export interface DisplayBookingsProps {
     bookings: BookingProps[];
     toggleBooking: (id: number) => void;
+    handleCancel: (id: number) => void;
     handleEdit: (id: number, e: React.MouseEvent) => void;
     getStatusColor: (status: string) => string;
     expandedBooking: number | null;
