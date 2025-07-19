@@ -13,11 +13,25 @@ use Illuminate\Support\Facades\Auth;
 
 class AccountsManagementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $accounts = User::latest()->paginate(5);
+        $query = User::query();
+        $filterRole = $request->input('role', 'all');
+
+        $allowedRoles = ['all', 'admin', 'staff', 'passenger'];
+        if (!in_array($filterRole, $allowedRoles)) {
+            $filterRole = 'all';
+        }
+
+        if ($filterRole !== 'all') {
+            $query->where('role', $filterRole);
+        }
+
+        $accounts = $query->latest()->paginate(5);
+
         return Inertia::render('features/admin/AccountsManagement', [
             'accounts' => $accounts,
+            'filterRole' => $filterRole,
         ]);
     }
 

@@ -381,3 +381,8 @@ export interface Html5QrScannerProps {
     onScanSuccess: (decodedText: string) => void;
     onScanFailure?: (error: string) => void;
 }
+
+export interface AccountsManagementProps {
+    accounts: PaginatedAccountData;
+    filterRole: 'all' | 'admin' | 'staff' | 'passenger';
+}
