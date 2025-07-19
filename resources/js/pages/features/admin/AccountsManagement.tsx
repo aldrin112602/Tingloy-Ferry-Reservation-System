@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
-import type { AccountProps, AccountsManagementProps, AddAccountFormData } from '@/types';
+import type { AddAccountFormData, AccountsManagementProps } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import AddNewAccount from './components/AddNewAccount';
 import EditAccount from './components/EditAccount';
@@ -15,9 +16,9 @@ const breadcrumbs = [
     },
 ];
 
-
 const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: AccountsManagementProps) => {
     const [currentFilter, setCurrentFilter] = useState<'all' | 'admin' | 'staff' | 'passenger'>(initialFilterRole);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [deleteDialog, setDeleteDialog] = useState({
         isOpen: false,
@@ -63,6 +64,7 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
             onSuccess: () => {
                 toast.success('Account added successfully.');
                 closeAddAccountModal();
+                router.reload({ only: ['accounts'], data: { role: currentFilter } });
             },
             onError: (error) => {
                 console.log('Error adding account:', error);
@@ -94,8 +96,10 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
         });
     };
 
+ 
     const handleFilterChange = (role: 'all' | 'admin' | 'staff' | 'passenger') => {
         setCurrentFilter(role);
+        setSearchTerm('');
         router.get(route('admin.account.index'), { role: role }, {
             preserveState: true,
             preserveScroll: true,
@@ -107,12 +111,32 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
         if (url) {
             const urlObj = new URL(url);
             urlObj.searchParams.set('role', currentFilter);
+            
             router.get(urlObj.toString(), {}, {
                 preserveState: true,
                 preserveScroll: true,
             });
         }
     };
+
+    const filteredAndSearchedAccounts = useMemo(() => {
+        let filtered = accounts.data;
+
+        if (currentFilter !== 'all') {
+            filtered = filtered.filter(account => account.role === currentFilter);
+        }
+
+        if (searchTerm) {
+            const lowerCaseSearchTerm = searchTerm.toLowerCase();
+            filtered = filtered.filter(account =>
+                account.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+                account.email.toLowerCase().includes(lowerCaseSearchTerm)
+            );
+        }
+
+        return filtered;
+    }, [accounts.data, currentFilter, searchTerm]);
+
 
     const formatDate = (dateString: string | number) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -133,36 +157,49 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
                     <Button onClick={openAddAccountModal} className="dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white">Add New Account</Button>
                 </div>
 
-                {/* Filter Buttons */}
-                <div className="mb-4 flex space-x-2">
-                    <Button
-                        variant={currentFilter === 'all' ? 'default' : 'outline'}
-                        onClick={() => handleFilterChange('all')}
-                        className={currentFilter === 'all' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
-                    >
-                        All
-                    </Button>
-                    <Button
-                        variant={currentFilter === 'admin' ? 'default' : 'outline'}
-                        onClick={() => handleFilterChange('admin')}
-                        className={currentFilter === 'admin' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
-                    >
-                        Admin
-                    </Button>
-                    <Button
-                        variant={currentFilter === 'staff' ? 'default' : 'outline'}
-                        onClick={() => handleFilterChange('staff')}
-                        className={currentFilter === 'staff' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
-                    >
-                        Staff
-                    </Button>
-                    <Button
-                        variant={currentFilter === 'passenger' ? 'default' : 'outline'}
-                        onClick={() => handleFilterChange('passenger')}
-                        className={currentFilter === 'passenger' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
-                    >
-                        Passenger
-                    </Button>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                    {/* Filter Buttons */}
+                    <div className="flex space-x-2 flex-wrap">
+                        <Button
+                            variant={currentFilter === 'all' ? 'default' : 'outline'}
+                            onClick={() => handleFilterChange('all')}
+                            className={currentFilter === 'all' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
+                        >
+                            All
+                        </Button>
+                        <Button
+                            variant={currentFilter === 'admin' ? 'default' : 'outline'}
+                            onClick={() => handleFilterChange('admin')}
+                            className={currentFilter === 'admin' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
+                        >
+                            Admin
+                        </Button>
+                        <Button
+                            variant={currentFilter === 'staff' ? 'default' : 'outline'}
+                            onClick={() => handleFilterChange('staff')}
+                            className={currentFilter === 'staff' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
+                        >
+                            Staff
+                        </Button>
+                        <Button
+                            variant={currentFilter === 'passenger' ? 'default' : 'outline'}
+                            onClick={() => handleFilterChange('passenger')}
+                            className={currentFilter === 'passenger' ? 'dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white' : 'dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700'}
+                        >
+                            Passenger
+                        </Button>
+                    </div>
+
+                    {/* Search Input */}
+                    <div className="w-full md:w-auto">
+                        <Input
+                            type="search"
+                            placeholder="Search by name or email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)} // Direct update, filtering handled by useMemo
+                            className="w-full md:max-w-xs dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:placeholder-gray-400 focus:dark:border-blue-500"
+                        />
+                    </div>
                 </div>
 
                 {/* Accounts List Table */}
@@ -179,8 +216,8 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-                                {accounts.data.length > 0 ? (
-                                    accounts.data.map((account) => (
+                                {filteredAndSearchedAccounts.length > 0 ? (
+                                    filteredAndSearchedAccounts.map((account) => (
                                         <tr key={account.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                             <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-gray-100">{account.name}</td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">{account.email}</td>
@@ -253,8 +290,8 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
                                                 className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${link.active
                                                     ? 'z-10 border-indigo-500 bg-indigo-50 text-indigo-600 dark:border-indigo-600 dark:bg-indigo-900 dark:text-indigo-200'
                                                     : 'border-gray-300 bg-white text-gray-500 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'
-                                                    } ${!link.url ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${index === 0 ? 'rounded-l-md' : ''
-                                                    } ${index === accounts.links.length - 1 ? 'rounded-r-md' : ''}`}
+                                                } ${!link.url ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${index === 0 ? 'rounded-l-md' : ''
+                                                } ${index === accounts.links.length - 1 ? 'rounded-r-md' : ''}`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
                                         ))}
