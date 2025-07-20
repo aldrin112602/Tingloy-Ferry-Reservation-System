@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
             $table->string('full_name');
+            $table->integer('children_counts')->nullable()->default(0);
             $table->integer('age');
             $table->string('contact_number')->nullable();
             $table->text('address')->nullable(); 

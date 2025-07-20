@@ -36,6 +36,28 @@ const MainPassengerInformation = ({ form, errors }: MainPassengerInformationProp
                         </SelectContent>
                     </Select>
                 </div>
+
+                <div className="space-y-2 col-span-2">
+                    <Label htmlFor="children_counts">
+                        Number of Children (Ages 0–6, if any)
+                    </Label>
+                    <Input
+                        id="children_counts"
+                        type="number"
+                        min="0"
+                        value={form.data.children_counts}
+                        onChange={(e) => form.setData('children_counts', Number(e.target.value))}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                        Please indicate how many young children (0–6 years old) are traveling with this passenger.
+                    </p>
+                    {errors.children_counts && (
+                        <p className="text-sm text-red-500">{errors.children_counts}</p>
+                    )}
+                </div>
+
+
+
                 <div className="col-span-2 space-y-2">
                     <Label htmlFor="address">Address</Label>
                     <Textarea id="address" value={form.data.address} onChange={(e) => form.setData('address', e.target.value)} />

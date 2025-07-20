@@ -321,6 +321,7 @@ export interface FormDataProps {
     route_id: string;
     full_name: string;
     age: string;
+    children_counts: number;
     passenger_fare_type: string;
     contact_number: string;
     residency_status: string;

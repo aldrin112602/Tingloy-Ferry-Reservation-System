@@ -19,6 +19,8 @@ class BookingController extends Controller
     public function store(Request $request)
     {
 
+        dd($request);
+
         $messages = [
             'additional_passengers.*.full_name.required' => 'All passenger names are required.',
             'additional_passengers.*.age.required' => 'Age is required for all passengers.',
@@ -40,7 +42,7 @@ class BookingController extends Controller
 
         $total_fee = 0;
 
-        $validator = $request->validate([
+        $request->validate([
             'route_id' => 'required|exists:routes,id',
             'full_name' => 'required',
             'age' => 'required|integer|min:0',
@@ -94,6 +96,7 @@ class BookingController extends Controller
                 'age' => $request->age,
                 'contact_number' => $request->contact_number,
                 'address' => $request->address,
+                'children_counts' => $request->children_counts ?? 0,
                 'passenger_fare_type' => $request->passenger_fare_type,
                 'passenger_fare' => $fare_types[$request->passenger_fare_type],
                 'residency_status' => $request->residency_status,

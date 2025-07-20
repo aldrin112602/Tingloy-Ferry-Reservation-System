@@ -30,6 +30,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
         age: '',
         passenger_fare_type: '',
         contact_number: '',
+        children_counts: 0,
         residency_status: 'non-resident',
         address: '',
         additional_passengers: [] as any[],
@@ -156,6 +157,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
             const formData = new FormData();
             formData.append('route_id', form.data.route_id);
             formData.append('full_name', form.data.full_name);
+            formData.append('children_counts', String(form.data.children_counts));
             formData.append('age', form.data.age);
             formData.append('contact_number', form.data.contact_number);
             formData.append('residency_status', form.data.residency_status);
