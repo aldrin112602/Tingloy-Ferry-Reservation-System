@@ -15,10 +15,20 @@ class AdminBookingController extends Controller
 {
     public function index()
     {
-        // show all bookings under User
-        $users = User::where('role', 'passenger')->with('booking')->get();
+        $users = User::where('role', 'passenger')
+            ->with('booking')
+            ->get()
+            ->sortBy('created_at')
+            ->values();
 
-        return Inertia::render('features/admin/ManageBookings', ['users' => $users]);
+
+        $mappedUsers = $users->map(function ($user) {
+            $userArray = $user->toArray();
+            $userArray['booking'] = $user->booking->sortBy('created_at')->values()->toArray();
+            return $userArray;
+        });
+
+        return Inertia::render('features/admin/ManageBookings', ['users' => $mappedUsers]);
     }
 
 
@@ -49,7 +59,7 @@ class AdminBookingController extends Controller
 
         $qrURL = "https://quickchart.io/qr?text=" . urlencode($encrypted) . "&size=500&download=true";
 
- 
+
         $booking->user->notify(new BookingNotification($qrURL, $booking));
 
         $booking->status = 'approved';
