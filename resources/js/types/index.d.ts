@@ -53,6 +53,7 @@ export interface RouteProps {
     capacity: number;
     seats_occupied: number;
     status: string;
+    passengers?: Passenger[];
     [key: string]: string;
 }
 
@@ -199,6 +200,8 @@ export interface RouteItemProps {
     route: RouteProps;
     onDelete?: () => void;
     openEditDialog: (route: RouteProps) => void;
+    setRoute: (route: RouteProps) => void;
+    setShowOverview: (showOverview: boolean) => void;
 }
 
 export interface Ferry {

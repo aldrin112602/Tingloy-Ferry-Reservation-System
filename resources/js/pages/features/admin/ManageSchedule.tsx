@@ -8,7 +8,7 @@ import { useRef, useState } from 'react';
 import AddNewSchedule from './components/AddNewSchedule';
 import EditSchedule from './components/EditSchedule';
 import RouteItem from './components/RouteItem';
-
+import { OverviewPageModal } from './components/OverviewPageModal';
 const breadcrumbs = [
     {
         title: 'Routes Management',
@@ -28,12 +28,16 @@ const statusFilters = [
 
 
 const ManageSchedule = ({ paginatedResponseData, currentStatus }: { paginatedResponseData: FerrySchedulePaginatedResponse; currentStatus?: string; }) => {
-    const [routeObj, setRouteObj] = useState({});
+
+    console.log(paginatedResponseData)
+    const [routeObj, setRouteObj] = useState<RouteProps>({});
     const { data, setData, post, processing, errors, reset } = useForm<Required<AddRouteFormData>>({
         name: '',
         route: '',
         date_and_time: '',
     });
+
+    const [showOverview, setShowOverview] = useState(false);
 
     const dialogRefStore = useRef<HTMLDialogElement>(null);
     const dialogRefEdit = useRef<HTMLDialogElement>(null);
@@ -126,7 +130,7 @@ const ManageSchedule = ({ paginatedResponseData, currentStatus }: { paginatedRes
                 ) : (
                     <div className="space-y-4">
                         {paginatedResponseData.data.map((route) => (
-                            <RouteItem key={route.id} route={route} openEditDialog={openEditRouteModal} />
+                            <RouteItem setRoute={setRouteObj} setShowOverview={setShowOverview} key={route.id} route={route} openEditDialog={openEditRouteModal} />
                         ))}
                     </div>
                 )}
@@ -165,6 +169,7 @@ const ManageSchedule = ({ paginatedResponseData, currentStatus }: { paginatedRes
                 />
 
                 <EditSchedule dialogRefEdit={dialogRefEdit} routeObj={routeObj} />
+                <OverviewPageModal showOverview={showOverview} setShowOverview={setShowOverview} routeObj={routeObj} />
             </div>
         </AppLayout>
     );

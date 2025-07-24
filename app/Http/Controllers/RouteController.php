@@ -11,34 +11,35 @@ use Carbon\Carbon;
 class RouteController extends Controller
 {
     public function index(Request $request)
-{
-    $today = Carbon::today();
-    $now = Carbon::now();
+    {
+        $today = Carbon::today();
+        $now = Carbon::now();
 
-    // Auto-update past trips
-    Route::where('status', '!=', 'finished')
-        ->where('date_and_time', '<', $now)
-        ->update([
-            'status' => 'finished',
+        // Auto-update past trips
+        Route::where('status', '!=', 'finished')
+            ->where('date_and_time', '<', $now)
+            ->update([
+                'status' => 'finished',
+            ]);
+
+        $status = $request->get('status');
+
+        $query = Route::with('passengers'); // 👈 eager load passengers
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $paginatedResponseData = $query->orderBy('date_and_time', 'asc')
+            ->paginate(20)
+            ->appends($request->query());
+
+        return Inertia::render('features/admin/ManageSchedule', [
+            'paginatedResponseData' => $paginatedResponseData,
+            'currentStatus' => $status,
         ]);
-
-    $status = $request->get('status');
-
-    $query = Route::query();
-
-    if ($status) {
-        $query->where('status', $status);
     }
 
-    $paginatedResponseData = $query->orderBy('date_and_time', 'asc')
-        ->paginate(20)
-        ->appends($request->query());
-
-    return Inertia::render('features/admin/ManageSchedule', [
-        'paginatedResponseData' => $paginatedResponseData,
-        'currentStatus' => $status,
-    ]);
-}
 
 
     public function store(Request $request)

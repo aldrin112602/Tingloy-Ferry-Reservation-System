@@ -1,4 +1,4 @@
-import { RouteItemProps } from '@/types';
+import { RouteItemProps, RouteProps } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { useState } from 'react';
@@ -8,9 +8,10 @@ const RouteItem = ({
     route,
     onDelete,
     openEditDialog,
+    setRoute,
+    setShowOverview
 }: RouteItemProps) => {
     const [confirmDelete, setConfirmDelete] = useState(false);
-
     const { delete: destroy, processing } = useForm();
 
     const handleDelete = async () => {
@@ -42,22 +43,28 @@ const RouteItem = ({
         }
     };
 
-    const getStatusClass = (status: string): string => {
-    switch (status) {
-        case 'scheduled':
-            return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-        case 'departed':
-            return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-        case 'in_transit':
-            return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-        case 'arrived':
-            return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
-        case 'cancelled':
-            return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-        default:
-            return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    const setOverview = (route: RouteProps) => {
+        setRoute(route)
+        setShowOverview(true);
+
     }
-};
+
+    const getStatusClass = (status: string): string => {
+        switch (status) {
+            case 'scheduled':
+                return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+            case 'departed':
+                return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+            case 'in_transit':
+                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+            case 'arrived':
+                return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+            case 'cancelled':
+                return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+            default:
+                return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+        }
+    };
 
     return (
         <div className="mb-4 flex flex-col items-start justify-between rounded-lg bg-white p-4 shadow dark:bg-gray-800 dark:text-gray-100 md:flex-row md:items-center">
@@ -90,6 +97,13 @@ const RouteItem = ({
 
             <div className="mt-4 flex gap-2 md:mt-0">
                 <button
+                    onClick={() => setOverview(route)}
+                    className="rounded bg-blue-50 px-3 py-1 text-xs text-blue-600 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800"
+                >
+                    View Overview
+                </button>
+
+                <button
                     onClick={() => openEditDialog(route)}
                     className="cursor-pointer rounded bg-yellow-50 px-3 py-1 text-xs text-yellow-600 hover:bg-yellow-100 dark:bg-yellow-900 dark:text-yellow-300 dark:hover:bg-yellow-800"
                 >
@@ -99,11 +113,10 @@ const RouteItem = ({
                 <button
                     onClick={handleDelete}
                     disabled={processing}
-                    className={`rounded px-3 py-1 text-xs ${
-                        confirmDelete
+                    className={`rounded px-3 py-1 text-xs ${confirmDelete
                             ? 'bg-red-600 text-white hover:bg-red-700'
                             : 'bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900 dark:text-red-300 dark:hover:bg-red-800'
-                    }`}
+                        }`}
                 >
                     {confirmDelete ? 'Confirm' : 'Delete'}
                 </button>
