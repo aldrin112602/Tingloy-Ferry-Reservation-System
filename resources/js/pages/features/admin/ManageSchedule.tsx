@@ -16,9 +16,18 @@ const breadcrumbs = [
     },
 ];
 
+const statusFilters = [
+    'scheduled',
+    'departed',
+    'in_transit',
+    'arrived',
+    'cancelled',
+    'finished',
+];
 
 
-const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: FerrySchedulePaginatedResponse }) => {
+
+const ManageSchedule = ({ paginatedResponseData, currentStatus }: { paginatedResponseData: FerrySchedulePaginatedResponse; currentStatus?: string; }) => {
     const [routeObj, setRouteObj] = useState({});
     const { data, setData, post, processing, errors, reset } = useForm<Required<AddRouteFormData>>({
         name: '',
@@ -28,6 +37,20 @@ const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: Ferr
 
     const dialogRefStore = useRef<HTMLDialogElement>(null);
     const dialogRefEdit = useRef<HTMLDialogElement>(null);
+
+    const handleFilter = (status: string | null) => {
+        const url = new URL(window.location.href);
+
+        if (status) {
+            url.searchParams.set('status', status);
+        } else {
+            url.searchParams.delete('status');
+        }
+        url.searchParams.set('page', '1');
+
+        window.location.href = url.toString();
+    };
+
 
     const openAddRouteModal = () => {
         if (dialogRefStore.current) {
@@ -71,6 +94,25 @@ const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: Ferr
                     <Button onClick={openAddRouteModal}>Add New Route</Button>
                 </div>
 
+                {/* Status Filter Buttons */}
+                <div className="flex flex-wrap gap-2">
+                    <Button
+                        variant={currentStatus ? 'outline' : 'default'}
+                        onClick={() => handleFilter(null)}
+                    >
+                        All
+                    </Button>
+                    {statusFilters.map((status) => (
+                        <Button
+                            key={status}
+                            variant={currentStatus === status ? 'default' : 'outline'}
+                            onClick={() => handleFilter(status)}
+                        >
+                            {status.replace('_', ' ').toUpperCase()}
+                        </Button>
+                    ))}
+                </div>
+
                 {paginatedResponseData.data.length === 0 ? (
                     <div className="rounded-lg bg-white py-12 text-center shadow">
                         <p className="text-gray-500">No routes available.</p>
@@ -99,13 +141,12 @@ const ManageSchedule = ({ paginatedResponseData }: { paginatedResponseData: Ferr
                                 <Link
                                     key={i}
                                     href={link.url || '#'}
-                                    className={`rounded px-3 py-1 ${
-                                        link.active
-                                            ? 'bg-blue-600 text-white'
-                                            : link.url === null
-                                              ? 'cursor-not-allowed bg-gray-100 text-gray-400'
-                                              : 'bg-white text-blue-600 hover:bg-blue-50'
-                                    }`}
+                                    className={`rounded px-3 py-1 ${link.active
+                                        ? 'bg-blue-600 text-white'
+                                        : link.url === null
+                                            ? 'cursor-not-allowed bg-gray-100 text-gray-400'
+                                            : 'bg-white text-blue-600 hover:bg-blue-50'
+                                        }`}
                                     dangerouslySetInnerHTML={{ __html: link.label }}
                                 />
                             );

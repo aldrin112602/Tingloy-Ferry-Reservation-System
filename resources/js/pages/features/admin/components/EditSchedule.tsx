@@ -163,6 +163,7 @@ const EditSchedule: React.FC<EditScheduleProps> = ({ dialogRefEdit, routeObj }) 
                         <option value="in_transit">In Transit</option>
                         <option value="arrived">Arrived</option>
                         <option value="cancelled">Cancelled</option>
+                        <option value="finished">Finished</option>
                     </select>
                     <InputError message={errors.status} />
                 </div>

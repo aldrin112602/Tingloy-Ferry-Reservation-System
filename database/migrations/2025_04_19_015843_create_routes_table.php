@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('capacity')->default(240)->nullable();
             $table->dateTime('date_and_time')->nullable();
             $table->integer('seats_occupied')->default(0)->nullable();
-            $table->enum('status', ['scheduled', 'departed', 'in_transit', 'arrived', 'cancelled'])->default('scheduled');
+            $table->enum('status', ['scheduled', 'departed', 'in_transit', 'arrived', 'cancelled', 'finished'])->default('scheduled');
             $table->timestamps();
         });
 

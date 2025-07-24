@@ -6,14 +6,40 @@ use App\Models\Route;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class RouteController extends Controller
 {
-    public function index()
-    {
-        $paginatedResponseData = Route::latest()->paginate(10);
-        return Inertia::render('features/admin/ManageSchedule', ['paginatedResponseData' => $paginatedResponseData]);
+    public function index(Request $request)
+{
+    $today = Carbon::today();
+    $now = Carbon::now();
+
+    // Auto-update past trips
+    Route::where('status', '!=', 'finished')
+        ->where('date_and_time', '<', $now)
+        ->update([
+            'status' => 'finished',
+        ]);
+
+    $status = $request->get('status');
+
+    $query = Route::query();
+
+    if ($status) {
+        $query->where('status', $status);
     }
+
+    $paginatedResponseData = $query->orderBy('date_and_time', 'asc')
+        ->paginate(20)
+        ->appends($request->query());
+
+    return Inertia::render('features/admin/ManageSchedule', [
+        'paginatedResponseData' => $paginatedResponseData,
+        'currentStatus' => $status,
+    ]);
+}
+
 
     public function store(Request $request)
     {
@@ -55,7 +81,7 @@ class RouteController extends Controller
             'status' => [
                 'required',
                 'string',
-                Rule::in(['scheduled', 'departed', 'in_transit', 'arrived', 'cancelled']),
+                Rule::in(['scheduled', 'departed', 'in_transit', 'arrived', 'cancelled', 'finished']),
             ],
         ]);
 
