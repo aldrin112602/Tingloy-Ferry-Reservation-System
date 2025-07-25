@@ -1,6 +1,6 @@
 import { Passenger, RouteProps } from '@/types';
 import { format } from 'date-fns';
-
+import { handlePrintOverview } from './handlePrintOverview';
 export const OverviewPageModal = ({
     showOverview,
     setShowOverview,
@@ -24,7 +24,11 @@ export const OverviewPageModal = ({
                                 ✕
                             </button>
                         </div>
-
+                        <div className="flex justify-end items-center">
+                            <button onClick={() => handlePrintOverview(routeObj)} className="px-3 py-2 cursor-pointer bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Print Overview
+                            </button>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-base">
                             <p><strong>Route:</strong> {routeObj?.name} ({routeObj?.route_code})</p>
                             <p><strong>From:</strong> {routeObj?.start_location}</p>
