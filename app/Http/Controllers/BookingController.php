@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Notification;
 use App\Models\Passenger;
 use App\Models\Route;
 use Illuminate\Http\Request;
@@ -18,8 +19,6 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-
-        dd($request);
 
         $messages = [
             'additional_passengers.*.full_name.required' => 'All passenger names are required.',
@@ -129,6 +128,13 @@ class BookingController extends Controller
 
             DB::commit();
 
+            Notification::create([
+                'sender_id' => Auth::id(),
+                'booking_id' => $booking->id,
+                'type' => 'booking',
+                'message' => 'Booking successful',
+            ]);
+
             return response()->json([
                 'message' => 'Booking successful. Proceed to payment.',
                 'booking' => $booking,
@@ -173,6 +179,14 @@ class BookingController extends Controller
             $booking->status = 'canceled';
             $booking->cancellation_reason = $request->cancellation_reason;
             $booking->save();
+
+            // Create a notification for the cancellation
+            Notification::create([
+                'sender_id' => Auth::id(),
+                'booking_id' => $booking->id,
+                'type' => 'cancellation',
+                'message' => $request->cancellation_reason,
+            ]);
 
             if ($route) {
                 $route->decrement('seats_occupied', $booking->number_of_passengers);

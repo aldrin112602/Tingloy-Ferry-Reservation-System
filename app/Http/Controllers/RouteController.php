@@ -24,7 +24,7 @@ class RouteController extends Controller
 
         $status = $request->get('status');
 
-        $query = Route::with('passengers'); // 👈 eager load passengers
+        $query = Route::with('passengers', 'bookings');
 
         if ($status) {
             $query->where('status', $status);

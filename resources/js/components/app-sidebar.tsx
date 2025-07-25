@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BarChart2, BookOpen, Calendar, Compass, CreditCard, LayoutGrid, ScanLine, Settings2, Ship, Ticket, UserCog, Users } from 'lucide-react';
+import { Bell, BookOpen, Calendar, LayoutGrid, ScanLine, Settings2, Ticket, UserCog, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 // Passenger menu
@@ -12,6 +12,7 @@ const passengerNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
     { title: 'Book Ticket', href: '/passenger/book_ticket', icon: Ticket },
     { title: 'My Bookings', href: '/passenger/bookings', icon: BookOpen },
+    { title: 'Notifications', href: '/passenger/notifications', icon: Bell },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 
@@ -29,6 +30,7 @@ const adminNavItems: NavItem[] = [
     { title: 'Manage Schedule', href: '/admin/schedule', icon: Calendar },
     { title: 'Manage Bookings', href: '/admin/bookings', icon: BookOpen },
     { title: 'Manage Accounts', href: '/admin/accounts_management', icon: UserCog },
+    { title: 'Notifications', href: '/admin/notifications', icon: Bell },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 

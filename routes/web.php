@@ -10,7 +10,7 @@ use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\QrController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\AccountsManagementController;
-
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -31,6 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // PASSENGER ROUTES
     Route::prefix('passenger')->middleware('role:passenger')->group(function () {
+        Route::get('notifications', [NotificationController::class, 'index'])->name('passenger.notifications');
+
         Route::get('book_ticket', function () {
             $routes = RouteSchedule::where('status', 'scheduled')->latest()->get();
             return Inertia::render('features/passenger/BookTicket', ['routes' => $routes]);
@@ -44,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ADMIN ROUTES
     Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::get('notifications', [NotificationController::class, 'index'])->name('admin.notifications');
         Route::get('accounts_management', [AccountsManagementController::class, 'index'])->name('admin.account.index');
         Route::post('accounts_management', [AccountsManagementController::class, 'store'])->name('admin.account.store');
         Route::delete('accounts_management/{id}', [AccountsManagementController::class, 'destroy'])->name('admin.account.destroy');

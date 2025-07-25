@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Booking;
+use App\Models\Notification;
 use App\Notifications\BookingNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
 
 
 class AdminBookingController extends Controller
@@ -59,6 +61,16 @@ class AdminBookingController extends Controller
 
         $qrURL = "https://quickchart.io/qr?text=" . urlencode($encrypted) . "&size=500&download=true";
 
+        Notification::create(
+            [
+                'sender_id' => Auth::id(),
+                'receiver_id' => $booking->user->id,
+                'booking_id' => $booking->id,
+                'type' => 'Booking Status',
+                'message' => 'Congratulations your booking has been approved successfully',
+            ]
+        );
+
 
         $booking->user->notify(new BookingNotification($qrURL, $booking));
 
@@ -81,6 +93,19 @@ class AdminBookingController extends Controller
 
         $booking->status = 'rejected';
         $booking->save();
+
+
+        Notification::create(
+            [
+                'sender_id' => Auth::id(),
+                'receiver_id' => $booking->user->id,
+                'booking_id' => $booking->id,
+                'type' => 'Booking Status',
+                'message' => 'Sorry your booking has been rejected.',
+            ]
+        );
+
+
         return redirect()->back()->with('success', 'Booking rejected successfully');
     }
 }
