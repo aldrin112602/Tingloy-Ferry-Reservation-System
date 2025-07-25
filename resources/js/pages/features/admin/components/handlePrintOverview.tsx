@@ -2,7 +2,7 @@ import { RouteProps, Passenger } from '@/types';
 import { format } from 'date-fns';
 
 export const handlePrintOverview = (routeObj?: RouteProps) => {
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    const printWindow = window.open('', '_blank', 'width=900,height=700');
 
     if (!printWindow && !routeObj) return;
 
