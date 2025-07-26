@@ -93,7 +93,7 @@ class BookingController extends Controller
                 'children_counts' => $request->children_counts ?? 0,
                 'childrens_contact_person' => $request->childrens_contact_person ?? null,
                 'childrens_contact_number' => $request->childrens_contact_number ?? null,
-                'payment_method' => $request->payment_method,
+                'payment_method' => ucwords($request->payment_method),
                 'receipt_image' => $receiptPath,
                 'status' => 'pending',
             ]);

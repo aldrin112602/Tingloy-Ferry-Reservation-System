@@ -16,7 +16,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
     const [step, setStep] = useState(1);
     const [schedules, setSchedules] = useState<Schedule[]>([]);
     const [additionalPassengers, setAdditionalPassengers] = useState<Passenger[]>([]);
-    const [paymentMethod, setPaymentMethod] = useState('gcash');
+    const [paymentMethod, setPaymentMethod] = useState('cash');
     const [receiptImage, setReceiptImage] = useState<string | null>(null);
     const [bookingComplete, setBookingComplete] = useState(false);
     const [bookingReference, setBookingReference] = useState<string | null>(null);

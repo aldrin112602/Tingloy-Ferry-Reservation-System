@@ -4,7 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { PaginationLink } from '@/types';
+import { SetupPaymentsProps } from '@/types';
 
 const breadcrumbs = [
     {
@@ -12,19 +12,6 @@ const breadcrumbs = [
         href: '/admin/setup_payments',
     },
 ];
-
-interface SetupPaymentsProps {
-    SetupPayments: {
-        data: {
-            id: number;
-            account_number: string;
-            account_name: string;
-            payment_method_name: string;
-            created_at: string;
-        }[];
-        links: PaginationLink[];
-    }
-}
 
 const SetupPayments = ({ SetupPayments }: SetupPaymentsProps) => {
     const handleDelete = async (id: number) => {

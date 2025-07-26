@@ -18,6 +18,12 @@ class SetupPaymentController extends Controller
         ]);
     }
 
+    public function getSetupPayments()
+    {
+        $SetupPayments = SetupPayment::all();
+        return response()->json($SetupPayments, 200);
+    }
+
     public function store(Request $request)
     {
         try {

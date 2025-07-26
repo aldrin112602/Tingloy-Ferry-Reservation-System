@@ -3,11 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { PaymentSectionProps } from '@/types';
-import { Trash2, Upload } from 'lucide-react';
+import { PaymentMethod, PaymentSectionProps } from '@/types';
+import { CircleDollarSign, CreditCard, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import BookingSummary from './BookingSummary';
 import { fareTypes } from './PassengerFareType';
+import axios from 'axios';
+
 
 const PaymentSection = ({
     paymentMethod,
@@ -20,6 +22,7 @@ const PaymentSection = ({
     handleReceiptUpload,
 }: PaymentSectionProps) => {
     const [totalFare, setTotalFare] = useState(0);
+    const [setupPayments, setSetupPayments] = useState<PaymentMethod[]>([]);
 
     useEffect(() => {
         const mainFare = fareTypes.find((item) => item.name === mainPassengerFare)?.price || 160;
@@ -31,24 +34,68 @@ const PaymentSection = ({
         setTotalFare(total);
     }, [mainPassengerFare, additionalPassengers]);
 
+
+    useEffect(() => {
+        axios.get('api/setup_payments')
+            .then(response => {
+                setSetupPayments(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching setup payments:', error);
+            });
+    }, [setupPayments.length]);
+
     return (
         <>
             {/* Payment Section */}
             <div className="mb-6">
                 <h3 className="mb-4 text-lg font-medium">Payment Method</h3>
-                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="flex flex-col space-y-3">
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="gcash" id="gcash" />
-                        <Label htmlFor="gcash">GCash (Upload Receipt)</Label>
+                <RadioGroup
+                    defaultValue="cash"
+                    className="grid grid-cols-1 gap-4"
+                    value={paymentMethod}
+                    onValueChange={setPaymentMethod}
+                >
+                    <div>
+                        <RadioGroupItem value="cash" id="r1" className="peer sr-only" />
+                        <Label
+                            htmlFor="r1"
+                            className="flex flex-col items-start justify-between rounded-md border-2 border-muted bg-transparent p-4 text-muted-foreground hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                        >
+                            <div className="flex items-center space-x-2">
+                                <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+                                <div className="text-sm font-medium text-foreground">Cash</div>
+                            </div>
+                            <div className="mt-2 text-xs text-muted-foreground">Pay directly at the terminal</div>
+                        </Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="cash" id="cash" />
-                        <Label htmlFor="cash">Cash (Pay at Terminal)</Label>
-                    </div>
+
+                    {setupPayments.map((method, index) => (
+                        <div key={index}>
+                            <RadioGroupItem
+                                value={method.payment_method_name.toLowerCase()}
+                                id={`r${index + 2}`}
+                                className="peer sr-only"
+                            />
+                            <Label
+                                htmlFor={`r${index + 2}`}
+                                className="flex flex-col items-start justify-between rounded-md border-2 border-muted bg-transparent p-4 text-muted-foreground hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                                    <div className="text-sm font-medium text-foreground">{method.payment_method_name}</div>
+                                </div>
+                                <div className="mt-2 text-xs text-muted-foreground">
+                                    {method.account_number} ({method.account_name})
+                                </div>
+                            </Label>
+                        </div>
+                    ))}
                 </RadioGroup>
+
             </div>
 
-            {paymentMethod === 'gcash' && (
+            {paymentMethod !== 'cash' && (
                 <div className="mb-6">
                     <h3 className="mb-2 text-lg font-medium">GCash Payment</h3>
                     <p className="text-muted-foreground mb-4">

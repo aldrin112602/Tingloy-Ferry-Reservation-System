@@ -31,6 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // PASSENGER ROUTES
     Route::prefix('passenger')->middleware('role:passenger')->group(function () {
+        Route::get('/api/setup_payments', [SetupPaymentController::class, 'getSetupPayments']);
+        
         Route::get('notifications', [NotificationController::class, 'index'])->name('passenger.notifications');
 
         Route::get('book_ticket', function () {

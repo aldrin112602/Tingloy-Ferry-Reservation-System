@@ -397,3 +397,19 @@ export interface AccountsManagementProps {
     accounts: PaginatedAccountData;
     filterRole: 'all' | 'admin' | 'staff' | 'passenger';
 }
+
+
+export interface PaymentMethod {
+    id: number;
+    account_number: string;
+    account_name: string;
+    payment_method_name: string;
+    created_at: string;
+}
+
+export interface SetupPaymentsProps {
+    SetupPayments: {
+        data: PaymentMethod[];
+        links: PaginationLink[];
+    }
+}
