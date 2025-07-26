@@ -245,9 +245,27 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                 </div>
 
                 {/* Passengers Information */}
-                <div className="mt-6 rounded-lg bg-white p-6 shadow-md
-                               dark:bg-gray-800 dark:shadow-lg"> {/* Dark mode for card background/shadow */}
+                <div className="mt-6 rounded-lg bg-white p-6 shadow-md dark:bg-gray-800 dark:shadow-lg">
                     <h2 className="mb-4 text-lg font-semibold dark:text-gray-100">Passenger Information</h2>
+
+                    {
+                        (booking.children_counts || booking.childrens_contact_person || booking.childrens_contact_number) && (
+                            <div className='block md:flex justify-between'>
+                                <div className="mb-4">
+                                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Number of Children (Ages 0–6)</p>
+                                    <p className="mt-1 dark:text-gray-200">{booking.children_counts || 0} child(ren)</p>
+                                </div>
+                                <div className="mb-4">
+                                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Children's Contact Person</p>
+                                    <p className="mt-1 dark:text-gray-200">{booking.childrens_contact_person || 'N/A'}</p>
+                                </div>
+                                <div className="mb-4">
+                                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Children's Contact Number</p>
+                                    <p className="mt-1 dark:text-gray-200">{booking.childrens_contact_number || 'N/A'}</p>
+                                </div>
+                            </div>
+                        )
+                    }
 
                     <div className="mx-auto overflow-x-auto lg:max-w-5xl">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700"> {/* Dark mode for table dividers */}
@@ -266,7 +284,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                         Address
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
-                                        File
+                                        Valid ID
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">
                                         Fare
@@ -304,17 +322,22 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
 
                                         {/* File (download link) */}
                                         <td className="px-6 py-4 text-sm whitespace-nowrap text-blue-600">
-                                            {passenger.file ? (
+                                            {passenger.id_file ? (
                                                 <a
-                                                    href={passenger.file}
+                                                    className="inline-block hover:shadow-lg"
+                                                    href={`${baseUrl}/storage/${passenger.id_file}`}
+                                                    title="Open Image to a new tab?"
                                                     target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="underline hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200" // Dark mode for link
                                                 >
-                                                    View File
+                                                    <img
+                                                        src={`${baseUrl}/storage/${passenger.id_file}`}
+                                                        width={'50px'}
+                                                        height={'50px'}
+                                                        className="cursor-pointer object-cover"
+                                                    />
                                                 </a>
                                             ) : (
-                                                <span className="text-gray-400 italic dark:text-gray-500">No File</span>
+                                                <span className="text-gray-400 italic dark:text-gray-500">No Image Uploaded</span>
                                             )}
                                         </td>
 

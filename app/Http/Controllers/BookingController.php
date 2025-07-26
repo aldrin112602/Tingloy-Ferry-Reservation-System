@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Illuminate\Http\UploadedFile;
 
 
 class BookingController extends Controller
@@ -60,6 +61,8 @@ class BookingController extends Controller
             'additional_passengers.*.address' => 'required_with:additional_passengers',
         ], $messages);
 
+
+
         $route = Route::findOrFail($request->route_id);
         $additionalCount = is_array($request->additional_passengers) ? count($request->additional_passengers) : 0;
         $totalPassengers = 1 + $additionalCount;
@@ -78,10 +81,18 @@ class BookingController extends Controller
                 $receiptPath = $request->file('receipt_image')->store('receipts', 'public');
             }
 
+            $idPath = null;
+            if ($request->hasFile('id_file') && in_array($request->passenger_fare_type, ['Student with valid ID', 'Senior/PWD with valid ID'])) {
+                $idPath = $request->file('id_file')->store('ids', 'public');
+            }
+
             $booking = Booking::create([
                 'user_id' => Auth::id() ?? 1,
                 'route_id' => (int) $request->route_id,
                 'number_of_passengers' => $totalPassengers,
+                'children_counts' => $request->children_counts ?? 0,
+                'childrens_contact_person' => $request->childrens_contact_person ?? null,
+                'childrens_contact_number' => $request->childrens_contact_number ?? null,
                 'payment_method' => $request->payment_method,
                 'receipt_image' => $receiptPath,
                 'status' => 'pending',
@@ -95,16 +106,21 @@ class BookingController extends Controller
                 'age' => $request->age,
                 'contact_number' => $request->contact_number,
                 'address' => $request->address,
-                'children_counts' => $request->children_counts ?? 0,
                 'passenger_fare_type' => $request->passenger_fare_type,
                 'passenger_fare' => $fare_types[$request->passenger_fare_type],
                 'residency_status' => $request->residency_status,
                 'is_main_passenger' => true,
+                'id_file' => $idPath,
             ]);
 
             if (!empty($request->additional_passengers)) {
                 foreach ($request->additional_passengers as $passenger) {
                     $total_fee = $total_fee + $fare_types[$passenger['passenger_fare_type']];
+                    $requiresId = in_array($passenger['passenger_fare_type'], ['Student with valid ID', 'Senior/PWD with valid ID']);
+                    $idPath = null;
+                    if ($requiresId && isset($passenger['id_file']) && $passenger['id_file'] instanceof UploadedFile) {
+                        $idPath = $passenger['id_file']->store('ids', 'public');
+                    }
 
                     Passenger::create([
                         'booking_id' => $booking->id,
@@ -116,6 +132,7 @@ class BookingController extends Controller
                         'passenger_fare' => $fare_types[$passenger['passenger_fare_type']],
                         'residency_status' => $passenger['residency_status'],
                         'is_main_passenger' => false,
+                        'id_file' => $idPath,
                     ]);
                 }
             }

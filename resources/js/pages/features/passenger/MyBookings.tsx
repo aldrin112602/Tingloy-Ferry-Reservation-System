@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 import DisplayBookings from './components/my-bookings/DisplayBookings';
 import NoBookingsFound from './components/my-bookings/NoBookingsFound';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 
 const breadcrumbs: BreadcrumbItem[] = [

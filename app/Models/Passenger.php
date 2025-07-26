@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Passenger extends Model
 {
@@ -17,6 +18,7 @@ class Passenger extends Model
         'passenger_fare_type',
         'residency_status',
         'is_main_passenger',
+        'id_file',
     ];
 
     protected $casts = [
@@ -26,5 +28,13 @@ class Passenger extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    public function getValidIdUrlAttribute()
+    {
+        if ($this->valid_id_path) {
+            return Storage::url($this->valid_id_path);
+        }
+        return null;
     }
 }

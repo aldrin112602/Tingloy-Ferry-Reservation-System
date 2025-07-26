@@ -21,6 +21,9 @@ return new class extends Migration
             $table->integer('total_fee')->default(160);
             $table->boolean('is_paid')->default(false);
             $table->integer('number_of_passengers')->default(1);
+            $table->integer('children_counts')->nullable()->default(0);
+            $table->string('childrens_contact_person')->nullable()->default('N/A');
+            $table->string('childrens_contact_number')->nullable()->default('N/A');
             $table->string('status')->default('pending');
             $table->timestamps();
         });

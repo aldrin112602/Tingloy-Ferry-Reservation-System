@@ -24,7 +24,10 @@ class Booking extends Model
         'total_fee',
         'is_paid',
         'number_of_passengers',
-        'status',   
+        'status', 
+        'children_counts',
+        'childrens_contact_person',
+        'childrens_contact_number',  
     ];
 
 

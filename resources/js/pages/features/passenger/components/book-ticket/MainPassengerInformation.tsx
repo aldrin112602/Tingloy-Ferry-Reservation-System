@@ -57,6 +57,25 @@ const MainPassengerInformation = ({ form, errors }: MainPassengerInformationProp
                 </div>
 
 
+                <div className="space-y-2">
+                    <Label htmlFor="childrens_contact_person">Childrens Contact Person (Optional)</Label>
+                    <Input
+                        id="childrens_contact_person"
+                        value={form.data.childrens_contact_person}
+                        onChange={(e) => form.setData('childrens_contact_person', e.target.value)}
+                    />
+                    {errors.childrens_contact_person && <p className="text-sm text-red-500">Required</p>}
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="childrens_contact_number">Childrens Contact Number (Optional)</Label>
+                    <Input
+                        id="childrens_contact_number"
+                        value={form.data.childrens_contact_number}
+                        onChange={(e) => form.setData('childrens_contact_number', e.target.value)}
+                    />
+                    {errors.childrens_contact_number && <p className="text-sm text-red-500">Required</p>}
+                </div>
 
                 <div className="col-span-2 space-y-2">
                     <Label htmlFor="address">Address</Label>

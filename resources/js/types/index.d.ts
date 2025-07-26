@@ -94,6 +94,9 @@ export interface BookingProps {
     passengers: Passenger[];
     route: RouteProps;
     cancellation_reason: string | null;
+    children_counts: number;
+    childrens_contact_person: string | null;
+    childrens_contact_number: string | null;
 }
 
 export interface BookingDetailsProps {
@@ -232,6 +235,7 @@ export interface Passenger {
     passenger_fare_type: string;
     passenger_fare?: number;
     file?: file | string | null;
+    id_file?: File | null;
 }
 
 export interface ViewPassengersProps {
@@ -332,6 +336,8 @@ export interface FormDataProps {
     additional_passengers: Passenger[];
     payment_method: string;
     receipt_image: File | null;
+    childrens_contact_person: string;
+    childrens_contact_number: string;
 }
 
 export interface MainPassengerInformationProps {
@@ -368,7 +374,7 @@ export interface AdditionalPassengerProps {
 
     additionalPassengers: Passenger[];
     removePassenger: (id: number, index: number) => void;
-    handlePassengerChange: (id: number, index: number, field: string, value: string) => void;
+    handlePassengerChange: (id: number, index: number, field: string, value: string|File|null) => void;
     errors: { [key: string]: boolean };
 }
 

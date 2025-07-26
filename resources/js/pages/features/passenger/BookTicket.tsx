@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { Passenger, RouteProps, Schedule, type BreadcrumbItem } from '@/types';
+import { FormDataProps, Passenger, RouteProps, Schedule, type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -36,6 +36,9 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
         additional_passengers: [] as any[],
         payment_method: 'gcash',
         receipt_image: null as File | null,
+        childrens_contact_person: '',
+        childrens_contact_number: '',
+        id_file: null as File | null, // For main passenger ID upload
     });
 
     useEffect(() => {
@@ -67,6 +70,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                 contact_number: '',
                 residency_status: 'non-resident',
                 is_main_passenger: false,
+                id_file: null as File | null, // For additional passenger ID upload
             };
 
             setAdditionalPassengers([...additionalPassengers, newPassenger]);
@@ -82,6 +86,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                     contact_number: '',
                     residency_status: 'non-resident',
                     is_main_passenger: false,
+                    id_file: null as File | null,
                 },
             ];
 
@@ -100,7 +105,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
     };
 
     // Handle additional passenger info change
-    const handlePassengerChange = (id: number, index: number, field: string, value: string): void => {
+    const handlePassengerChange = (id: number, index: number, field: string, value: string | File | null): void => {
         setAdditionalPassengers(additionalPassengers.map((passenger) => (passenger.id === id ? { ...passenger, [field]: value } : passenger)));
 
         // Update the form data for Inertia
@@ -126,6 +131,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
     // Validate form
     const validateForm = (): boolean => {
         const newErrors: Record<string, boolean> = {};
+        const withID = ['Student with valid ID', 'Senior/PWD with valid ID'];
 
         if (!form.data.full_name) newErrors.full_name = true;
         if (!form.data.route_id) newErrors.route_id = true;
@@ -133,9 +139,14 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
         if (!form.data.contact_number) newErrors.contact_number = true;
         if (!form.data.address) newErrors.address = true;
         if (!form.data.passenger_fare_type) newErrors.passenger_fare_type = true;
+        if (withID.includes(form.data.passenger_fare_type) && !form.data.id_file) newErrors.id_file = true;
+
+            console.log(newErrors);
 
         // Validate additional passengers
-        const invalidPassengers = additionalPassengers.some((p) => !p.full_name || !p.age);
+        const invalidPassengers = additionalPassengers.some((p) => {
+            return !p.full_name || !p.age || !p.contact_number || !p.passenger_fare_type || !p.residency_status || !p.address || (withID.includes(p.passenger_fare_type) && !p.id_file);
+        });
         if (invalidPassengers) newErrors.additional_passengers = true;
 
         setErrors(newErrors);
@@ -164,6 +175,9 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
             formData.append('address', form.data.address);
             formData.append('passenger_fare_type', form.data.passenger_fare_type);
             formData.append('payment_method', paymentMethod);
+            formData.append('childrens_contact_person', form.data.childrens_contact_person);
+            formData.append('childrens_contact_number', form.data.childrens_contact_number);
+            if (form.data.id_file) formData.append('id_file', form.data.id_file);
 
             form.data.additional_passengers.forEach((passenger, index) => {
                 Object.keys(passenger).forEach((key) => {
@@ -263,7 +277,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                                 </>
                             ) : (
                                 <PaymentSection
-                                mainPassengerFare={form.data.passenger_fare_type}
+                                    mainPassengerFare={form.data.passenger_fare_type}
                                     paymentMethod={paymentMethod}
                                     setPaymentMethod={setPaymentMethod}
                                     additionalPassengers={additionalPassengers}
