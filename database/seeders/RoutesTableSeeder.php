@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\Route;
 
 class RoutesTableSeeder extends Seeder
 {
@@ -15,6 +15,10 @@ class RoutesTableSeeder extends Seeder
      */
     public function run()
     {
+
+        Route::truncate();
+
+
         foreach (range(1, 10) as $index) {
             DB::table('routes')->insert([
                 [

@@ -267,7 +267,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                         )
                     }
 
-                    <div className="mx-auto overflow-x-auto lg:max-w-5xl">
+                    <div className="mx-auto overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700"> {/* Dark mode for table dividers */}
                             <thead className="bg-gray-50 dark:bg-gray-700"> {/* Dark mode for table header */}
                                 <tr>

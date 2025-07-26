@@ -11,6 +11,7 @@ use App\Http\Controllers\QrController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\AccountsManagementController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SetupPaymentController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -26,7 +27,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('scan_qr', [StaffController::class, 'scanQrCode'])->name('staff.scan_qr');
         Route::post('qr_validation', [QrController::class, 'validate'])->name('qr.validation');
         Route::post('booking/{id}', [QrController::class, 'bookingPaid'])->name('booking.paid');
-
     });
 
     // PASSENGER ROUTES
@@ -40,12 +40,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('bookings', [BookingController::class, 'index'])->name('passenger.bookings');
         Route::post('book', [BookingController::class, 'store'])->name('bookings.store');
         Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
-
-        
     });
 
     // ADMIN ROUTES
     Route::prefix('admin')->middleware('role:admin')->group(function () {
+        // Display list
+        Route::get('setup_payments', [SetupPaymentController::class, 'index'])->name('admin.setup_payments');
+        Route::post('setup_payments', [SetupPaymentController::class, 'store'])->name('admin.setup_payments.store');
+        Route::put('setup_payments/{id}', [SetupPaymentController::class, 'update'])->name('admin.setup_payments.update');
+        Route::delete('setup_payments/{id}', [SetupPaymentController::class, 'destroy'])->name('admin.setup_payments.destroy');
+
+        
         Route::get('notifications', [NotificationController::class, 'index'])->name('admin.notifications');
         Route::get('accounts_management', [AccountsManagementController::class, 'index'])->name('admin.account.index');
         Route::post('accounts_management', [AccountsManagementController::class, 'store'])->name('admin.account.store');
@@ -63,9 +68,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('approve/{id}', [AdminBookingController::class, 'approve'])->name('admin.bookings.approve');
             Route::post('reject/{id}', [AdminBookingController::class, 'reject'])->name('admin.bookings.reject');
         });
-
-
-        
     });
 });
 

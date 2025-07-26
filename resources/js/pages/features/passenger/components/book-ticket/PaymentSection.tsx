@@ -77,7 +77,7 @@ const PaymentSection = ({
                         ) : (
                             <>
                                 <Upload className="text-muted-foreground mb-2 h-10 w-10" />
-                                <p className="text-muted-foreground mb-2 text-center text-sm">Click or drag to upload your GCash receipt</p>
+                                <p className="text-muted-foreground mb-2 text-center text-sm">Click or drag to upload your <b>{paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)}</b> receipt</p>
                                 <Input type="file" accept="image/*" className="max-w-xs" onChange={handleReceiptUpload} />
                             </>
                         )}
