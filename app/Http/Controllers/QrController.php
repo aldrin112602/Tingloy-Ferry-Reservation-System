@@ -24,10 +24,12 @@ class QrController extends Controller
             $bookingId = explode(": ", $data[0])[1];
             $routeCode = explode(": ", $data[1])[1];
             $ticketCode = explode(": ", $data[2])[1];
+
+
             $booking = Booking::with('route')->where('id', $bookingId)->first();
             $route = Route::where('route_code', $routeCode)->first();
-            $user = User::where('id', $booking->user_id)->first();
-            if (!$booking || !$route || !$user) {
+
+            if (!isset($booking) || !isset($route)) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Invalid QR code. Booking, route, or user not found.',
@@ -45,12 +47,6 @@ class QrController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Booking already boarded.',
-                ], 422);
-            }
-            if ($route->status != 'active') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Route not active. Please contact admin.',
                 ], 422);
             }
             if ($booking->ticket_code != $ticketCode) {

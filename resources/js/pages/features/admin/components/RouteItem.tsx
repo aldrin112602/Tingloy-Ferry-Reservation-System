@@ -87,7 +87,7 @@ const RouteItem = ({
                     </p>
                     <p>
                         <span className="mr-4">Date: {format(new Date(route.date_and_time), 'PPP')}</span>
-                        <span>Time: {format(new Date(route.date_and_time), 'p')}</span>
+                        <span>Time: {format(new Date(route.date_and_time), 'hh:mm a')}</span>
                     </p>
                     <p className="mt-1">
                         Capacity: {route.seats_occupied}/{route.capacity} seats occupied

@@ -21,7 +21,7 @@ class Route extends Model
     ];
 
     protected $casts = [
-        'date_and_time' => 'datetime',
+        'date_and_time' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function bookings()
