@@ -13,7 +13,9 @@ class RouteController extends Controller
     public function index(Request $request)
     {
         $today = Carbon::today();
-        $now = Carbon::now();
+        $now = now()->timezone('Asia/Manila');
+
+
 
         // Auto-update past trips
         Route::where('status', '!=', 'finished')
