@@ -36,7 +36,7 @@ class QrController extends Controller
                 ], 422);
             }
 
-            if ($booking->status == 'pending') {
+            if ($booking->status === 'pending' && $booking->payment_method !== 'Cash') {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Booking is not approved yet. Please contact the admin.',
@@ -64,7 +64,7 @@ class QrController extends Controller
                 ], 422);
             }
 
-            if ($booking->payment_method == 'cash' && !$booking->is_paid) {
+            if ($booking->payment_method == 'Cash' && !$booking->is_paid) {
                 return response()->json([
                     'status' => 'error',
                     'message' => "This booking was made with cash payment and hasn't been paid yet. Please complete the payment before boarding.",
@@ -99,6 +99,7 @@ class QrController extends Controller
     {
         $booking = Booking::findOrFail($id);
         $booking->is_paid = true;
+        $booking->status = 'boarded';
         $booking->save();
 
         return response()->json([

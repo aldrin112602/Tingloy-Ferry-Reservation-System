@@ -75,6 +75,7 @@ class AdminBookingController extends Controller
         $booking->user->notify(new BookingNotification($qrURL, $booking));
 
         $booking->status = 'approved';
+        $booking->is_paid = true;
         $booking->save();
         return redirect()->back()->with('success', 'Booking approved successfully');
     }
