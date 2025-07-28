@@ -73,6 +73,7 @@ const ScanQrCode = () => {
             setBookingId(null);
             setOpenDialog(false);
         } catch (err) {
+            console.log(err)
             toast.error('Failed to update payment status.');
         }
     };

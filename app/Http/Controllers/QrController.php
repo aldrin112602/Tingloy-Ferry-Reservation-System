@@ -97,7 +97,12 @@ class QrController extends Controller
 
     public function bookingPaid($id)
     {
-        $booking = Booking::findOrFail($id);
+
+        $booking = Booking::where('id', $id)->first();
+        if(!isset($booking)) {
+            return response()->json(['message' => 'Booking not found.'], 500);
+        }
+
         $booking->is_paid = true;
         $booking->status = 'boarded';
         $booking->save();
