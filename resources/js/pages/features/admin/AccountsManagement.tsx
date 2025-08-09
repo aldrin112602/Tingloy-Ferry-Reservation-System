@@ -212,7 +212,7 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">Email</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">Role</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">Created At</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">Actions</th>
+                                    {/* <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300">Actions</th> */}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
@@ -227,7 +227,7 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300">{formatDate(account.created_at)}</td>
-                                            <td className="space-x-2 px-6 py-4 text-sm font-medium whitespace-nowrap">
+                                            {/* <td className="space-x-2 px-6 py-4 text-sm font-medium whitespace-nowrap">
                                                 <Button variant="outline" size="sm" onClick={() => openEditAccountModal(account)}
                                                     className="dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
                                                     Edit
@@ -236,7 +236,7 @@ const AccountsManagement = ({ accounts, filterRole: initialFilterRole }: Account
                                                     className="dark:bg-red-700 dark:hover:bg-red-600 dark:text-white">
                                                     Delete
                                                 </Button>
-                                            </td>
+                                            </td> */}
                                         </tr>
                                     ))
                                 ) : (

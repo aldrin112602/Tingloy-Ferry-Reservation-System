@@ -24,10 +24,10 @@ class Booking extends Model
         'total_fee',
         'is_paid',
         'number_of_passengers',
-        'status', 
+        'status',
         'children_counts',
         'childrens_contact_person',
-        'childrens_contact_number',  
+        'childrens_contact_number',
     ];
 
 
@@ -51,13 +51,21 @@ class Booking extends Model
         return $this->passengers()->where('is_main_passenger', true)->first();
     }
 
-    // Generate ticket code automatically
+    // Generate incremental ticket code automatically
     protected static function booted()
     {
         static::creating(function ($booking) {
-            $booking->ticket_code = 'FT-' . strtoupper(uniqid());
+            $lastBooking = static::latest('id')->first();
+            $lastNumber = 0;
+
+            if ($lastBooking && preg_match('/TF-(\d+)/', $lastBooking->ticket_code, $matches)) {
+                $lastNumber = (int) $matches[1];
+            }
+            $nextNumber = $lastNumber + 1;
+            $booking->ticket_code = 'TF-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
         });
     }
+
 
     /**
      * The attributes that should be hidden for serialization.

@@ -56,8 +56,14 @@ class Route extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
-            $model->route_code = 'CODE-' . Str::uuid();
+        static::creating(function ($route) {
+            $lastRoute = static::latest('id')->first();
+            $lastNumber = 0;
+            if ($lastRoute && preg_match('/RT-(\d+)/', $lastRoute->route_code, $matches)) {
+                $lastNumber = (int) $matches[1];
+            }
+            $nextNumber = $lastNumber + 1;
+            $route->route_code = 'RT-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
         });
     }
 }

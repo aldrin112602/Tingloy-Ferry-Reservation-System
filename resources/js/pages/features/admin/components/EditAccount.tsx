@@ -99,7 +99,7 @@ const EditAccount: React.FC<UpdatedEditAccountProps> = ({ isOpen, onOpenChange, 
                         <InputError message={errors.email} />
                     </div>
 
-                    <div>
+                    <div className="hidden">
                         <label className="mb-1 block text-sm font-medium text-gray-700">Select Role</label>
                         <select
                             value={data.role}
