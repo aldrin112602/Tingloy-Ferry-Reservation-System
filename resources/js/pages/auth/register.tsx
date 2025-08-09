@@ -12,6 +12,8 @@ import AuthLayout from '@/layouts/auth-layout';
 type RegisterForm = {
     name: string;
     email: string;
+    address: string;
+    birthdate: string;
     password: string;
     password_confirmation: string;
 };
@@ -20,6 +22,8 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
+        address: '',
+        birthdate: '',
         password: '',
         password_confirmation: '',
     });
@@ -70,12 +74,43 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
+                        <Label htmlFor="address">Address</Label>
+                        <Input
+                            id="address"
+                            type="address"
+                            required
+                            tabIndex={3}
+                            autoComplete="address"
+                            value={data.address}
+                            onChange={(e) => setData('address', e.target.value)}
+                            disabled={processing}
+                            placeholder="Enter address"
+                        />
+                        <InputError message={errors.address} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="birthdate">Birthdate</Label>
+                        <Input
+                            id="birthdate"
+                            type="date"
+                            required
+                            tabIndex={4}
+                            autoComplete="birthdate"
+                            value={data.birthdate}
+                            onChange={(e) => setData('birthdate', e.target.value)}
+                            disabled={processing}
+                        />
+                        <InputError message={errors.birthdate} />
+                    </div>
+
+                    <div className="grid gap-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
                             id="password"
                             type="password"
                             required
-                            tabIndex={3}
+                            tabIndex={5}
                             autoComplete="new-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
@@ -91,7 +126,7 @@ export default function Register() {
                             id="password_confirmation"
                             type="password"
                             required
-                            tabIndex={4}
+                            tabIndex={6}
                             autoComplete="new-password"
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}

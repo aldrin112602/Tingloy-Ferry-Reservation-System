@@ -22,6 +22,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 type ProfileForm = {
     name: string;
     email: string;
+    address: string;
+    birthdate: string;
 }
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
@@ -30,6 +32,8 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
         name: auth.user.name,
         email: auth.user.email,
+        address: auth.user.address,
+        birthdate: auth.user.birthdate
     });
 
     const submit: FormEventHandler = (e) => {
@@ -75,11 +79,49 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 required
-                                autoComplete="username"
+                                autoComplete="email"
                                 placeholder="Email address"
                             />
 
                             <InputError className="mt-2" message={errors.email} />
+                        </div>
+
+
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="address">Address</Label>
+
+                            <Input
+                                id="address"
+                                type="address"
+                                className="mt-1 block w-full"
+                                value={data.address}
+                                onChange={(e) => setData('address', e.target.value)}
+                                required
+                                autoComplete="address"
+                                placeholder="Address"
+                            />
+
+                            <InputError className="mt-2" message={errors.address} />
+                        </div>
+
+
+
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="birthdate">birthdate</Label>
+
+                            <Input
+                                id="birthdate"
+                                type="date"
+                                className="mt-1 block w-full"
+                                value={data.birthdate}
+                                onChange={(e) => setData('birthdate', e.target.value)}
+                                required
+                                autoComplete="birthdate"
+                            />
+
+                            <InputError className="mt-2" message={errors.birthdate} />
                         </div>
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
