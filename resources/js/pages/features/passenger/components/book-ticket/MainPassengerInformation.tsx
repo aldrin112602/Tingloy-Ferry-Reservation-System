@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { MainPassengerInformationProps } from '@/types';
 
-const MainPassengerInformation = ({ form, errors }: MainPassengerInformationProps) => {
+const MainPassengerInformation = ({ fareTypes, form, errors }: MainPassengerInformationProps) => {
     return (
         <div className="mb-6">
             <h3 className="mb-4 text-lg font-medium">Main Passenger Information</h3>

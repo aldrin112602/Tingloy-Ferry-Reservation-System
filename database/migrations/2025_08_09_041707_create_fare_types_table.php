@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->default('Full fare');
             $table->integer('price')->default(160);
+            $table->boolean('required_valid_id')->default(false);
             $table->timestamps();
         });
     }

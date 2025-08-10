@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { FormDataProps, Passenger, RouteProps, Schedule, type BreadcrumbItem } from '@/types';
+import { FareType, Passenger, RouteProps, Schedule, type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import MainPassengerInformation from './components/book-ticket/MainPassengerInfo
 import { PassengerFareType } from './components/book-ticket/PassengerFareType';
 import PaymentSection from './components/book-ticket/PaymentSection';
 import TripSelection from './components/book-ticket/TripSelection';
+import Swal from 'sweetalert2';
 
 export default function BookTicket({ routes }: { routes: RouteProps[] }) {
     const [step, setStep] = useState(1);
@@ -22,6 +23,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
     const [bookingReference, setBookingReference] = useState<string | null>(null);
     const [errors, setErrors] = useState<Record<string, boolean>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fareTypes, setFareTypes] = useState<FareType[]>([]);
 
     // Use Inertia form helper
     const form = useForm({
@@ -38,7 +40,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
         receipt_image: null as File | null,
         childrens_contact_person: '',
         childrens_contact_number: '',
-        id_file: null as File | null, // For main passenger ID upload
+        id_file: null as File | null,
     });
 
     useEffect(() => {
@@ -57,10 +59,28 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
         setSchedules(schedules);
     }, [routes]);
 
+
+
+
+    useEffect(() => {
+        axios.get(route('passenger.setup_fare_types'))
+            .then(response => {
+                setFareTypes(response.data);
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error fetching fare types',
+                    text: 'Please try again later.',
+                });
+                setFareTypes([]);
+                console.error('Error fetching fare types:', error);
+            });
+    }, []);
+
     // Handle adding a passenger
     const addPassenger = (): void => {
-        if (additionalPassengers.length < 9) {
-            // Max 10 passengers including main passenger
+        if (additionalPassengers.length < 200) {
             const newPassenger = {
                 id: Date.now(),
                 full_name: '',
@@ -70,7 +90,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                 contact_number: '',
                 residency_status: 'non-resident',
                 is_main_passenger: false,
-                id_file: null as File | null, // For additional passenger ID upload
+                id_file: null as File | null,
             };
 
             setAdditionalPassengers([...additionalPassengers, newPassenger]);
@@ -131,23 +151,43 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
     // Validate form
     const validateForm = (): boolean => {
         const newErrors: Record<string, boolean> = {};
-        const withID = ['Student with valid ID', 'Senior/PWD with valid ID'];
-
+        const findFareTypeById = (id: string) => fareTypes.find(fare => fare.id.toString() === id);
         if (!form.data.full_name) newErrors.full_name = true;
         if (!form.data.route_id) newErrors.route_id = true;
         if (!form.data.age) newErrors.age = true;
         if (!form.data.contact_number) newErrors.contact_number = true;
         if (!form.data.address) newErrors.address = true;
         if (!form.data.passenger_fare_type) newErrors.passenger_fare_type = true;
-        if (withID.includes(form.data.passenger_fare_type) && !form.data.id_file) newErrors.id_file = true;
+        const mainPassengerFare = findFareTypeById(form.data.passenger_fare_type);
 
-            console.log(newErrors);
+        if (mainPassengerFare?.required_valid_id && !form.data.id_file) {
+            newErrors.id_file = true;
+        }
+        const invalidPassengers = additionalPassengers.some((p, index) => {
+            const additionalPassengerFare = findFareTypeById(p.passenger_fare_type);
 
-        // Validate additional passengers
-        const invalidPassengers = additionalPassengers.some((p) => {
-            return !p.full_name || !p.age || !p.contact_number || !p.passenger_fare_type || !p.residency_status || !p.address || (withID.includes(p.passenger_fare_type) && !p.id_file);
+            if (!p.full_name || !p.age || !p.contact_number || !p.passenger_fare_type || !p.residency_status || !p.address) {
+                if (!p.full_name) newErrors[`additional_passengers.${index}.full_name`] = true;
+                if (!p.age) newErrors[`additional_passengers.${index}.age`] = true;
+                if (!p.contact_number) newErrors[`additional_passengers.${index}.contact_number`] = true;
+                if (!p.passenger_fare_type) newErrors[`additional_passengers.${index}.passenger_fare_type`] = true;
+                if (!p.residency_status) newErrors[`additional_passengers.${index}.residency_status`] = true;
+                if (!p.address) newErrors[`additional_passengers.${index}.address`] = true;
+
+                return true;
+            }
+
+            if (additionalPassengerFare?.required_valid_id && !p.id_file) {
+                newErrors[`additional_passengers.${index}.id_file`] = true;
+                return true; 
+            }
+
+            return false;
         });
-        if (invalidPassengers) newErrors.additional_passengers = true;
+
+        if (invalidPassengers) {
+            newErrors.additional_passengers = true;
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -206,6 +246,12 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                     setBookingComplete(true);
                 })
                 .catch((error) => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Booking Failed',
+                        text: 'Please check your details and try again.',
+                    });
+                    
                     console.error('Booking error:', error);
                     // Handle errors
                     if (error.response && error.response.data && error.response.data.errors) {
@@ -261,12 +307,13 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                                     {/* Trip Selection Section */}
                                     <TripSelection form={form} schedules={schedules} errors={errors} />
                                     {/* Passenger Fare Type */}
-                                    <PassengerFareType form={form} errors={errors} />
+                                    <PassengerFareType fareTypes={fareTypes} form={form} errors={errors} />
                                     {/* Main Passenger Information */}
-                                    <MainPassengerInformation form={form} errors={errors} />
+                                    <MainPassengerInformation fareTypes={fareTypes} form={form} errors={errors} />
 
                                     {/* Additional Passengers */}
                                     <AdditionalPassengers
+                                        fareTypes={fareTypes}
                                         form={form}
                                         addPassenger={addPassenger}
                                         additionalPassengers={additionalPassengers}
@@ -277,6 +324,7 @@ export default function BookTicket({ routes }: { routes: RouteProps[] }) {
                                 </>
                             ) : (
                                 <PaymentSection
+                                    fareTypes={fareTypes}
                                     mainPassengerFare={form.data.passenger_fare_type}
                                     paymentMethod={paymentMethod}
                                     setPaymentMethod={setPaymentMethod}

@@ -11,6 +11,7 @@ use App\Http\Controllers\QrController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\AccountsManagementController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SetupFareTypeController;
 use App\Http\Controllers\SetupPaymentController;
 
 Route::get('/', function () {
@@ -32,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // PASSENGER ROUTES
     Route::prefix('passenger')->middleware('role:passenger')->group(function () {
         Route::get('/api/setup_payments', [SetupPaymentController::class, 'getSetupPayments']);
+        Route::get('/api/get_fare_types', [SetupFareTypeController::class, 'getFareTypes'])->name('passenger.setup_fare_types');
         
         Route::get('notifications', [NotificationController::class, 'index'])->name('passenger.notifications');
 
@@ -46,7 +48,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ADMIN ROUTES
     Route::prefix('admin')->middleware('role:admin')->group(function () {
-        // Display list
+        Route::get('setup_fare_types', [SetupFareTypeController::class, 'index'])->name('admin.setup_fare_types');
+        Route::post('setup_fare_types', [SetupFareTypeController::class, 'store'])->name('admin.setup_fare_types.store');
+        Route::put('setup_fare_types/{id}', [SetupFareTypeController::class, 'update'])->name('admin.setup_fare_types.update');
+        Route::delete('setup_fare_types/{id}', [SetupFareTypeController::class, 'destroy'])->name('admin.setup_fare_types.destroy');
+
+        
         Route::get('setup_payments', [SetupPaymentController::class, 'index'])->name('admin.setup_payments');
         Route::post('setup_payments', [SetupPaymentController::class, 'store'])->name('admin.setup_payments.store');
         Route::put('setup_payments/{id}', [SetupPaymentController::class, 'update'])->name('admin.setup_payments.update');

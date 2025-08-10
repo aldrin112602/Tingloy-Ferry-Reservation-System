@@ -43,7 +43,7 @@ const DisplayBookings = ({
                                     </span>
                                     <div className="flex space-x-2">
                                         {/* Cancel Button */}
-                                        {booking.status === 'pending' && ( // Only show if status is 'pending'
+                                        {booking.status !== 'canceled' && ( // Only show if status is 'pending'
                                             <Button
                                                 variant="outline"
                                                 size="sm"

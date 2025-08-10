@@ -5,14 +5,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { AdditionalPassengerProps } from '@/types';
 import { Plus, Trash2 } from 'lucide-react';
-import { fareTypes } from './PassengerFareType';
 
 const AdditionalPassengers = ({
+    fareTypes,
     addPassenger,
     additionalPassengers,
     removePassenger,
     handlePassengerChange,
-    form,
     errors,
 }: AdditionalPassengerProps) => {
     return (
@@ -27,12 +26,7 @@ const AdditionalPassengers = ({
             {additionalPassengers.length === 0 && <p className="text-muted-foreground text-sm">No additional passengers added.</p>}
 
             {additionalPassengers.map((passenger, index) => {
-                const requiresIdUpload =
-                    passenger.passenger_fare_type === 'Senior/PWD with valid ID' ||
-                    passenger.passenger_fare_type === 'Student with valid ID';
-
-                // Find the currently selected fare type object for this passenger
-                const selectedFare = fareTypes.find(fare => fare.name === passenger.passenger_fare_type);
+                const selectedFare = fareTypes.find(fare => fare.id.toString() === passenger.passenger_fare_type);
 
                 return (
                     <div key={passenger.id} className="mb-4 rounded-md border p-4">
@@ -49,6 +43,7 @@ const AdditionalPassengers = ({
                                     value={passenger.full_name}
                                     onChange={(e) => handlePassengerChange(passenger.id, index, 'full_name', e.target.value)}
                                 />
+                                {errors[`additional_passengers.${index}.full_name`] && <p className="mt-1 text-sm text-red-500">Please enter a name</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label>Age</Label>
@@ -57,6 +52,7 @@ const AdditionalPassengers = ({
                                     value={passenger.age}
                                     onChange={(e) => handlePassengerChange(passenger.id, index, 'age', e.target.value)}
                                 />
+                                {errors[`additional_passengers.${index}.age`] && <p className="mt-1 text-sm text-red-500">Please enter an age</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label>Contact Number</Label>
@@ -64,6 +60,7 @@ const AdditionalPassengers = ({
                                     value={passenger.contact_number}
                                     onChange={(e) => handlePassengerChange(passenger.id, index, 'contact_number', e.target.value)}
                                 />
+                                {errors[`additional_passengers.${index}.contact_number`] && <p className="mt-1 text-sm text-red-500">Please enter a contact number</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label>Residency Status</Label>
@@ -72,13 +69,14 @@ const AdditionalPassengers = ({
                                     onValueChange={(value) => handlePassengerChange(passenger.id, index, 'residency_status', value)}
                                 >
                                     <SelectTrigger>
-                                        <SelectValue />
+                                        <SelectValue placeholder="Select status" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="resident">Resident</SelectItem>
                                         <SelectItem value="non-resident">Non-resident</SelectItem>
                                     </SelectContent>
                                 </Select>
+                                {errors[`additional_passengers.${index}.residency_status`] && <p className="mt-1 text-sm text-red-500">Please select a residency status</p>}
                             </div>
                             <div className="col-span-2 space-y-2">
                                 <Label>Address</Label>
@@ -86,6 +84,7 @@ const AdditionalPassengers = ({
                                     value={passenger.address}
                                     onChange={(e) => handlePassengerChange(passenger.id, index, 'address', e.target.value)}
                                 />
+                                {errors[`additional_passengers.${index}.address`] && <p className="mt-1 text-sm text-red-500">Please enter an address</p>}
                             </div>
 
                             <div className="col-span-2 space-y-2">
@@ -93,16 +92,11 @@ const AdditionalPassengers = ({
                                 <Select
                                     value={passenger.passenger_fare_type}
                                     onValueChange={(value) => {
-                                        const newRequiresIdUpload =
-                                            value === 'Senior/PWD with valid ID' ||
-                                            value === 'Student with valid ID';
-                                        
-                                        // If the new value does not require an ID, clear the id_file
-                                        if (!newRequiresIdUpload) {
+                                        const newSelectedFare = fareTypes.find(fare => fare.id.toString() === value);
+                                        if (newSelectedFare && !newSelectedFare.required_valid_id) {
                                             handlePassengerChange(passenger.id, index, 'id_file', null);
                                         }
-                                        
-                                        // Update the fare type
+
                                         handlePassengerChange(passenger.id, index, 'passenger_fare_type', value);
                                     }}
                                 >
@@ -111,14 +105,15 @@ const AdditionalPassengers = ({
                                     </SelectTrigger>
                                     <SelectContent>
                                         {fareTypes.map((fare) => (
-                                            <SelectItem key={fare.id} value={fare.name}>
+                                            <SelectItem key={fare.id} value={fare.id.toString()}>
                                                 {fare.name} - PHP {fare.price}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
+                                {errors[`additional_passengers.${index}.passenger_fare_type`] && <p className="mt-1 text-sm text-red-500">Please select a fare type</p>}
                             </div>
-                            
+
                             {/* Conditionally render pricing details */}
                             {selectedFare && (
                                 <div className="col-span-2 mb-6 rounded-md border border-gray-200 p-4 shadow-sm dark:border-gray-700">
@@ -141,7 +136,7 @@ const AdditionalPassengers = ({
                             )}
 
                             {/* Conditionally render the ID upload field */}
-                            {requiresIdUpload && (
+                            {selectedFare?.required_valid_id && (
                                 <div className="col-span-2 space-y-2">
                                     <Label>Upload Valid ID</Label>
                                     <Input
@@ -150,7 +145,9 @@ const AdditionalPassengers = ({
                                             const file = e.target.files && e.target.files.length > 0 ? e.target.files[0] : null;
                                             handlePassengerChange(passenger.id, index, 'id_file', file);
                                         }}
+                                        accept="image/*"
                                     />
+                                    {errors[`additional_passengers.${index}.id_file`] && <p className="mt-1 text-sm text-red-500">Please upload a Valid ID</p>}
                                 </div>
                             )}
                         </div>

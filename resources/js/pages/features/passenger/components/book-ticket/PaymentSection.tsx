@@ -7,11 +7,11 @@ import { PaymentMethod, PaymentSectionProps } from '@/types';
 import { CircleDollarSign, CreditCard, Trash2, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import BookingSummary from './BookingSummary';
-import { fareTypes } from './PassengerFareType';
 import axios from 'axios';
 
 
 const PaymentSection = ({
+    fareTypes,
     paymentMethod,
     setPaymentMethod,
     additionalPassengers,

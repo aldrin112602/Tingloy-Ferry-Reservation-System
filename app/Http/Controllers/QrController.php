@@ -26,7 +26,7 @@ class QrController extends Controller
             $ticketCode = explode(": ", $data[2])[1];
 
 
-            $booking = Booking::with('route')->where('id', $bookingId)->first();
+            $booking = Booking::with('route', 'user')->where('id', $bookingId)->first();
             $route = Route::where('route_code', $routeCode)->first();
 
             if (!isset($booking) || !isset($route)) {
@@ -79,7 +79,7 @@ class QrController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Congratulations, QR code validated successfully.',
+                'message' => "Congratulations {$booking->user->name}!,QR code validated successfully."
             ]);
 
         } catch (DecryptException $e) {

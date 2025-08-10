@@ -1,23 +1,27 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MainPassengerInformationProps } from '@/types';
+import { MainPassengerInformationProps, FareType } from '@/types';
+import { useState, useEffect } from 'react';
 
-export const fareTypes = [
-    { id: 1, name: 'Full fare', price: 160 },
-    { id: 2, name: 'Senior/PWD with valid ID', price: 104 },
-    { id: 3, name: 'Student with valid ID', price: 116 },
-    { id: 4, name: 'Children 3ys-12yrs old', price: 72 },
-];
+export const PassengerFareType = ({ fareTypes, form, errors }: MainPassengerInformationProps) => {
 
-export const PassengerFareType = ({ form, errors }: MainPassengerInformationProps) => {
-    // Determine if the currently selected fare type requires an ID
-    const requiresIdUpload =
-        form.data.passenger_fare_type === 'Senior/PWD with valid ID' ||
-        form.data.passenger_fare_type === 'Student with valid ID';
+    const [selectedFare, setSelectedFare] = useState<FareType | null>(null);
+    useEffect(() => {
+        const fare = fareTypes.find(fare => fare.id.toString() === form.data.passenger_fare_type);
+        setSelectedFare(fare || null);
+    }, [form.data.passenger_fare_type, fareTypes]);
 
-    // Find the currently selected fare type object to get its price
-    const selectedFare = fareTypes.find(fare => fare.name === form.data.passenger_fare_type);
+    const handleFareTypeChange = (value: string) => {
+
+        const newSelectedFare = fareTypes.find(fare => fare.id.toString() === value);
+
+        form.setData('passenger_fare_type', value);
+
+        if (newSelectedFare && !newSelectedFare.required_valid_id) {
+            form.setData('id_file', null);
+        }
+    };
 
     return (
         <>
@@ -27,19 +31,14 @@ export const PassengerFareType = ({ form, errors }: MainPassengerInformationProp
                 </Label>
                 <Select
                     value={form.data.passenger_fare_type}
-                    onValueChange={(value) => {
-                        form.setData('passenger_fare_type', value);
-                        if(!selectedFare) {
-                            form.setData('id_file', null); 
-                        }
-                    }}
+                    onValueChange={handleFareTypeChange}
                 >
                     <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Select fare type" />
                     </SelectTrigger>
                     <SelectContent>
                         {fareTypes.map((fare) => (
-                            <SelectItem key={fare.id} value={fare.name}>
+                            <SelectItem key={fare.id} value={fare.id.toString()}>
                                 {fare.name} - PHP {fare.price}
                             </SelectItem>
                         ))}
@@ -70,7 +69,7 @@ export const PassengerFareType = ({ form, errors }: MainPassengerInformationProp
             )}
 
             {/* Conditionally render the file upload input */}
-            {requiresIdUpload && (
+            {selectedFare?.required_valid_id && (
                 <div className="mb-6">
                     <Label htmlFor="id_upload" className="text-lg font-medium">
                         Upload Valid ID

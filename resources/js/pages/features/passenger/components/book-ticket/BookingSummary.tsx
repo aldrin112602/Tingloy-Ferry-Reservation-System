@@ -3,7 +3,7 @@ import { Passenger } from '@/types';
 const BookingSummary = ({ additionalPassengers, totalFare }: { additionalPassengers: Passenger[]; totalFare: number }) => {
     return (
         <div className="mb-6">
-            <h3 className="mb-4 text-lg font-medium">Booking Summary</h3>
+            <h3 className="mb-4 text-lg font-medium mt-5">Booking Summary</h3>
             <div className="bg-muted rounded-md p-4">
                 <div className="mb-2 flex justify-between">
                     <span>Main Passenger:</span>

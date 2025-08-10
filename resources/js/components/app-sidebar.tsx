@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Bell, PhilippinePeso, BookOpen, Calendar, LayoutGrid, ScanLine, Settings2, Ticket, UserCog, Users } from 'lucide-react';
+import { Bell, PhilippinePeso, CogIcon, BookOpen, Calendar, LayoutGrid, ScanLine, Settings2, Ticket, UserCog, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 // Passenger menu
@@ -31,6 +31,7 @@ const adminNavItems: NavItem[] = [
     { title: 'Manage Bookings', href: '/admin/bookings', icon: BookOpen },
     { title: 'Manage Accounts', href: '/admin/accounts_management', icon: UserCog },
     { title: 'Setup Payment', href: '/admin/setup_payments', icon:  PhilippinePeso },
+    { title: 'Setup Fare Types', href: '/admin/setup_fare_types', icon:  CogIcon },
     { title: 'Notifications', href: '/admin/notifications', icon: Bell },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];

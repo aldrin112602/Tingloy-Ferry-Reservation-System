@@ -11,57 +11,48 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Http\UploadedFile;
-
+use App\Models\FareType;
 
 class BookingController extends Controller
 {
-    /**
-     * Process the booking form
-     */
     public function store(Request $request)
     {
+        $fareTypes = FareType::all()->keyBy('id');
+        $fareTypeIds = $fareTypes->keys()->toArray();
 
+        $fareIdsRequiringId = $fareTypes->where('required_valid_id', true)->keys()->toArray();
         $messages = [
-            'additional_passengers.*.full_name.required' => 'All passenger names are required.',
-            'additional_passengers.*.age.required' => 'Age is required for all passengers.',
+            'additional_passengers.*.full_name.required_with' => 'All passenger names are required.',
+            'additional_passengers.*.age.required_with' => 'Age is required for all passengers.',
             'additional_passengers.*.age.integer' => 'Age must be a number for all passengers.',
             'additional_passengers.*.age.min' => 'Age cannot be negative for any passenger.',
-            'additional_passengers.*.contact_number.required' => 'Contact number is required for all passengers.',
-            'additional_passengers.*.residency_status.required' => 'Residency status is required for all passengers.',
-            'additional_passengers.*.address.required' => 'Address is required for all passengers.',
-            'additional_passengers.*.passenger_fare_type.required' => 'Passenger fare type is required for all passengers.',
+            'additional_passengers.*.contact_number.required_with' => 'Contact number is required for all passengers.',
+            'additional_passengers.*.residency_status.required_with' => 'Residency status is required for all passengers.',
+            'additional_passengers.*.address.required_with' => 'Address is required for all passengers.',
+            'additional_passengers.*.passenger_fare_type.required_with' => 'Passenger fare type is required for all passengers.',
+            'additional_passengers.*.id_file.required_if' => 'A valid ID is required for this fare type.',
         ];
-
-
-        $fare_types = [
-            'Full fare' => 160,
-            'Senior/PWD with valid ID' => 104,
-            'Student with valid ID' => 116,
-            'Children 3ys-12yrs old' => 72
-        ];
-
-        $total_fee = 0;
 
         $request->validate([
-            'route_id' => 'required|exists:routes,id',
-            'full_name' => 'required',
-            'age' => 'required|integer|min:0',
-            'contact_number' => 'required|string|max:20',
-            'residency_status' => 'required',
-            'address' => 'required',
-            'passenger_fare_type' => 'required',
-            'payment_method' => 'required|string',
-            'receipt_image' => 'nullable|file|image',
+            'route_id' => ['required', 'exists:routes,id'],
+            'full_name' => ['required', 'string', 'max:255'],
+            'age' => ['required', 'integer', 'min:0'],
+            'contact_number' => ['required', 'string', 'max:20'],
+            'residency_status' => ['required', 'string'],
+            'address' => ['required', 'string'],
+            'passenger_fare_type' => ['required', 'in:' . implode(',', $fareTypeIds)],
+            'id_file' => ['required_if:passenger_fare_type,' . implode(',', $fareIdsRequiringId), 'nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif,svg,pdf', 'max:2048'],
+            'payment_method' => ['required', 'string'],
+            'receipt_image' => ['nullable', 'file', 'image', 'mimes:jpeg,png,jpg,gif,svg,pdf', 'max:2048'],
 
-            'additional_passengers' => 'sometimes|array',
-            'additional_passengers.*.full_name' => 'required_with:additional_passengers',
-            'additional_passengers.*.age' => 'required_with:additional_passengers|integer|min:0',
-            'additional_passengers.*.contact_number' => 'required_with:additional_passengers|string|max:20',
-            'additional_passengers.*.residency_status' => 'required_with:additional_passengers',
-            'additional_passengers.*.address' => 'required_with:additional_passengers',
+            'additional_passengers' => ['sometimes', 'array'],
+            'additional_passengers.*.full_name' => ['required_with:additional_passengers', 'string', 'max:255'],
+            'additional_passengers.*.age' => ['required_with:additional_passengers', 'integer', 'min:0'],
+            'additional_passengers.*.contact_number' => ['required_with:additional_passengers', 'string', 'max:20'],
+            'additional_passengers.*.residency_status' => ['required_with:additional_passengers', 'string'],
+            'additional_passengers.*.address' => ['required_with:additional_passengers', 'string'],
+            'additional_passengers.*.passenger_fare_type' => ['required_with:additional_passengers', 'in:' . implode(',', $fareTypeIds)],
         ], $messages);
-
-
 
         $route = Route::findOrFail($request->route_id);
         $additionalCount = is_array($request->additional_passengers) ? count($request->additional_passengers) : 0;
@@ -80,10 +71,10 @@ class BookingController extends Controller
             if ($request->hasFile('receipt_image')) {
                 $receiptPath = $request->file('receipt_image')->store('receipts', 'public');
             }
-
-            $idPath = null;
-            if ($request->hasFile('id_file') && in_array($request->passenger_fare_type, ['Student with valid ID', 'Senior/PWD with valid ID'])) {
-                $idPath = $request->file('id_file')->store('ids', 'public');
+            $mainPassengerFareType = $fareTypes->get($request->passenger_fare_type);
+            $mainPassengerIdPath = null;
+            if ($mainPassengerFareType && $mainPassengerFareType->required_valid_id && $request->hasFile('id_file')) {
+                $mainPassengerIdPath = $request->file('id_file')->store('ids', 'public');
             }
 
             $booking = Booking::create([
@@ -98,50 +89,53 @@ class BookingController extends Controller
                 'status' => 'pending',
             ]);
 
-            $total_fee = $total_fee + $fare_types[$request->passenger_fare_type];
+            $total_fee = $mainPassengerFareType->price;
 
+            // Create main passenger
             Passenger::create([
                 'booking_id' => $booking->id,
                 'full_name' => $request->full_name,
                 'age' => $request->age,
                 'contact_number' => $request->contact_number,
                 'address' => $request->address,
-                'passenger_fare_type' => $request->passenger_fare_type,
-                'passenger_fare' => $fare_types[$request->passenger_fare_type],
+                'passenger_fare_type' => $mainPassengerFareType->name,
+                'passenger_fare' => $mainPassengerFareType->price,
                 'residency_status' => $request->residency_status,
                 'is_main_passenger' => true,
-                'id_file' => $idPath,
+                'id_file' => $mainPassengerIdPath,
             ]);
 
+            // Create additional passengers
             if (!empty($request->additional_passengers)) {
-                foreach ($request->additional_passengers as $passenger) {
-                    $total_fee = $total_fee + $fare_types[$passenger['passenger_fare_type']];
-                    $requiresId = in_array($passenger['passenger_fare_type'], ['Student with valid ID', 'Senior/PWD with valid ID']);
-                    $idPath = null;
-                    if ($requiresId && isset($passenger['id_file']) && $passenger['id_file'] instanceof UploadedFile) {
-                        $idPath = $passenger['id_file']->store('ids', 'public');
-                    }
+                foreach ($request->additional_passengers as $passengerData) {
+                    $additionalPassengerFareType = $fareTypes->get($passengerData['passenger_fare_type']);
 
-                    Passenger::create([
-                        'booking_id' => $booking->id,
-                        'full_name' => $passenger['full_name'],
-                        'age' => $passenger['age'],
-                        'contact_number' => $passenger['contact_number'],
-                        'address' => $passenger['address'],
-                        'passenger_fare_type' => $passenger['passenger_fare_type'],
-                        'passenger_fare' => $fare_types[$passenger['passenger_fare_type']],
-                        'residency_status' => $passenger['residency_status'],
-                        'is_main_passenger' => false,
-                        'id_file' => $idPath,
-                    ]);
+                    if ($additionalPassengerFareType) {
+                        $total_fee += $additionalPassengerFareType->price;
+
+                        $additionalIdPath = null;
+                        if ($additionalPassengerFareType->required_valid_id && isset($passengerData['id_file']) && $passengerData['id_file'] instanceof UploadedFile) {
+                            $additionalIdPath = $passengerData['id_file']->store('ids', 'public');
+                        }
+
+                        Passenger::create([
+                            'booking_id' => $booking->id,
+                            'full_name' => $passengerData['full_name'],
+                            'age' => $passengerData['age'],
+                            'contact_number' => $passengerData['contact_number'],
+                            'address' => $passengerData['address'],
+                            'passenger_fare_type' => $additionalPassengerFareType->name,
+                            'passenger_fare' => $additionalPassengerFareType->price,
+                            'residency_status' => $passengerData['residency_status'],
+                            'is_main_passenger' => false,
+                            'id_file' => $additionalIdPath,
+                        ]);
+                    }
                 }
             }
 
             $route->increment('seats_occupied', $totalPassengers);
-            $booking->update([
-                'total_fee' => $total_fee
-            ]);
-            $booking->save();
+            $booking->update(['total_fee' => $total_fee]);
 
             DB::commit();
 

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('childrens_contact_person')->nullable()->default('N/A');
             $table->string('childrens_contact_number')->nullable()->default('N/A');
             $table->string('status')->default('pending');
+            $table->text('cancellation_reason')->nullable()->after('status');
             $table->timestamps();
         });
         

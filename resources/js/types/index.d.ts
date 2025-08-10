@@ -314,6 +314,7 @@ export interface BookingCompleteDisplayProps {
 }
 
 export interface PaymentSectionProps {
+    fareTypes: FareType[];
     paymentMethod: string;
     mainPassengerFare: string;
     setPaymentMethod: (value: string) => void;
@@ -343,6 +344,7 @@ export interface FormDataProps {
 }
 
 export interface MainPassengerInformationProps {
+    fareTypes: FareType[];
     form: {
         setData: (key: string, value: any) => void;
         data: FormDataProps;
@@ -368,6 +370,7 @@ export interface TripSelectionProps {
 }
 
 export interface AdditionalPassengerProps {
+    fareTypes: FareType[];
     addPassenger: () => void;
     form: {
         setData: (key: string, value: any) => void;
@@ -415,3 +418,25 @@ export interface SetupPaymentsProps {
         links: PaginationLink[];
     }
 }
+
+
+
+export type FareType = {
+    id: number;
+    name: string;
+    required_valid_id: boolean;
+    price: number;
+    created_at: string;
+};
+
+export type FareTypesProps = {
+    fareTypes: {
+        data: FareType[];
+        links: {
+            url: string | null;
+            label: string;
+            active: boolean;
+        }[];
+    };
+};
+
