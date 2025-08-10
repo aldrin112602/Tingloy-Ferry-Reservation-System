@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // STAFF ROUTES
     Route::prefix('staff')->middleware('role:staff')->group(function () {
+        Route::get('notifications', [NotificationController::class, 'index'])->name('staff.notifications');
         Route::get('passengers', [StaffController::class, 'passengerList'])->name('staff.passengers');
         Route::get('scan_qr', [StaffController::class, 'scanQrCode'])->name('staff.scan_qr');
         Route::post('qr_validation', [QrController::class, 'validate'])->name('qr.validation');

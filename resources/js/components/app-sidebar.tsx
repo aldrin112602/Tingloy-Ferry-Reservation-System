@@ -21,6 +21,7 @@ const staffNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
     { title: 'Scan QR', href: '/staff/scan_qr', icon: ScanLine },
     { title: 'Passenger List', href: '/staff/passengers', icon: Users },
+    { title: 'Notifications', href: '/staff/notifications', icon: Bell },
     { title: 'Account Settings', href: '/settings', icon: Settings2 },
 ];
 

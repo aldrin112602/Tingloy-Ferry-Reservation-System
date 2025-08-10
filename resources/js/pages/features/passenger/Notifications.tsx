@@ -6,10 +6,9 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const breadcrumbs = [
   {
     title: 'Notifications',
-    href: '/admin/notifications',
+    href: '/passenger/notifications',
   },
 ];
-
 
 const Notifications = ({ notifications }: NotificationsProps) => {
   return (

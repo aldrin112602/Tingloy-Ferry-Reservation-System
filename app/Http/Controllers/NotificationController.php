@@ -13,7 +13,7 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
+        if (in_array($user->role, ['admin', 'staff'])) {
             $notifications = Notification::where('receiver_id', null)->orWhere('sender_id', null)
                 ->with('booking', 'sender')
                 ->latest()
@@ -26,9 +26,24 @@ class NotificationController extends Controller
         }
 
 
-        return Inertia::render('features/admin/Notifications', [
-            'notifications' => $notifications
-        ]);
+
+        switch ($user->role) {
+            case 'admin':
+                return Inertia::render('features/admin/Notifications', [
+                    'notifications' => $notifications
+                ]);
+                break;
+            case 'staff':
+                return Inertia::render('features/staff/Notifications', [
+                    'notifications' => $notifications
+                ]);
+                break;
+            default:
+                return Inertia::render('features/passenger/Notifications', [
+                    'notifications' => $notifications
+                ]);
+                break;
+        }
     }
 
     public function markAsSeen(Request $request, $id)

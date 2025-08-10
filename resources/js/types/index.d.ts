@@ -440,3 +440,19 @@ export type FareTypesProps = {
     };
 };
 
+export interface NotificationItem {
+  booking: BookingProps;
+  sender: User;
+  type: string;
+  message: string;
+  is_seen: boolean;
+  created_at: string;
+}
+
+
+export interface NotificationsProps {
+  notifications: {
+    data: NotificationItem[];
+    links: PaginationLink[];
+  };
+}
