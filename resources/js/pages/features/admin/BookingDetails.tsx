@@ -78,7 +78,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Booking Details" />
-            <div className="p-6 dark:bg-gray-900 dark:text-gray-100 min-h-screen"> {/* Added dark mode background */}
+            <div className="p-6 dark:bg-gray-900 dark:text-gray-100 min-h-screen" style={{ minWidth: '80vw', maxWidth: '100vw' }}>
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold dark:text-gray-100">Booking Details</h1>
                     {booking.status.toLowerCase() === 'pending' && (

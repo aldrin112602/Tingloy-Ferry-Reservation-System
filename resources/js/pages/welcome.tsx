@@ -30,10 +30,6 @@ export default function Welcome() {
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
-
-        // Assuming you have a backend route for handling contact form submissions
-        // You would use form.post() here to send the data.
-        // The backend should handle sending the email to macawayantingloy2018@gmail.com
         form.post(route('contact.submit'), {
             onSuccess: () => {
                 Swal.fire({
@@ -695,7 +691,7 @@ export default function Welcome() {
                         
                         {/* Modal container with transition effect from bottom-left */}
                         <div
-                            className={`relative w-full max-w-lg p-6 bg-white dark:bg-gray-800 rounded-lg shadow-2xl transform transition-all duration-500 ease-in-out pointer-events-auto
+                            className={`relative w-full max-w-lg p-6 bg-white dark:bg-gray-800 rounded-lg shadow-2xl dark:shadow-[0_4px_6px_rgba(255,255,255,0.3)]  transform transition-all duration-500 ease-in-out pointer-events-auto
                                 ${isModalOpen
                                     ? 'translate-x-0 translate-y-0 opacity-100'
                                     : '-translate-x-full translate-y-full opacity-0'
