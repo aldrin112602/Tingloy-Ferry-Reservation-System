@@ -2,11 +2,55 @@ import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Logo from '../images/logo.png';
+import { useForm } from '@inertiajs/react'
+import Swal from 'sweetalert2';
 
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
     const [scrolled, setScrolled] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Form state for the contact form
+    const form = useForm({
+        name: '',
+        email: '',
+        message: '',
+    });
+
+    const openModal = (e: any) => {
+        // Prevent the default link behavior
+        e.preventDefault();
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
+
+        // Assuming you have a backend route for handling contact form submissions
+        // You would use form.post() here to send the data.
+        // The backend should handle sending the email to macawayantingloy2018@gmail.com
+        form.post(route('contact.submit'), {
+            onSuccess: () => {
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Your message has been sent successfully!',
+                    icon: 'success'
+                });
+                
+                form.reset();
+                closeModal();
+            },
+            onError: (errors) => {
+                console.error('Submission failed:', errors);
+                alert('Failed to send message. Please try again.');
+            }
+        });
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -20,6 +64,21 @@ export default function Welcome() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Also, handle closing the modal with the Escape key
+    useEffect(() => {
+        const handleEscape = (e: any) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        };
+
+        if (isModalOpen) {
+            window.addEventListener('keydown', handleEscape);
+        }
+
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [isModalOpen]);
 
     return (
         <>
@@ -40,9 +99,33 @@ export default function Welcome() {
                         <div className="flex items-center gap-2">
                             <div className="h-12 w-12 rounded-xl">
                                 {/* logo */}
-                                <img src={Logo} alt="Tingloy Logo" className='w-full object-cover'/>
+                                <img src={Logo} alt="Tingloy Logo" className='w-full object-cover' />
                             </div>
                             <span className="text-xl tracking-tight font-normal" style={{ fontFamily: '"Arvo", serif' }}>Tingloy Ferry</span>
+                        </div>
+                        <div className="flex items-center gap-6 text-sm font-medium">
+                            <Link
+                                href={route('about')}
+                                className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                ABOUT
+                            </Link>
+                            <Link
+                                href={route('routes')}
+                                className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                ROUTES
+                            </Link>
+                            <button
+                                onClick={openModal}
+                                className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+                            >
+                                CONTACT
+                            </button>
                         </div>
                         <div className="flex items-center gap-4">
                             {auth.user ? (
@@ -72,6 +155,7 @@ export default function Welcome() {
                     </nav>
                 </header>
 
+                {/* Main and other sections here... */}
                 <main className="flex min-h-screen flex-col">
                     {/* Hero Section */}
                     <section className="flex min-h-screen flex-col items-center justify-center px-6 pt-20">
@@ -103,24 +187,19 @@ export default function Welcome() {
                                         <span className="relative z-10">Book Your Ferry Now</span>
                                         <span className="absolute inset-0 -translate-y-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
                                     </Link>
+                                    {/* Learn More link, now opens in a new tab as requested */}
                                     <Link
-                                        href="#features"
+                                        href={route('learn_more')}
                                         className="rounded-full border border-gray-300 bg-white/30 px-8 py-3 text-base font-medium backdrop-blur-sm transition-all duration-300 hover:bg-white/50 dark:border-gray-700 dark:bg-white/5 dark:hover:bg-white/10"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                     >
                                         Learn More
                                     </Link>
                                 </div>
                             </div>
-
-                            {/* Ferry illustration/mockup would go here */}
-                            {/* <div className="mt-16 flex justify-center">
-                                <div className="relative h-64 w-full max-w-3xl overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 shadow-xl backdrop-blur-md md:h-80 dark:from-blue-900/30 dark:to-indigo-900/30">
-                                    <img src={Tingloy} alt="Ferry" className='w-full h-full object-cover' />
-                                </div>
-                            </div> */}
                         </div>
                     </section>
-
                     {/* Features Section */}
                     <section id="features" className="mt-16 px-6 py-16">
                         <div className="mx-auto max-w-7xl">
@@ -559,9 +638,12 @@ export default function Welcome() {
                                             <span className="relative z-10">Get Started</span>
                                             <span className="absolute inset-0 -translate-y-full bg-gradient-to-r from-blue-50 to-indigo-50 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
                                         </Link>
+                                        {/* Learn More link, now opens in a new tab as requested */}
                                         <Link
-                                            href="#features"
+                                            href={route('learn_more')}
                                             className="rounded-full border border-white/30 bg-white/10 px-8 py-3 text-center font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                         >
                                             Learn More
                                         </Link>
@@ -576,47 +658,24 @@ export default function Welcome() {
                     <div className="mx-auto max-w-7xl border-t border-gray-200 pt-8 dark:border-gray-800">
                         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
                             <div className="flex items-center gap-2">
-                                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 p-1.5 shadow-lg">
-                                    <svg
-                                        className="h-5 w-5 text-white"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M18 8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v12h12V8z"></path>
-                                        <path d="M6 2h12v6H6z"></path>
-                                        <path d="M9 10h1"></path>
-                                        <path d="M14 10h1"></path>
-                                        <path d="M9 14h6"></path>
-                                    </svg>
+                                <div className="h-12 w-12 rounded-xl">
+                                    <img src={Logo} alt="Tingloy Logo" className='w-full object-cover' />
                                 </div>
                                 <span className="text-lg font-medium">Tingloy Ferry</span>
                             </div>
                             <nav className="flex flex-wrap justify-center gap-6 text-sm">
-                                <a href="#" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                <Link href={route('about')} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
                                     About
-                                </a>
-                                <a href="#" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                </Link>
+
+                                <Link href={route('routes')} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
                                     Routes
-                                </a>
-                                <a href="#" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
-                                    Schedule
-                                </a>
-                                <a href="#" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+                                </Link>
+
+                                <button onClick={openModal} className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
                                     Contact
-                                </a>
-                                <a href="#" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
-                                    Terms
-                                </a>
-                                <a href="#" className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
-                                    Privacy
-                                </a>
+                                </button>
+                                {/* Terms and Privacy links were removed as per request */}
                             </nav>
                         </div>
                         <p className="mt-8 text-sm text-gray-500 dark:text-gray-400">
@@ -624,6 +683,97 @@ export default function Welcome() {
                         </p>
                     </div>
                 </footer>
+
+                {/* The Modal */}
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-end justify-start pointer-events-none">
+                        {/* Overlay */}
+                        <div
+                            className="fixed inset-0  shadow-lg transition-opacity duration-300 ease-in-out pointer-events-auto"
+                            onClick={closeModal}
+                        ></div>
+                        
+                        {/* Modal container with transition effect from bottom-left */}
+                        <div
+                            className={`relative w-full max-w-lg p-6 bg-white dark:bg-gray-800 rounded-lg shadow-2xl transform transition-all duration-500 ease-in-out pointer-events-auto
+                                ${isModalOpen
+                                    ? 'translate-x-0 translate-y-0 opacity-100'
+                                    : '-translate-x-full translate-y-full opacity-0'
+                                }
+                                mb-6 ml-6`}
+                        >
+                            <div className="flex items-center justify-between border-b pb-4">
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Contact Us</h3>
+                                <button
+                                    onClick={closeModal}
+                                    className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                                    aria-label="Close modal"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                                <div>
+                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        Your Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={form.data.name}
+                                        onChange={(e) => form.setData('name', e.target.value)}
+                                        required
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white px-4 py-3"
+                                    />
+                                    {form.errors.name && <div className="text-red-500 text-xs mt-1">{form.errors.name}</div>}
+                                </div>
+                                <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        Your Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        value={form.data.email}
+                                        onChange={(e) => form.setData('email', e.target.value)}
+                                        required
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white  px-4 py-3"
+                                    />
+                                    {form.errors.email && <div className="text-red-500 text-xs mt-1">{form.errors.email}</div>}
+                                </div>
+                                <div>
+                                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                                        Message
+                                    </label>
+                                    <textarea
+                                        id="message"
+                                        name="message"
+                                        rows={4}
+                                        value={form.data.message}
+                                        onChange={(e) => form.setData('message', e.target.value)}
+                                        required
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white  px-4 py-3"
+                                    ></textarea>
+                                    {form.errors.message && <div className="text-red-500 text-xs mt-1">{form.errors.message}</div>}
+                                </div>
+                                <div className="flex justify-end pt-4">
+                                    <button
+                                        type="submit"
+                                        disabled={form.processing}
+                                        className="rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2 text-sm font-medium text-white transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30"
+                                    >
+                                        {form.processing ? 'Sending...' : 'Send Message'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );

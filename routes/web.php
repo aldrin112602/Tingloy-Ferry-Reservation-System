@@ -13,10 +13,14 @@ use App\Http\Controllers\AccountsManagementController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SetupFareTypeController;
 use App\Http\Controllers\SetupPaymentController;
+use App\Http\Controllers\WelcomePageController;
+use App\Http\Controllers\ContactController;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+Route::get('/', [WelcomePageController::class, 'index'])->name('home');
+Route::get('/about', [WelcomePageController::class, 'about'])->name('about');
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
+Route::get('/learn_more', [WelcomePageController::class, 'learn_more'])->name('learn_more');
+Route::get('/routes', [WelcomePageController::class, 'routes'])->name('routes');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
