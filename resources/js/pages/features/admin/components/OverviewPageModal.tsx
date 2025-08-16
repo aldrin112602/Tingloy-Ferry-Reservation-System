@@ -1,86 +1,127 @@
 import { Passenger, RouteProps } from '@/types';
 import { format } from 'date-fns';
 import { handlePrintOverview } from './handlePrintOverview';
+import { X, Printer } from 'lucide-react';
+
 export const OverviewPageModal = ({
     showOverview,
     setShowOverview,
-    routeObj
+    routeObj,
 }: {
     showOverview: boolean;
     setShowOverview: (curr: boolean) => void;
     routeObj?: RouteProps;
 }) => {
+    if (!showOverview) return null;
+    console.log(routeObj)
     return (
-        <>
-            {showOverview && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-                    <div className="w-full max-w-6xl rounded-2xl bg-white p-8 shadow-2xl dark:bg-gray-900 dark:text-white transition-all">
-                        <div className="flex items-center justify-between border-b pb-4 mb-6">
-                            <h2 className="text-2xl font-bold">Trip Overview</h2>
-                            <button
-                                onClick={() => setShowOverview(false)}
-                                className="text-lg hover:text-red-500"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                        <div className="flex justify-end items-center">
-                            <button onClick={() => handlePrintOverview(routeObj)} className="px-3 py-2 cursor-pointer bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                Print Overview
-                            </button>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-base">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div className="w-full max-w-6xl rounded-2xl bg-white dark:bg-gray-900 dark:text-white shadow-2xl transition-all overflow-hidden">
+                {/* Header */}
+                <div className="flex items-center justify-between border-b px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                    <h2 className="text-2xl font-semibold">🚢 Trip Overview</h2>
+                    <button
+                        onClick={() => setShowOverview(false)}
+                        className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition"
+                    >
+                        <X className="w-5 h-5 text-red-600" />
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+                    {/* Print Button */}
+                    <div className="flex justify-end">
+                        <button
+                            onClick={() => handlePrintOverview(routeObj)}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-md transition"
+                        >
+                            <Printer className="w-4 h-4" /> Print Overview
+                        </button>
+                    </div>
+
+                    {/* Trip Info Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-base">
+                        <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-800 shadow-sm">
                             <p><strong>Route:</strong> {routeObj?.name} ({routeObj?.route_code})</p>
                             <p><strong>From:</strong> {routeObj?.start_location}</p>
                             <p><strong>To:</strong> {routeObj?.end_location}</p>
-                            <p><strong>Date:</strong> {routeObj ? format(new Date(routeObj?.date_and_time), 'PPP') : ''}</p>
-                            <p><strong>Time:</strong> {routeObj ? format(new Date(routeObj?.date_and_time), 'p') : ''}</p>
-                            <p><strong>Status:</strong> <span className={`font-semibold ${routeObj?.status === 'finished' ? 'text-green-600' : 'text-yellow-600'}`}>{routeObj?.status.toUpperCase()}</span></p>
-                            <p><strong>Capacity:</strong> {routeObj?.capacity}</p>
-                            <p><strong>Seats Occupied:</strong> {routeObj?.seats_occupied}</p>
-                            <p><strong>Remaining Seats:</strong> {routeObj ? (routeObj.capacity - routeObj.seats_occupied) : 0}</p>
                         </div>
 
-                        {routeObj?.passengers && routeObj.passengers.length > 0 ? (
-                            <>
-                                <h3 className="mt-8 text-xl font-semibold border-b pb-2">Passenger List ({routeObj.passengers.length})</h3>
-                                <div className="mt-4 overflow-x-auto">
-                                    <table className="min-w-full table-auto border-collapse">
-                                        <thead className="bg-gray-100 dark:bg-gray-800 text-left">
-                                            <tr>
-                                                <th className="px-4 py-2">Full Name</th>
-                                                <th className="px-4 py-2">Age</th>
-                                                <th className="px-4 py-2">Contact</th>
-                                                <th className="px-4 py-2">Address</th>
-                                                <th className="px-4 py-2">Fare</th>
-                                                <th className="px-4 py-2">Type</th>
-                                                <th className="px-4 py-2">Residency</th>
-                                                <th className="px-4 py-2">Main Passenger</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {routeObj.passengers.map((passenger: Passenger) => (
-                                                <tr key={passenger.id} className="border-t dark:border-gray-700">
-                                                    <td className="px-4 py-2">{passenger.full_name}</td>
-                                                    <td className="px-4 py-2">{passenger.age}</td>
-                                                    <td className="px-4 py-2">{passenger.contact_number}</td>
-                                                    <td className="px-4 py-2">{passenger.address}</td>
-                                                    <td className="px-4 py-2">₱{passenger.passenger_fare}</td>
-                                                    <td className="px-4 py-2">{passenger.passenger_fare_type}</td>
-                                                    <td className="px-4 py-2 capitalize">{passenger.residency_status}</td>
-                                                    <td className="px-4 py-2">{passenger.is_main_passenger ? '✅' : '—'}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </>
-                        ) : (
-                            <p className="mt-6 text-gray-500 dark:text-gray-400">No passengers booked yet.</p>
-                        )}
+                        <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-800 shadow-sm">
+                            <p><strong>Date:</strong> {routeObj ? format(new Date(routeObj?.date_and_time), 'PPP') : ''}</p>
+                            <p><strong>Time:</strong> {routeObj ? format(new Date(routeObj?.date_and_time), 'p') : ''}</p>
+                            <p>
+                                <strong>Status:</strong>{' '}
+                                <span
+                                    className={`font-semibold ${routeObj?.status === 'finished'
+                                            ? 'text-green-600'
+                                            : 'text-yellow-600'
+                                        }`}
+                                >
+                                    {routeObj?.status.toUpperCase()}
+                                </span>
+                            </p>
+                        </div>
                     </div>
+
+                    <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-800 shadow-sm flex items-center justify-between">
+                        <p className='border border-white block w-full text-center py-4'><strong>Capacity:</strong> {routeObj?.capacity}</p>
+                        <p className='border border-white block w-full text-center py-4'><strong>Seats Occupied:</strong> {routeObj?.seats_occupied}</p>
+                        <p className='border border-white block w-full text-center py-4'>
+                            <strong>Remaining:</strong>{' '}
+                            {routeObj ? routeObj.capacity - routeObj.seats_occupied : 0}
+                        </p>
+                    </div>
+
+
+                    {/* Passengers */}
+                    {routeObj?.passengers && routeObj.passengers.length > 0 ? (
+                        <div>
+                            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                👥 Passengers ({routeObj.passengers.length})
+                            </h3>
+                            <div className="overflow-x-auto rounded-lg shadow">
+                                <table className="min-w-full border-collapse">
+                                    <thead className="bg-gray-200 dark:bg-gray-700 text-left sticky top-0">
+                                        <tr>
+                                            <th className="px-4 py-2">Full Name</th>
+                                            <th className="px-4 py-2">Age</th>
+                                            <th className="px-4 py-2">Contact</th>
+                                            <th className="px-4 py-2">Address</th>
+                                            <th className="px-4 py-2">Fare</th>
+                                            <th className="px-4 py-2">Type</th>
+                                            <th className="px-4 py-2">Residency</th>
+                                            <th className="px-4 py-2">Main</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {routeObj.passengers.map((p: Passenger) => (
+                                            <tr
+                                                key={p.id}
+                                                className="border-t dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                                            >
+                                                <td className="px-4 py-2">{p.full_name}</td>
+                                                <td className="px-4 py-2">{p.age}</td>
+                                                <td className="px-4 py-2">{p.contact_number}</td>
+                                                <td className="px-4 py-2">{p.address}</td>
+                                                <td className="px-4 py-2">₱{p.passenger_fare}</td>
+                                                <td className="px-4 py-2">{p.passenger_fare_type}</td>
+                                                <td className="px-4 py-2 capitalize">{p.residency_status}</td>
+                                                <td className="px-4 py-2 text-center">
+                                                    {p.is_main_passenger ? '✅' : '—'}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 dark:text-gray-400 italic">No passengers booked yet.</p>
+                    )}
                 </div>
-            )}
-        </>
+            </div>
+        </div>
     );
 };

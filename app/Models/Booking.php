@@ -28,6 +28,7 @@ class Booking extends Model
         'children_counts',
         'childrens_contact_person',
         'childrens_contact_number',
+        'qr_code'
     ];
 
 

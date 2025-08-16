@@ -5,7 +5,6 @@ import { Ship } from 'lucide-react';
 import { useState } from 'react';
 import CardDisplayData from './components/CardDisplayData';
 import PaginationLink from './components/PaginationLink';
-import ViewPassengers from './components/ViewPassengers';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,9 +14,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const PassengerList = ({ paginatedResponseData }: { paginatedResponseData: FerrySchedulePaginatedResponse }) => {
-    const [isOpenDialog, setISOpenDialog] = useState(false);
-    const [passengersArr, setPassengersArr] = useState<Passenger[]>([]);
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Passenger List" />
@@ -29,8 +25,6 @@ const PassengerList = ({ paginatedResponseData }: { paginatedResponseData: Ferry
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         <CardDisplayData
                             paginatedResponseData={paginatedResponseData}
-                            setPassengersArr={setPassengersArr}
-                            setISOpenDialog={setISOpenDialog}
                         />
                     </div>
                 ) : (
@@ -48,7 +42,6 @@ const PassengerList = ({ paginatedResponseData }: { paginatedResponseData: Ferry
                 )}
             </div>
 
-            <ViewPassengers isOpenDialog={isOpenDialog} setISOpenDialog={setISOpenDialog} passengersArr={passengersArr} />
         </AppLayout>
     );
 };

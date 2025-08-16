@@ -16,7 +16,7 @@ const UserBookings: React.FC<UserBookingsProps> = ({ bookings }) => {
             <table className="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
                 <thead className="bg-gray-50 text-xs uppercase tracking-wider text-gray-500 dark:bg-gray-700 dark:text-gray-300">
                     <tr>
-                        <th className="whitespace-nowrap px-4 py-3 text-left font-medium">Ticket Code</th>
+                        <th className="whitespace-nowrap px-4 py-3 text-left font-medium">Booking Reference Code</th>
                         <th className="whitespace-nowrap px-4 py-3 text-left font-medium">Passengers</th>
                         <th className="whitespace-nowrap px-4 py-3 text-left font-medium">Receipt</th>
                         <th className="whitespace-nowrap px-4 py-3 text-left font-medium">Payment Method</th>

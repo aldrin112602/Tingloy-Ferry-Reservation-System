@@ -93,6 +93,7 @@ export interface BookingProps {
     is_paid: boolean;
     number_of_passengers: number;
     status: string;
+    qr_code: string;
     passengers: Passenger[];
     route: RouteProps;
     cancellation_reason: string | null;
@@ -389,8 +390,6 @@ export interface BookingDetailsProps {
 
 export interface CardDisplayDataProps {
     paginatedResponseData: FerrySchedulePaginatedResponse;
-    setPassengersArr: (passengers: Passenger[]) => void;
-    setISOpenDialog: (isOpen: boolean) => void;
 }
 
 export interface Html5QrScannerProps {

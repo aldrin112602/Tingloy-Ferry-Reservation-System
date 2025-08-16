@@ -4,8 +4,10 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { CardDisplayDataProps, Passenger } from '@/types';
 import { format } from 'date-fns';
 import { Calendar, ChevronRight, MapPin, Ship, Users } from 'lucide-react';
+import { handlePrintOverview } from '../../admin/components/handlePrintOverview';
 
-const CardDisplayData = ({ paginatedResponseData, setPassengersArr, setISOpenDialog }: CardDisplayDataProps) => {
+
+const CardDisplayData = ({ paginatedResponseData }: CardDisplayDataProps) => {
     const formatScheduleDate = (dateString: string | number | Date) => {
         try {
             const date = new Date(dateString);
@@ -99,12 +101,11 @@ const CardDisplayData = ({ paginatedResponseData, setPassengersArr, setISOpenDia
                     <CardFooter>
                         <Button
                             onClick={() => {
-                                setPassengersArr(route.passengers as Passenger[]);
-                                setISOpenDialog(true);
+                                handlePrintOverview(route)
                             }}
                             className="w-full"
                         >
-                            View Passenger List
+                            Print Booking Information
                         </Button>
                     </CardFooter>
                 </Card>

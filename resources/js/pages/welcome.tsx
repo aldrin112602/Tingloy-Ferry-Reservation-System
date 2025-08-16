@@ -108,14 +108,14 @@ export default function Welcome() {
                             >
                                 ABOUT
                             </Link>
-                            <Link
+                            <a
                                 href={route('routes')}
                                 className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                ROUTES
-                            </Link>
+                                SCHEDULE AND ROUTES
+                            </a>
                             <button
                                 onClick={openModal}
                                 className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
@@ -183,15 +183,14 @@ export default function Welcome() {
                                         <span className="relative z-10">Book Your Ferry Now</span>
                                         <span className="absolute inset-0 -translate-y-full bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
                                     </Link>
-                                    {/* Learn More link, now opens in a new tab as requested */}
-                                    <Link
+                                    <a
                                         href={route('learn_more')}
                                         className="rounded-full border border-gray-300 bg-white/30 px-8 py-3 text-base font-medium backdrop-blur-sm transition-all duration-300 hover:bg-white/50 dark:border-gray-700 dark:bg-white/5 dark:hover:bg-white/10"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
                                         Learn More
-                                    </Link>
+                                    </a>
                                 </div>
                             </div>
                         </div>

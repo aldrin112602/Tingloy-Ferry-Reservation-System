@@ -1,8 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
+use App\Models\Route;
 use Inertia\Inertia;
 
 class WelcomePageController extends Controller
@@ -15,16 +13,13 @@ class WelcomePageController extends Controller
         return Inertia::render('About');
     }
 
-    public function contact() {
-
-    }
-
     public function routes() {
-
+        $routes = Route::where('status', 'scheduled')->get();
+        return Inertia::render('ScheduleAndRoutes', ['routes' => $routes]);
     }
 
-    public function schedule() {
-
+    public function learnMore() {
+        return Inertia::render('LearnMore');
     }
 
 

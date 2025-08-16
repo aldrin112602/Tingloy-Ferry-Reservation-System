@@ -38,7 +38,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             >
                 <option value="all">All Statuses</option>
                 <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
+                <option value="approved">Approved</option>
+                <option value="boarded">Boarded</option>
                 <option value="cancelled">Cancelled</option>
             </select>
         </div>

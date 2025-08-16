@@ -165,9 +165,31 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
                                     >
                                         <img
                                             src={`${baseUrl}/storage/${booking.receipt_image}`}
-                                            width={'50px'}
-                                            height={'50px'}
+                                            width={'200px'}
+                                            height={'200px'}
                                             className="cursor-pointer object-cover" // Image itself usually doesn't need dark mode style
+                                        />
+                                    </a>
+                                ) : (
+                                    <span className="text-gray-400 italic dark:text-gray-500">No Image Uploaded</span>
+                                )}
+                            </div>
+
+
+                            <div>
+                                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">QR Code</p>
+                                {booking.qr_code ? (
+                                    <a
+                                        className="inline-block hover:shadow-lg"
+                                        href={`https://quickchart.io/qr?text=${booking.qr_code}&size=200`}
+                                        title="Open Image to a new tab?"
+                                        target="_blank"
+                                    >
+                                        <img
+                                            src={`https://quickchart.io/qr?text=${booking.qr_code}&size=200`}
+                                            width={'200px'}
+                                            height={'200px'}
+                                            className="cursor-pointer object-cover"
                                         />
                                     </a>
                                 ) : (

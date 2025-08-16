@@ -19,7 +19,7 @@ use App\Http\Controllers\ContactController;
 Route::get('/', [WelcomePageController::class, 'index'])->name('home');
 Route::get('/about', [WelcomePageController::class, 'about'])->name('about');
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
-Route::get('/learn_more', [WelcomePageController::class, 'learn_more'])->name('learn_more');
+Route::get('/learn_more', [WelcomePageController::class, 'learnMore'])->name('learn_more');
 Route::get('/routes', [WelcomePageController::class, 'routes'])->name('routes');
 
 Route::middleware(['auth', 'verified'])->group(function () {

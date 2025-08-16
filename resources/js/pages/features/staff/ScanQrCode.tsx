@@ -30,37 +30,38 @@ const ScanQrCode = () => {
     const [openDialog, setOpenDialog] = useState(false);
 
     const handleScanSuccess = async (result: string) => {
-    if (isSubmitting || processingRef.current) return;
-    const host = `${window.location.protocol}//${window.location.host}`;
+        if (isSubmitting || processingRef.current) return;
+        const host = `${window.location.protocol}//${window.location.host}`;
 
-    setIsSubmitting(true);
-    processingRef.current = true;
+        setIsSubmitting(true);
+        processingRef.current = true;
 
-    try {
-        const response = await axios.post(route('qr.validation'), {
-            data: result,
-        });
-
-        toast.success(response.data.message);
-        setCanMarkAsPaid(false);
-        setBookingId(null);
-
-        const booking = response.data.booking;
-
-        // Helper: Format date & time to AM/PM
-        const formatDateTime = (dateStr: string) => {
-            const date = new Date(dateStr);
-            return date.toLocaleString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
+        try {
+            const response = await axios.post(route('qr.validation'), {
+                data: result,
             });
-        };
 
-        const passengerRows = booking.passengers.map((p: any, index: number) => `
+            toast.success(response.data.message);
+            setCanMarkAsPaid(false);
+            setBookingId(null);
+
+            const booking = response.data.booking;
+
+            // Helper: Format date & time to AM/PM
+            const formatDateTime = (dateStr: string) => {
+                const date = new Date(dateStr);
+                return date.toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                    timeZone: "Asia/Manila",
+                });
+            };
+
+            const passengerRows = booking.passengers.map((p: any, index: number) => `
             <tr>
                 <td>${index + 1}</td>
                 <td>${p.full_name}</td>
@@ -75,9 +76,9 @@ const ScanQrCode = () => {
             </tr>
         `).join("");
 
-        const printWindow = window.open("", "_blank");
-        if (printWindow) {
-            printWindow.document.write(`
+            const printWindow = window.open("", "_blank");
+            if (printWindow) {
+                printWindow.document.write(`
                 <html>
                 <head>
                     <title>Booking #${booking.ticket_code}</title>
@@ -150,64 +151,27 @@ const ScanQrCode = () => {
                 </body>
                 </html>
             `);
-        }
-
-        setTimeout(() => {
-            processingRef.current = false;
-        }, 1000);
-    } catch (error: any) {
-        console.error('QR submission failed:', error);
-        if (error.response && error.response.status === 422) {
-            toast.error(error.response.data.message);
-            if (error.response.data.can_mark_as_paid) {
-                setCanMarkAsPaid(true);
-                setBookingId(error.response.data.booking_id);
             }
-        } else {
-            toast.error('An error occurred while processing the QR code. Please try again.');
+
+            setTimeout(() => {
+                processingRef.current = false;
+            }, 1000);
+        } catch (error: any) {
+            console.error('QR submission failed:', error);
+            if (error.response && error.response.status === 422) {
+                toast.error(error.response.data.message);
+                if (error.response.data.can_mark_as_paid) {
+                    setCanMarkAsPaid(true);
+                    setBookingId(error.response.data.booking_id);
+                }
+            } else {
+                toast.error('An error occurred while processing the QR code. Please try again.');
+            }
+            processingRef.current = false;
+        } finally {
+            setIsSubmitting(false);
         }
-        processingRef.current = false;
-    } finally {
-        setIsSubmitting(false);
-    }
-};
-
-
-
-    // const handleScanSuccess = async (result: string) => {
-    //     if (isSubmitting || processingRef.current) return;
-
-    //     setIsSubmitting(true);
-    //     processingRef.current = true;
-
-    //     try {
-    //         const response = await axios.post(route('qr.validation'), {
-    //             data: result,
-    //         });
-
-    //         toast.success(response.data.message);
-    //         setCanMarkAsPaid(false);
-    //         setBookingId(null);
-
-    //         setTimeout(() => {
-    //             processingRef.current = false;
-    //         }, 1000);
-    //     } catch (error: any) {
-    //         console.error('QR submission failed:', error);
-    //         if (error.response && error.response.status === 422) {
-    //             toast.error(error.response.data.message);
-    //             if (error.response.data.can_mark_as_paid) {
-    //                 setCanMarkAsPaid(true);
-    //                 setBookingId(error.response.data.booking_id);
-    //             }
-    //         } else {
-    //             toast.error('An error occurred while processing the QR code. Please try again.');
-    //         }
-    //         processingRef.current = false;
-    //     } finally {
-    //         setIsSubmitting(false);
-    //     }
-    // };
+    };
 
     const markBookingAsPaid = async () => {
         if (!bookingId) return;
